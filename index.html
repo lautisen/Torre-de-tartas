@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Marta's Heavy Cake - Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="user-screen">
+        <div class="modal">
+            <h2>🍰 Registro de Repostero</h2>
+            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
+            <button id="start-btn">¡A Cocinar!</button>
+            <div id="high-score-board"></div>
+        </div>
+    </div>
+
+    <div id="ui" class="hidden">
+        <div id="score-box">
+            <h1>🎂 <span id="user-display"></span>: <span id="score">0</span></h1>
+        </div>
+    </div>
+
+    <div id="crane-system" class="hidden">
+        <div id="crane">
+            <div id="active-cake-container"></div>
+        </div>
+    </div>
+
+    <div id="game-world" class="hidden">
+        <div id="base-container">
+            <div id="tower"></div>
+            <div id="base"></div>
+        </div>
+    </div>
+
+    <script src="physics.js"></script>
+    <script src="ui.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
