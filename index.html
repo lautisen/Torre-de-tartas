@@ -1,50 +1,123 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Marta's Heavy Cake - Pro</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="user-screen">
-        <div class="modal">
-            <h2>🍰 Registro de Repostero</h2>
-            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
-            <button id="start-btn">¡A Cocinar!</button>
-            
-            <div id="high-score-board">
-                <p>Cargando Top Mundial...</p>
-            </div>
-        </div>
-    </div>
+const gameMain = {
+    speed: 0.02,
+    angle: 0,
+    width: 160,
+    cameraY: 0, 
+    isInitialized: false,
 
-    <div id="ui" class="hidden">
-        <div id="score-box">
-            <h1>🎂 <span id="user-display"></span>: <span id="score">0</span></h1>
-        </div>
-    </div>
+    start() {
+        this.width = 160;
+        this.angle = 0;
+        this.cameraY = 0;
+        ui.score = 0;
+        document.getElementById('tower').innerHTML = "";
+        document.getElementById('game-world').style.transform = `translateY(0px)`;
+        this.spawnCake();
+        if (!this.isInitialized) {
+            this.loop();
+            this.setupControls();
+            this.isInitialized = true;
+        }
+    },
 
-    <div id="crane-system" class="hidden">
-        <div id="crane">
-            <div id="active-cake-container"></div>
-        </div>
-    </div>
+    setupControls() {
+        const dropAction = () => { if(ui.gameActive) this.drop(); };
+        window.addEventListener('mousedown', dropAction);
+        window.addEventListener('touchstart', (e) => { 
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') e.preventDefault(); 
+            dropAction(); 
+        }, {passive: false});
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') dropAction(); });
+    },
 
-    <div id="game-world" class="hidden">
-        <div id="base-container">
-            <div id="tower"></div>
-            <div id="base"></div>
-        </div>
-    </div>
+    spawnCake() {
+        const container = document.getElementById('active-cake-container');
+        this.width = Math.max(50, this.width * 0.98); 
+        container.style.width = this.width + "px";
+        container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+    },
 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    loop() {
+        if (ui.gameActive) {
+            this.angle += this.speed;
+            const oscillation = Math.sin(this.angle) * 35; 
+            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+        }
+        requestAnimationFrame(() => this.loop());
+    },
 
-    <script src="config.js"></script>
+    drop() {
+        const cake = document.querySelector('#active-cake-container .cake');
+        if (!cake) return;
+        const rect = cake.getBoundingClientRect();
+        const color = window.getComputedStyle(cake).backgroundColor;
+        const currentWidth = this.width;
+        cake.remove();
 
-    <script src="physics.js"></script>
-    <script src="ui.js"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+        const falling = document.createElement('div');
+        falling.className = "cake";
+        Object.assign(falling.style, {
+            position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
+            width: currentWidth + 'px', backgroundColor: color, zIndex: '300'
+        });
+        document.body.appendChild(falling);
+
+        let pY = rect.top;
+        let vY = 0;
+        // Calculamos el suelo dinámicamente según la altura de la torre
+        const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
+
+        const fall = () => {
+            vY += 0.8;
+            pY += vY;
+            falling.style.top = pY + 'px';
+            if (pY < targetY) {
+                requestAnimationFrame(fall);
+            } else {
+                this.land(falling, rect.left, currentWidth, color);
+            }
+        };
+        requestAnimationFrame(fall);
+    },
+
+    land(falling, x, w, color) {
+        const offset = physics.calculateOffset(x, w);
+        const tolerance = w * 0.8; 
+
+        if (Math.abs(offset) < tolerance) {
+            falling.remove();
+            const stacked = document.createElement('div');
+            stacked.className = "cake";
+            Object.assign(stacked.style, {
+                position: 'relative', width: w + 'px', left: offset + 'px', 
+                margin: '0 auto', backgroundColor: color, height: '40px'
+            });
+            document.getElementById('tower').appendChild(stacked);
+            ui.score++;
+            document.getElementById('score').innerText = ui.score;
+            if (ui.score > 3) {
+                this.cameraY = (ui.score - 3) * 40;
+                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
+            }
+            this.speed += 0.001; 
+            this.spawnCake();
+        } else {
+            this.gameOver(falling);
+        }
+    },
+
+    gameOver(falling) {
+        ui.gameActive = false;
+        ui.saveScore(ui.score);
+        
+        // Animación de caída
+        falling.style.transition = 'transform 0.8s ease-in, opacity 0.8s';
+        falling.style.transform = 'translateY(100vh) rotate(45deg)';
+        falling.style.opacity = '0';
+
+        setTimeout(() => {
+            document.getElementById('final-score').innerText = ui.score;
+            document.getElementById('game-over-screen').classList.remove('hidden');
+        }, 500);
+    }
+};
