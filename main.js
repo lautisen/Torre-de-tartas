@@ -7,7 +7,9 @@ const gameMain = {
     start() {
         ui.score = 0;
         this.width = 150;
+        document.getElementById('tower').innerHTML = ""; 
         this.spawnCake();
+        
         if (!this.isInitialized) {
             this.loop();
             this.setupControls();
@@ -18,19 +20,19 @@ const gameMain = {
     setupControls() {
         const dropAction = () => { if(ui.gameActive) this.drop(); };
         window.addEventListener('mousedown', dropAction);
-        window.addEventListener('touchstart', (e) => { dropAction(); }, {passive: false});
+        window.addEventListener('touchstart', (e) => { if(ui.gameActive) dropAction(); }, {passive: false});
     },
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
         container.style.width = this.width + "px";
-        container.innerHTML = `<div class="cake" style="width:100%; background: #f06292;"></div>`;
+        container.innerHTML = `<div class="cake" style="width:100%"></div>`;
     },
 
     loop() {
         if (ui.gameActive) {
             this.angle += this.speed;
-            const oscillation = Math.sin(this.angle) * 40; 
+            const oscillation = Math.sin(this.angle) * 35; 
             document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
         }
         requestAnimationFrame(() => this.loop());
@@ -46,17 +48,16 @@ const gameMain = {
         falling.className = "cake";
         Object.assign(falling.style, {
             position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
-            width: this.width + 'px', zIndex: '300', background: '#f06292'
+            width: this.width + 'px', zIndex: '300'
         });
         document.body.appendChild(falling);
 
         let pY = rect.top;
-        const targetY = window.innerHeight - 100 - (ui.score * 40);
+        const targetY = window.innerHeight - 80 - (ui.score * 40);
 
         const fall = () => {
-            pY += 10; // Velocidad de caída constante
+            pY += 8;
             falling.style.top = pY + 'px';
-
             if (pY < targetY) {
                 requestAnimationFrame(fall);
             } else {
@@ -68,23 +69,20 @@ const gameMain = {
 
     land(falling, x) {
         const offset = physics.calculateOffset(x, this.width);
-        
-        if (Math.abs(offset) < this.width) { // Si toca la base
+        if (Math.abs(offset) < this.width * 0.8) {
             falling.remove();
             const stacked = document.createElement('div');
             stacked.className = "cake";
             Object.assign(stacked.style, {
                 position: 'relative', width: this.width + 'px', left: offset + 'px', 
-                margin: '0 auto', background: '#f06292', height: '40px'
+                margin: '0 auto', height: '40px'
             });
             document.getElementById('tower').appendChild(stacked);
             ui.score++;
             document.getElementById('score').innerText = ui.score;
             this.spawnCake();
         } else {
-            ui.gameActive = false;
-            document.getElementById('final-score').innerText = ui.score;
-            document.getElementById('game-over-screen').classList.remove('hidden');
+            ui.showGameOver(ui.score);
         }
     }
 };
