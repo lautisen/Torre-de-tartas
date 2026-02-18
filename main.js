@@ -1,17 +1,12 @@
 const gameMain = {
-    speed: 0.02,
+    speed: 0.03,
     angle: 0,
-    width: 160,
-    cameraY: 0, 
+    width: 150,
     isInitialized: false,
 
     start() {
-        this.width = 160;
-        this.angle = 0;
-        this.cameraY = 0;
         ui.score = 0;
-        document.getElementById('tower').innerHTML = "";
-        document.getElementById('game-world').style.transform = `translateY(0px)`;
+        this.width = 150;
         this.spawnCake();
         if (!this.isInitialized) {
             this.loop();
@@ -23,24 +18,19 @@ const gameMain = {
     setupControls() {
         const dropAction = () => { if(ui.gameActive) this.drop(); };
         window.addEventListener('mousedown', dropAction);
-        window.addEventListener('touchstart', (e) => { 
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') e.preventDefault(); 
-            dropAction(); 
-        }, {passive: false});
-        window.addEventListener('keydown', (e) => { if(e.code === 'Space') dropAction(); });
+        window.addEventListener('touchstart', (e) => { dropAction(); }, {passive: false});
     },
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
-        this.width = Math.max(50, this.width * 0.98); 
         container.style.width = this.width + "px";
-        container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+        container.innerHTML = `<div class="cake" style="width:100%; background: #f06292;"></div>`;
     },
 
     loop() {
         if (ui.gameActive) {
             this.angle += this.speed;
-            const oscillation = Math.sin(this.angle) * 35; 
+            const oscillation = Math.sin(this.angle) * 40; 
             document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
         }
         requestAnimationFrame(() => this.loop());
@@ -50,74 +40,51 @@ const gameMain = {
         const cake = document.querySelector('#active-cake-container .cake');
         if (!cake) return;
         const rect = cake.getBoundingClientRect();
-        const color = window.getComputedStyle(cake).backgroundColor;
-        const currentWidth = this.width;
         cake.remove();
 
         const falling = document.createElement('div');
         falling.className = "cake";
         Object.assign(falling.style, {
             position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
-            width: currentWidth + 'px', backgroundColor: color, zIndex: '300'
+            width: this.width + 'px', zIndex: '300', background: '#f06292'
         });
         document.body.appendChild(falling);
 
         let pY = rect.top;
-        let vY = 0;
-        // Calculamos el suelo dinámicamente según la altura de la torre
-        const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
+        const targetY = window.innerHeight - 100 - (ui.score * 40);
 
         const fall = () => {
-            vY += 0.8;
-            pY += vY;
+            pY += 10; // Velocidad de caída constante
             falling.style.top = pY + 'px';
+
             if (pY < targetY) {
                 requestAnimationFrame(fall);
             } else {
-                this.land(falling, rect.left, currentWidth, color);
+                this.land(falling, rect.left);
             }
         };
-        requestAnimationFrame(fall);
+        fall();
     },
 
-    land(falling, x, w, color) {
-        const offset = physics.calculateOffset(x, w);
-        const tolerance = w * 0.8; 
-
-        if (Math.abs(offset) < tolerance) {
+    land(falling, x) {
+        const offset = physics.calculateOffset(x, this.width);
+        
+        if (Math.abs(offset) < this.width) { // Si toca la base
             falling.remove();
             const stacked = document.createElement('div');
             stacked.className = "cake";
             Object.assign(stacked.style, {
-                position: 'relative', width: w + 'px', left: offset + 'px', 
-                margin: '0 auto', backgroundColor: color, height: '40px'
+                position: 'relative', width: this.width + 'px', left: offset + 'px', 
+                margin: '0 auto', background: '#f06292', height: '40px'
             });
             document.getElementById('tower').appendChild(stacked);
             ui.score++;
             document.getElementById('score').innerText = ui.score;
-            if (ui.score > 3) {
-                this.cameraY = (ui.score - 3) * 40;
-                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
-            }
-            this.speed += 0.001; 
             this.spawnCake();
         } else {
-            this.gameOver(falling);
-        }
-    },
-
-    gameOver(falling) {
-        ui.gameActive = false;
-        ui.saveScore(ui.score);
-        
-        // Animación de caída
-        falling.style.transition = 'transform 0.8s ease-in, opacity 0.8s';
-        falling.style.transform = 'translateY(100vh) rotate(45deg)';
-        falling.style.opacity = '0';
-
-        setTimeout(() => {
+            ui.gameActive = false;
             document.getElementById('final-score').innerText = ui.score;
             document.getElementById('game-over-screen').classList.remove('hidden');
-        }, 500);
+        }
     }
 };
