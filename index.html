@@ -7,23 +7,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="user-screen">
         <div class="modal">
             <h2>🍰 Registro de Repostero</h2>
-            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
+            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12">
             <button id="start-btn">¡A Cocinar!</button>
-            
-            <div id="high-score-board">
-                <p>Cargando Top Mundial...</p>
-            </div>
+            <div id="high-score-board"></div>
         </div>
     </div>
 
     <div id="game-over-screen" class="hidden">
         <div class="modal">
             <h2>💥 ¡Torre Caída!</h2>
-            <p>Has apilado: <span id="final-score">0</span> pisos</p>
+            <p>Pisos alcanzados: <span id="final-score">0</span></p>
             <button onclick="location.reload()">Reintentar</button>
         </div>
     </div>
@@ -47,16 +43,8 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
-    <script src="config.js"></script>
-
     <script src="physics.js"></script>
-
     <script src="main.js"></script>
-
     <script src="ui.js"></script>
-
 </body>
 </html>
