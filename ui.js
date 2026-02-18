@@ -1,9 +1,5 @@
 
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
 const ui = {
     gameActive: false,
     score: 0,
