@@ -4,18 +4,18 @@ const ui = {
     currentUser: "",
 
     init() {
-        const btn = document.getElementById('start-btn');
-        if(btn) btn.onclick = () => this.startGame();
+        document.getElementById('start-btn').onclick = (e) => this.startGame(e);
         this.showBoard();
     },
 
-    startGame() {
+    startGame(event) {
         const name = document.getElementById('username').value.trim();
-        if (!name) return alert("¡Dime tu nombre!");
+        if (!name) return alert("¡Ingresa tu nombre!");
 
         this.currentUser = name;
         document.getElementById('user-display').innerText = name;
-        
+        document.getElementById('score').innerText = "0";
+
         document.getElementById('user-screen').classList.add('hidden');
         document.getElementById('ui').classList.remove('hidden');
         document.getElementById('game-world').classList.remove('hidden');
@@ -35,9 +35,9 @@ const ui = {
     showBoard() {
         const scores = JSON.parse(localStorage.getItem('cakeScores') || '[]');
         const board = document.getElementById('high-score-board');
-        if (board && scores.length > 0) {
+        if (scores.length > 0) {
             board.innerHTML = "<h3>🏆 Récords</h3>" + scores.map(s => `<div>${s.name}: ${s.score}</div>`).join('');
         }
     }
 };
-window.addEventListener('load', () => ui.init());
+window.onload = () => ui.init();
