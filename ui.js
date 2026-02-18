@@ -1,5 +1,3 @@
-
-
 const ui = {
     gameActive: false,
     score: 0,
@@ -29,9 +27,9 @@ const ui = {
         gameMain.start();
     },
 
-    // Envía el puntaje al Top Mundial
     saveScore(score) {
         if (score <= 0) return;
+        // 'database' viene de config.js
         database.ref('leaderboard').push({
             name: this.currentUser,
             score: score,
@@ -39,17 +37,14 @@ const ui = {
         });
     },
 
-    // Escucha cambios globales en el ranking
     listenToLeaderboard() {
+        // 'database' viene de config.js
         const boardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
         boardRef.on('value', (snapshot) => {
             const data = snapshot.val();
             const scores = [];
             for (let id in data) scores.push(data[id]);
-            
-            // Ordenar descendente
             scores.sort((a, b) => b.score - a.score);
-            
             const board = document.getElementById('high-score-board');
             if (board) {
                 board.innerHTML = "<h3>🏆 Top Mundial</h3>" + 
