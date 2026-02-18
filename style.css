@@ -37,3 +37,41 @@ body {
 input {
     user-select: auto; /* Permite escribir en el nombre */
 }
+
+/* EFECTOS V1.2 */
+.cake.perfect {
+    box-shadow: 0 0 20px #fff, 0 0 30px #fff176;
+    border: 3px solid white !important;
+    animation: shine 0.5s alternate infinite;
+}
+
+@keyframes shine {
+    from { filter: brightness(1.2); }
+    to { filter: brightness(1.7); }
+}
+
+.crumb {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+    z-index: 1001;
+    border-radius: 2px;
+}
+
+.perfect-text {
+    position: fixed;
+    color: #ffeb3b;
+    font-weight: bold;
+    font-size: 32px;
+    text-shadow: 3px 3px 0px #000;
+    pointer-events: none;
+    z-index: 2000;
+    transform: translate(-50%, -50%);
+    animation: floatUp 0.8s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -120px); opacity: 0; }
+}
