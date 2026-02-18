@@ -29,7 +29,6 @@ const ui = {
 
     saveScore(score) {
         if (score <= 0) return;
-        // 'database' viene de config.js
         database.ref('leaderboard').push({
             name: this.currentUser,
             score: score,
@@ -38,7 +37,6 @@ const ui = {
     },
 
     listenToLeaderboard() {
-        // 'database' viene de config.js
         const boardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
         boardRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -53,5 +51,4 @@ const ui = {
         });
     }
 };
-
 window.addEventListener('load', () => ui.init());
