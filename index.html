@@ -12,7 +12,10 @@
             <h2>🍰 Registro de Repostero</h2>
             <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
             <button id="start-btn">¡A Cocinar!</button>
-            <div id="high-score-board"></div>
+            
+            <div id="high-score-board">
+                <p>Cargando Top Mundial...</p>
+            </div>
         </div>
     </div>
 
@@ -20,7 +23,6 @@
         <div id="score-box">
             <h1>🎂 <span id="user-display"></span>: <span id="score">0</span></h1>
         </div>
-        <p id="msg"></p>
     </div>
 
     <div id="crane-system" class="hidden">
@@ -36,8 +38,11 @@
         </div>
     </div>
 
-    <script src="ui.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <script src="physics.js"></script>
+    <script src="ui.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
