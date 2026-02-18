@@ -45,27 +45,45 @@ const gameMain = {
         if (!cake) return;
 
         const rect = cake.getBoundingClientRect();
-        const lateralVelocity = Math.cos(this.angle) * this.speed * 300;
-        const currentWidth = this.width;
         const color = window.getComputedStyle(cake).backgroundColor;
+        const currentWidth = this.width;
         cake.remove();
 
         const falling = document.createElement('div');
         falling.className = "cake";
         Object.assign(falling.style, {
-            position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
-            width: currentWidth + 'px', backgroundColor: color, zIndex: '300'
+            position: 'fixed', 
+            left: rect.left + 'px', 
+            top: rect.top + 'px',
+            width: currentWidth + 'px', 
+            backgroundColor: color, 
+            zIndex: '300', 
+            border: '3px solid #6d4c41', 
+            borderRadius: '6px'
         });
         document.body.appendChild(falling);
 
-        let pX = rect.left, pY = rect.top, vX = lateralVelocity, vY = 0;
-        const targetY = window.innerHeight - (ui.score * 40) - 80;
+        let pX = rect.left; // La posición X se queda fija aquí
+        let pY = rect.top;
+        let vY = 0;
+        const gravity = 0.8;
+        
+        // Calculamos el destino ajustado a la cámara
+        const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
-            vY += 0.7; pX += vX; pY += vY;
-            falling.style.left = pX + 'px'; falling.style.top = pY + 'px';
-            if (pY < targetY) requestAnimationFrame(fall);
-            else this.land(falling, pX, currentWidth);
+            vY += gravity;
+            pY += vY;
+            
+            // Solo actualizamos la posición vertical (Top)
+            falling.style.top = pY + 'px';
+
+            if (pY < targetY) {
+                requestAnimationFrame(fall);
+            } else {
+                // Al aterrizar, enviamos el pX original (caída recta)
+                this.land(falling, pX, currentWidth, color);
+            }
         };
         fall();
     },
