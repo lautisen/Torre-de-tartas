@@ -28,3 +28,12 @@ body { background: linear-gradient(to bottom, #ffc3a0, #ffafbd); margin: 0; over
 #tower { width: 100%; display: flex; flex-direction: column-reverse; align-items: center; }
 
 button { background: var(--brown); color: white; border: none; padding: 12px 30px; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+
+body {
+    touch-action: manipulation; /* Elimina el retraso del doble tap */
+    user-select: none; /* Evita que se seleccione texto al tocar mucho */
+}
+
+input {
+    user-select: auto; /* Permite escribir en el nombre */
+}
