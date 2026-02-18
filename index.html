@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Torre de Tartas - Minimal</title>
+    <title>Marta's Heavy Cake - Pro</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div id="user-screen">
         <div class="modal">
-            <h2>🍰 Nueva Partida</h2>
-            <input type="text" id="username" placeholder="Tu nombre..." maxlength="10">
-            <button id="start-btn">¡Empezar!</button>
+            <h2>🍰 Registro de Repostero</h2>
+            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
+            <button id="start-btn">¡A Cocinar!</button>
+            
+            <div id="high-score-board">
+                <p>Cargando Top Mundial...</p>
+            </div>
         </div>
     </div>
 
     <div id="game-over-screen" class="hidden">
         <div class="modal">
-            <h2>💥 ¡Perdiste!</h2>
-            <p>Pisos: <span id="final-score">0</span></p>
-            <button onclick="location.reload()">Reiniciar</button>
+            <h2>💥 ¡Torre Caída!</h2>
+            <p>Has apilado: <span id="final-score">0</span> pisos</p>
+            <button onclick="location.reload()">Reintentar</button>
         </div>
     </div>
 
     <div id="ui" class="hidden">
-        <div id="score-box">Pisos: <span id="score">0</span></div>
+        <div id="score-box">
+            <h1>🎂 <span id="user-display"></span>: <span id="score">0</span></h1>
+        </div>
     </div>
 
     <div id="crane-system" class="hidden">
@@ -34,16 +41,22 @@
     </div>
 
     <div id="game-world" class="hidden">
-        <div id="tower"></div>
-        <div id="base"></div>
+        <div id="base-container">
+            <div id="tower"></div>
+            <div id="base"></div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    
+
     <script src="config.js"></script>
+
     <script src="physics.js"></script>
-    <script src="ui.js"></script>
+
     <script src="main.js"></script>
+
+    <script src="ui.js"></script>
+
 </body>
 </html>
