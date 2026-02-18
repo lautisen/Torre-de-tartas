@@ -1,45 +1,12 @@
-/**
- * main.js - Motor principal del juego
- * Gestiona el movimiento, colisiones, cámara y efectos visuales.
- */
-
 const gameMain = {
-    speed: 0.02,
-    angle: 0,
-    width: 160,
-    cameraY: 0,
-    balance: 0,
-    comboCount: 0,
-    isInitialized: false,
+    speed: 0.02, angle: 0, width: 160, cameraY: 0, balance: 0, comboCount: 0, isInitialized: false,
 
-    /**
-     * Inicializa o reinicia el estado del juego
-     */
     start() {
-        // Reset de variables
-        this.width = 160;
-        this.angle = 0;
-        this.cameraY = 0;
-        this.balance = 0;
-        this.comboCount = 0;
-
-        // Limpiar la torre visualmente
-        const tower = document.getElementById('tower');
-        if (tower) tower.innerHTML = "";
-
-        // Reset visual de la base
-        const base = document.getElementById('base-container');
-        if (base) {
-            base.style.transform = `translateX(-50%) rotate(0deg)`;
-            base.style.transition = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-        }
-
-        // Reset de cámara
-        const world = document.getElementById('game-world');
-        if (world) world.style.transform = `translateY(0px)`;
-
+        this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0;
+        ui.score = 0;
+        document.getElementById('tower').innerHTML = "";
+        document.getElementById('base-container').style.transform = `translateX(-50%) rotate(0deg)`;
         this.spawnCake();
-
         if (!this.isInitialized) {
             this.setupControls();
             this.loop();
@@ -47,30 +14,92 @@ const gameMain = {
         }
     },
 
-    /**
-     * Configura los controles para PC (Espacio/Click) y Móvil (Tap)
-     */
     setupControls() {
-        const triggerDrop = (e) => {
-            if (ui.gameActive) {
-                if (e && e.type === 'keydown' && e.code !== 'Space') return;
-                if (e) e.preventDefault();
-                this.drop();
-            }
-        };
-
-        window.addEventListener('mousedown', triggerDrop);
-        window.addEventListener('touchstart', triggerDrop, { passive: false });
-        window.addEventListener('keydown', triggerDrop);
+        const trigger = (e) => { if(ui.gameActive) { e.preventDefault(); this.drop(); } };
+        window.addEventListener('mousedown', trigger);
+        window.addEventListener('touchstart', trigger, {passive: false});
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') trigger(e); });
     },
 
-    /**
-     * Crea una nueva tarta en la grúa
-     */
     spawnCake() {
         const container = document.getElementById('active-cake-container');
-        // El ancho se reduce ligeramente cada vez para aumentar la dificultad
         this.width = Math.max(60, this.width * 0.98);
-        
-        if (container) {
-            container.style.
+        container.style.width = this.width + "px";
+        container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+    },
+
+    loop() {
+        if (ui.gameActive) {
+            this.angle += this.speed;
+            const oscillation = Math.sin(this.angle) * 35;
+            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+        }
+        requestAnimationFrame(() => this.loop());
+    },
+
+    drop() {
+        const cake = document.querySelector('#active-cake-container .cake');
+        if (!cake) return;
+        const rect = cake.getBoundingClientRect();
+        const color = window.getComputedStyle(cake).backgroundColor;
+        cake.remove();
+
+        const falling = document.createElement('div');
+        falling.className = "cake";
+        Object.assign(falling.style, { position: 'fixed', left: rect.left + 'px', top: rect.top + 'px', width: this.width + 'px', backgroundColor: color, zIndex: '1000' });
+        document.body.appendChild(falling);
+
+        let pY = rect.top;
+        const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
+
+        const fall = () => {
+            pY += 10;
+            falling.style.top = pY + 'px';
+            if (pY < targetY) requestAnimationFrame(fall);
+            else this.land(falling, rect.left, color);
+        };
+        fall();
+    },
+
+    land(falling, x, color) {
+        const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
+        const absOffset = Math.abs(offset);
+        const isPerfect = absOffset < 8;
+
+        if (absOffset < this.width * 0.8) {
+            falling.remove();
+            if (isPerfect) this.comboCount++; else this.comboCount = 0;
+
+            // EL SECRETO DEL BALANCEO:
+            this.balance += (offset / 15); 
+            const baseContainer = document.getElementById('base-container');
+            baseContainer.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
+
+            const stacked = document.createElement('div');
+            stacked.className = "cake" + (isPerfect ? " perfect" : "");
+            Object.assign(stacked.style, { position: 'relative', width: this.width + 'px', left: offset + 'px', margin: '0 auto', backgroundColor: color });
+            document.getElementById('tower').appendChild(stacked);
+            
+            ui.score++;
+            document.getElementById('score').innerText = ui.score;
+
+            if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
+            if (ui.score > 4) {
+                this.cameraY = (ui.score - 4) * 40;
+                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
+            }
+            this.speed += 0.001;
+            this.spawnCake();
+        } else {
+            ui.showGameOver(ui.score);
+        }
+    },
+
+    gameOverFall() {
+        ui.gameActive = false;
+        const base = document.getElementById('base-container');
+        base.style.transition = "transform 1s ease-in";
+        base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(800px)`;
+        setTimeout(() => ui.showGameOver(ui.score), 1000);
+    }
+};
