@@ -15,10 +15,16 @@ const gameMain = {
     },
 
     setupControls() {
-        const trigger = (e) => { if(ui.gameActive) { e.preventDefault(); this.drop(); } };
+        const trigger = (e) => { 
+            if(ui.gameActive) { 
+                if(e.type === 'keydown' && e.code !== 'Space') return;
+                e.preventDefault(); 
+                this.drop(); 
+            } 
+        };
         window.addEventListener('mousedown', trigger);
         window.addEventListener('touchstart', trigger, {passive: false});
-        window.addEventListener('keydown', (e) => { if(e.code === 'Space') trigger(e); });
+        window.addEventListener('keydown', trigger);
     },
 
     spawnCake() {
@@ -64,16 +70,26 @@ const gameMain = {
     land(falling, x, color) {
         const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
         const absOffset = Math.abs(offset);
-        const isPerfect = absOffset < 8;
+        const isPerfect = absOffset < 7;
 
         if (absOffset < this.width * 0.8) {
             falling.remove();
-            if (isPerfect) this.comboCount++; else this.comboCount = 0;
+            
+            // SONIDO DE ÉXITO
+            gameAudio.success();
 
-            // EL SECRETO DEL BALANCEO:
-            this.balance += (offset / 15); 
-            const baseContainer = document.getElementById('base-container');
-            baseContainer.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
+            if (isPerfect) {
+                this.comboCount++;
+                this.showText(x + (this.width / 2), `PERFECTO x${this.comboCount}`);
+            } else {
+                this.comboCount = 0;
+            }
+
+            this.createCrumbs(x + (this.width / 2), color);
+
+            // BALANCEO REALISTA
+            this.balance += (offset / 12); 
+            document.getElementById('base-container').style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
             stacked.className = "cake" + (isPerfect ? " perfect" : "");
@@ -91,12 +107,37 @@ const gameMain = {
             this.speed += 0.001;
             this.spawnCake();
         } else {
-            ui.showGameOver(ui.score);
+            this.gameOverFall();
         }
+    },
+
+    createCrumbs(x, color) {
+        for (let i = 0; i < 8; i++) {
+            const crumb = document.createElement('div');
+            crumb.className = "crumb";
+            crumb.style.backgroundColor = color;
+            crumb.style.left = x + 'px';
+            crumb.style.top = (window.innerHeight - 100) + 'px';
+            crumb.style.setProperty('--dx', `${(Math.random() - 0.5) * 100}px`);
+            document.body.appendChild(crumb);
+            setTimeout(() => crumb.remove(), 1000);
+        }
+    },
+
+    showText(x, txt) {
+        const el = document.createElement('div');
+        el.className = "perfect-text";
+        el.innerText = txt;
+        el.style.left = x + 'px';
+        el.style.top = '50%';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 800);
     },
 
     gameOverFall() {
         ui.gameActive = false;
+        // SONIDO DERROTA
+        gameAudio.gameOver();
         const base = document.getElementById('base-container');
         base.style.transition = "transform 1s ease-in";
         base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(800px)`;
