@@ -3,7 +3,7 @@ const gameMain = {
     angle: 0,
     width: 160,
     cameraY: 0,
-    balance: 0, // Inclinación acumulada
+    balance: 0,
     isInitialized: false,
 
     start() {
@@ -14,8 +14,10 @@ const gameMain = {
         
         document.getElementById('tower').innerHTML = "";
         const base = document.getElementById('base-container');
-        base.style.transform = `translateX(-50%) rotate(0deg)`;
-        base.style.transition = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+        if (base) {
+            base.style.transform = `translateX(-50%) rotate(0deg)`;
+            base.style.transition = "transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+        }
         
         this.spawnCake();
         if (!this.isInitialized) {
@@ -26,25 +28,46 @@ const gameMain = {
     },
 
     setupControls() {
-        const dropAction = () => { if(ui.gameActive) this.drop(); };
-        window.addEventListener('mousedown', dropAction);
-        window.addEventListener('touchstart', (e) => { 
-            if(ui.gameActive) { e.preventDefault(); dropAction(); } 
-        }, {passive: false});
+        // Función única de disparo
+        const triggerDrop = (e) => {
+            if (ui.gameActive) {
+                // Evitamos que el espacio haga scroll o que el tap haga zoom
+                if (e) e.preventDefault(); 
+                this.drop();
+            }
+        };
+
+        // 1. Mouse para PC
+        window.addEventListener('mousedown', triggerDrop);
+
+        // 2. Touch para Móviles
+        window.addEventListener('touchstart', triggerDrop, { passive: false });
+
+        // 3. Teclado (Espacio) para PC
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                triggerDrop(e);
+            }
+        });
     },
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
         this.width = Math.max(60, this.width * 0.98);
-        container.style.width = this.width + "px";
-        container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+        if (container) {
+            container.style.width = this.width + "px";
+            container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+        }
     },
 
     loop() {
         if (ui.gameActive) {
             this.angle += this.speed;
             const oscillation = Math.sin(this.angle) * 35;
-            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+            const crane = document.getElementById('crane');
+            if (crane) {
+                crane.style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+            }
         }
         requestAnimationFrame(() => this.loop());
     },
@@ -91,10 +114,10 @@ const gameMain = {
         if (Math.abs(offset) < this.width * 0.8) {
             falling.remove();
 
-            // 1. Calcular balance (inclinación)
+            // Aplicamos la inclinación según donde caiga
             this.balance += (offset / 18); 
             const base = document.getElementById('base-container');
-            base.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
+            if (base) base.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
             stacked.className = "cake";
@@ -108,9 +131,10 @@ const gameMain = {
             document.getElementById('tower').appendChild(stacked);
             
             ui.score++;
-            document.getElementById('score').innerText = ui.score;
+            const scoreDisp = document.getElementById('score');
+            if (scoreDisp) scoreDisp.innerText = ui.score;
 
-            // 2. Comprobar si la torre vuelca
+            // Si la torre se inclina más de 15 grados, se cae
             if (Math.abs(this.balance) > 15) {
                 this.gameOverFall();
                 return;
@@ -118,7 +142,8 @@ const gameMain = {
 
             if (ui.score > 4) {
                 this.cameraY = (ui.score - 4) * 40;
-                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
+                const world = document.getElementById('game-world');
+                if (world) world.style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001;
             this.spawnCake();
@@ -130,9 +155,10 @@ const gameMain = {
     gameOverFall() {
         ui.gameActive = false;
         const base = document.getElementById('base-container');
-        base.style.transition = "transform 1s ease-in";
-        base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(600px)`;
-        
+        if (base) {
+            base.style.transition = "transform 1s ease-in";
+            base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(600px)`;
+        }
         setTimeout(() => {
             ui.showGameOver(ui.score);
         }, 800);
