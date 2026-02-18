@@ -108,42 +108,52 @@ const gameMain = {
         requestAnimationFrame(fall);
     },
 
+    const gameMain = {
+    // ... tus otras variables ...
+    comboCount: 0, 
+
     land(falling, x, color) {
         const offset = physics.calculateOffset(x, this.width);
+        const absOffset = Math.abs(offset);
         
-        if (Math.abs(offset) < this.width * 0.8) {
+        if (absOffset < this.width * 0.8) {
             falling.remove();
 
-            // Aplicamos la inclinación según donde caiga
+            // LÓGICA DE PERFECTO
+            let isPerfect = absOffset < 10; 
+            if (isPerfect) {
+                this.comboCount++;
+                this.showPerfectText(x + (this.width / 2));
+            } else {
+                this.comboCount = 0;
+            }
+
+            // EFECTO DE PARTICULAS
+            this.createCrumbs(x + (this.width / 2), color);
+
             this.balance += (offset / 18); 
             const base = document.getElementById('base-container');
             if (base) base.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
-            stacked.className = "cake";
+            // Añadimos la clase perfect si corresponde
+            stacked.className = "cake" + (isPerfect ? " perfect" : "");
             Object.assign(stacked.style, {
-                position: 'relative',
-                width: this.width + 'px',
-                left: offset + 'px',
-                margin: '0 auto',
-                backgroundColor: color
+                position: 'relative', width: this.width + 'px', left: offset + 'px', 
+                margin: '0 auto', backgroundColor: color
             });
+            
             document.getElementById('tower').appendChild(stacked);
             
-            ui.score++;
-            const scoreDisp = document.getElementById('score');
-            if (scoreDisp) scoreDisp.innerText = ui.score;
+            // PUNTUACIÓN CON COMBO
+            ui.score += (1 + this.comboCount);
+            document.getElementById('score').innerText = ui.score;
 
-            // Si la torre se inclina más de 15 grados, se cae
-            if (Math.abs(this.balance) > 15) {
-                this.gameOverFall();
-                return;
-            }
+            if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
 
             if (ui.score > 4) {
                 this.cameraY = (ui.score - 4) * 40;
-                const world = document.getElementById('game-world');
-                if (world) world.style.transform = `translateY(${this.cameraY}px)`;
+                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001;
             this.spawnCake();
@@ -151,6 +161,47 @@ const gameMain = {
             ui.showGameOver(ui.score);
         }
     },
+
+    // NUEVAS FUNCIONES DE V1.2
+    createCrumbs(x, color) {
+        for (let i = 0; i < 10; i++) {
+            const crumb = document.createElement('div');
+            crumb.className = "crumb";
+            crumb.style.backgroundColor = color;
+            crumb.style.left = x + 'px';
+            const currentY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
+            crumb.style.top = currentY + 'px';
+            document.body.appendChild(crumb);
+
+            const vx = (Math.random() - 0.5) * 15;
+            const vy = (Math.random() - 0.5) * 15 - 5;
+            let px = x;
+            let py = currentY;
+            let gravity = 0.6;
+
+            const move = () => {
+                px += vx;
+                py += vy + gravity;
+                gravity += 0.4;
+                crumb.style.left = px + 'px';
+                crumb.style.top = py + 'px';
+                if (py < window.innerHeight) requestAnimationFrame(move);
+                else crumb.remove();
+            };
+            requestAnimationFrame(move);
+        }
+    },
+
+    showPerfectText(x) {
+        const text = document.createElement('div');
+        text.className = "perfect-text";
+        text.innerText = this.comboCount > 1 ? `COMBO x${this.comboCount}!` : "¡PERFECTO!";
+        text.style.left = x + 'px';
+        text.style.top = '50%';
+        document.body.appendChild(text);
+        setTimeout(() => text.remove(), 800);
+    }
+};
 
     gameOverFall() {
         ui.gameActive = false;
