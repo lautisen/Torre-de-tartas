@@ -1,50 +1,87 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Marta's Heavy Cake - Pro</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="user-screen">
-        <div class="modal">
-            <h2>🍰 Registro de Repostero</h2>
-            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12">
-            <button id="start-btn">¡A Cocinar!</button>
-            <div id="high-score-board"></div>
-        </div>
-    </div>
+const gameMain = {
+    speed: 0.02,
+    angle: 0,
+    width: 160,
+    cameraY: 0,
+    isInitialized: false,
 
-    <div id="game-over-screen" class="hidden">
-        <div class="modal">
-            <h2>💥 ¡Torre Caída!</h2>
-            <p>Pisos alcanzados: <span id="final-score">0</span></p>
-            <button onclick="location.reload()">Reintentar</button>
-        </div>
-    </div>
+    init() {
+        this.spawnCake();
+        if (!this.isInitialized) {
+            this.loop();
+            window.addEventListener('click', () => { if(ui.gameActive) this.drop(); });
+            this.isInitialized = true;
+        }
+    },
 
-    <div id="ui" class="hidden">
-        <div id="score-box">
-            <h1>🎂 <span id="user-display"></span>: <span id="score">0</span></h1>
-        </div>
-    </div>
+    spawnCake() {
+        const container = document.getElementById('active-cake-container');
+        container.style.width = this.width + "px";
+        container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
+    },
 
-    <div id="crane-system" class="hidden">
-        <div id="crane">
-            <div id="active-cake-container"></div>
-        </div>
-    </div>
+    loop() {
+        if (ui.gameActive) {
+            this.angle += this.speed;
+            const oscillation = Math.sin(this.angle) * 35;
+            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+        }
+        requestAnimationFrame(() => this.loop());
+    },
 
-    <div id="game-world" class="hidden">
-        <div id="base-container">
-            <div id="tower"></div>
-            <div id="base"></div>
-        </div>
-    </div>
+    drop() {
+        const cake = document.querySelector('#active-cake-container .cake');
+        if (!cake) return;
+        const rect = cake.getBoundingClientRect();
+        const currentWidth = this.width;
+        cake.remove();
 
-    <script src="physics.js"></script>
-    <script src="main.js"></script>
-    <script src="ui.js"></script>
-</body>
-</html>
+        const falling = document.createElement('div');
+        falling.className = "cake f-1";
+        Object.assign(falling.style, {
+            position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
+            width: currentWidth + 'px', zIndex: '1000'
+        });
+        document.body.appendChild(falling);
+
+        let pY = rect.top;
+        const targetY = window.innerHeight - 80 - (ui.score * 40) + this.cameraY;
+
+        const fall = () => {
+            pY += 8;
+            falling.style.top = pY + 'px';
+            if (pY < targetY) {
+                requestAnimationFrame(fall);
+            } else {
+                this.land(falling, rect.left);
+            }
+        };
+        fall();
+    },
+
+    land(falling, x) {
+        const offset = physics.calculateOffset(x, this.width);
+        
+        if (Math.abs(offset) < this.width * 0.8) {
+            falling.remove();
+            const stacked = document.createElement('div');
+            stacked.className = "cake f-1";
+            Object.assign(stacked.style, {
+                position: 'relative', width: this.width + 'px', left: offset + 'px', 
+                margin: '0 auto', height: '40px'
+            });
+            document.getElementById('tower').appendChild(stacked);
+            ui.score++;
+            document.getElementById('score').innerText = ui.score;
+            
+            if (ui.score > 4) {
+                this.cameraY = (ui.score - 4) * 40;
+                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
+            }
+            this.width = Math.max(60, this.width - 5);
+            this.spawnCake();
+        } else {
+            ui.showGameOver(ui.score);
+        }
+    }
+};
