@@ -24,10 +24,10 @@ const gameMain = {
         const dropAction = () => { if(ui.gameActive) this.drop(); };
         window.addEventListener('mousedown', dropAction);
         window.addEventListener('touchstart', (e) => { 
-            if (e.target.tagName !== 'INPUT') e.preventDefault(); 
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') e.preventDefault(); 
             dropAction(); 
         }, {passive: false});
-        window.addEventListener('keydown', (e) => { if(e.code === 'Space') { e.preventDefault(); dropAction(); } });
+        window.addEventListener('keydown', (e) => { if(e.code === 'Space') dropAction(); });
     },
 
     spawnCake() {
@@ -64,6 +64,7 @@ const gameMain = {
 
         let pY = rect.top;
         let vY = 0;
+        // Calculamos el suelo dinámicamente según la altura de la torre
         const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
@@ -101,10 +102,22 @@ const gameMain = {
             this.speed += 0.001; 
             this.spawnCake();
         } else {
-            ui.gameActive = false;
-            ui.saveScore(ui.score);
-            alert("¡GAME OVER! Has apilado " + ui.score + " pisos.");
-            location.reload();
+            this.gameOver(falling);
         }
+    },
+
+    gameOver(falling) {
+        ui.gameActive = false;
+        ui.saveScore(ui.score);
+        
+        // Animación de caída
+        falling.style.transition = 'transform 0.8s ease-in, opacity 0.8s';
+        falling.style.transform = 'translateY(100vh) rotate(45deg)';
+        falling.style.opacity = '0';
+
+        setTimeout(() => {
+            document.getElementById('final-score').innerText = ui.score;
+            document.getElementById('game-over-screen').classList.remove('hidden');
+        }, 500);
     }
 };
