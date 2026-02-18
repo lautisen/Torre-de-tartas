@@ -1,46 +1,30 @@
-/**
- * ui.js - Gestión de Interfaz y Conexión con Firebase
- */
-
 const ui = {
     gameActive: false,
     score: 0,
     currentUser: "",
 
-    /**
-     * Inicializa los eventos de la interfaz
-     */
     init() {
         const btn = document.getElementById('start-btn');
         if (btn) btn.onclick = () => this.startGame();
         
-        // Verificamos si la base de datos está disponible antes de intentar leer
         if (typeof database !== 'undefined') {
-            console.log("Firebase detectado correctamente.");
             this.listenToLeaderboard();
         } else {
-            console.error("Error: 'database' no está definida. Revisa el orden de los scripts en index.html.");
             const board = document.getElementById('high-score-board');
-            if (board) board.innerHTML = "<p style='color:red'>Error de conexión con la base de datos</p>";
+            if (board) board.innerHTML = "<p>Error: config.js no cargado</p>";
         }
     },
 
-    /**
-     * Valida el nombre y arranca el motor del juego
-     */
     startGame() {
         const nameInput = document.getElementById('username');
-        const name = nameInput.value.trim();
+        const name = nameInput ? nameInput.value.trim() : "";
 
-        if (!name) {
-            return alert("¡Dime tu nombre, repostero!");
-        }
+        if (!name) return alert("¡Dime tu nombre, repostero!");
 
         this.currentUser = name;
         document.getElementById('user-display').innerText = name;
         document.getElementById('score').innerText = "0";
 
-        // Gestión de pantallas
         document.getElementById('user-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
         document.getElementById('ui').classList.remove('hidden');
@@ -48,30 +32,52 @@ const ui = {
         document.getElementById('crane-system').classList.remove('hidden');
 
         this.gameActive = true;
-        
-        // Llamada al motor principal en main.js
-        if (typeof gameMain !== 'undefined') {
-            gameMain.start();
-        }
+        if (typeof gameMain !== 'undefined') gameMain.start();
     },
 
-    /**
-     * Muestra la pantalla de Game Over integrada
-     */
     showGameOver(finalScore) {
         this.gameActive = false;
-        document.getElementById('final-score').innerText = finalScore;
+        const scoreEl = document.getElementById('final-score');
+        if (scoreEl) scoreEl.innerText = finalScore;
         document.getElementById('game-over-screen').classList.remove('hidden');
-        
-        // Guardar puntuación en Firebase
         this.saveScore(finalScore);
     },
 
-    /**
-     * Envía los datos a Firebase Realtime Database
-     */
     saveScore(score) {
-        if (score <= 0) return;
-
+        if (score <= 0 || typeof database === 'undefined') return;
         database.ref('leaderboard').push({
-            name:
+            name: this.currentUser,
+            score: score,
+            timestamp: Date.now()
+        });
+    },
+
+    listenToLeaderboard() {
+        const board = document.getElementById('high-score-board');
+        if (!board) return;
+
+        const leaderboardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
+
+        leaderboardRef.on('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                board.innerHTML = "<h3>🏆 Ranking</h3><p>¡Sé el primero!</p>";
+                return;
+            }
+
+            const scores = [];
+            snapshot.forEach((child) => { scores.push(child.val()); });
+            scores.sort((a, b) => b.score - a.score);
+
+            board.innerHTML = "<h3>🏆 Top 10</h3>" + 
+                scores.map((s, i) => `
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee;">
+                        <span>${i + 1}. ${s.name}</span>
+                        <span>${s.score}</span>
+                    </div>
+                `).join('');
+        });
+    }
+};
+
+// Cierre correcto del archivo
+window.onload = () => ui.init();
