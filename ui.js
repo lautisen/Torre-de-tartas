@@ -1,96 +1,48 @@
-const gameMain = {
-    speed: 0.03,
-    angle: 0,
-    width: 150,
-    isInitialized: false,
+const ui = {
+    gameActive: false,
+    score: 0,
+    currentUser: "",
 
-    start() {
-        ui.score = 0;
-        this.width = 150;
-        document.getElementById('tower').innerHTML = ""; // Limpiar torre
-        this.spawnCake();
-        if (!this.isInitialized) {
-            this.loop();
-            this.setupControls();
-            this.isInitialized = true;
-        }
+    init() {
+        document.getElementById('start-btn').onclick = () => this.startGame();
+        this.listenToLeaderboard();
     },
 
-    setupControls() {
-        const dropAction = () => { if(ui.gameActive) this.drop(); };
-        window.addEventListener('mousedown', dropAction);
-        window.addEventListener('touchstart', (e) => { 
-            if(ui.gameActive) { e.preventDefault(); dropAction(); }
-        }, {passive: false});
-    },
+    startGame() {
+        const name = document.getElementById('username').value.trim();
+        if (!name) return alert("¡Escribe tu nombre!");
 
-    spawnCake() {
-        const container = document.getElementById('active-cake-container');
-        container.style.width = this.width + "px";
-        container.innerHTML = `<div class="cake f-1" style="width:100%"></div>`;
-    },
-
-    loop() {
-        if (ui.gameActive) {
-            this.angle += this.speed;
-            const oscillation = Math.sin(this.angle) * 35; 
-            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
-        }
-        requestAnimationFrame(() => this.loop());
-    },
-
-    drop() {
-        const cake = document.querySelector('#active-cake-container .cake');
-        if (!cake) return;
-        const rect = cake.getBoundingClientRect();
-        cake.remove();
-
-        const falling = document.createElement('div');
-        falling.className = "cake f-1";
-        Object.assign(falling.style, {
-            position: 'fixed', left: rect.left + 'px', top: rect.top + 'px',
-            width: this.width + 'px', zIndex: '300'
-        });
-        document.body.appendChild(falling);
-
-        let pY = rect.top;
-        const targetY = window.innerHeight - 80 - (ui.score * 40);
-
-        const fall = () => {
-            pY += 8; // Velocidad de caída estable
-            falling.style.top = pY + 'px';
-
-            if (pY < targetY) {
-                requestAnimationFrame(fall);
-            } else {
-                this.land(falling, rect.left);
-            }
-        };
-        fall();
-    },
-
-    land(falling, x) {
-        const offset = physics.calculateOffset(x, this.width);
+        this.currentUser = name;
+        document.getElementById('user-display').innerText = name;
         
-        // Si el pastel toca la base (margen de error razonable)
-        if (Math.abs(offset) < this.width * 0.8) {
-            falling.remove();
-            const stacked = document.createElement('div');
-            stacked.className = "cake f-1";
-            Object.assign(stacked.style, {
-                position: 'relative', width: this.width + 'px', left: offset + 'px', 
-                margin: '0 auto', height: '40px'
-            });
-            document.getElementById('tower').appendChild(stacked);
-            ui.score++;
-            document.getElementById('score').innerText = ui.score;
-            this.spawnCake();
-        } else {
-            // Animación de caída al perder
-            falling.style.transition = 'transform 0.5s ease-in';
-            falling.style.transform = 'translateY(100vh)';
-            // Llamamos al Game Over de la UI
-            ui.showGameOver(ui.score);
-        }
+        document.getElementById('user-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        document.getElementById('ui').classList.remove('hidden');
+        document.getElementById('game-world').classList.remove('hidden');
+        document.getElementById('crane-system').classList.remove('hidden');
+
+        this.gameActive = true;
+        gameMain.start(); // LLAMADA AL MOTOR
+    },
+
+    showGameOver(finalScore) {
+        this.gameActive = false;
+        document.getElementById('final-score').innerText = finalScore;
+        document.getElementById('game-over-screen').classList.remove('hidden');
+        this.saveScore(finalScore);
+    },
+
+    saveScore(score) {
+        if (score > 0) database.ref('leaderboard').push({ name: this.currentUser, score: score });
+    },
+
+    listenToLeaderboard() {
+        database.ref('leaderboard').orderByChild('score').limitToLast(5).on('value', (snap) => {
+            const data = snap.val();
+            let html = "<h3>🏆 Ranking</h3>";
+            for (let id in data) html += `<div>${data[id].name}: ${data[id].score}</div>`;
+            document.getElementById('high-score-board').innerHTML = html;
+        });
     }
 };
+window.addEventListener('load', () => ui.init());
