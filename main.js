@@ -42,6 +42,7 @@ const gameMain = {
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
+        if (!container) return;
         this.width = Math.max(50, this.width * 0.98); 
         container.style.width = this.width + "px";
         container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
@@ -100,9 +101,9 @@ const gameMain = {
     },
 
     land(falling, x, w, color) {
-        // AQUÍ USAMOS TU PHYSICS.JS SIMPLIFICADO
+        // CORRECCIÓN CLAVE: Solo enviamos x y w
         const offset = physics.calculateOffset(x, w);
-        const tolerance = 70; 
+        const tolerance = w * 0.8; 
 
         if (Math.abs(offset) < tolerance) {
             falling.remove();
@@ -116,11 +117,13 @@ const gameMain = {
             document.getElementById('tower').appendChild(stacked);
             
             ui.score++;
-            document.getElementById('score').innerText = ui.score;
+            const scoreEl = document.getElementById('score');
+            if (scoreEl) scoreEl.innerText = ui.score;
 
             if (ui.score > 3) {
                 this.cameraY = (ui.score - 3) * 40;
-                document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
+                const world = document.getElementById('game-world');
+                if (world) world.style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001; 
             this.spawnCake();
