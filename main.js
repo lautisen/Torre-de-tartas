@@ -1,43 +1,23 @@
 const gameMain = {
-    speed: 0.02,
-    angle: 0,
-    width: 160,
-    cameraY: 0,
-    balance: 0,
-    comboCount: 0,
-    isInitialized: false,
-    
-    // Variables de viento
-    windForce: 0,
-    nextWindChange: 0,
+    speed: 0.02, angle: 0, width: 160, cameraY: 0, balance: 0, comboCount: 0,
+    isInitialized: false, windForce: 0, nextWindChange: 0,
 
     start() {
-        this.width = 160; 
-        this.cameraY = 0; 
-        this.balance = 0; 
-        this.comboCount = 0;
-        this.windForce = 0;
+        this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.windForce = 0;
         ui.score = 0;
-        
         document.getElementById('tower').innerHTML = "";
-        document.getElementById('base-container').style.transform = `translateX(-50%) rotate(0deg)`;
-        
+        document.getElementById('base-container').style.transform = `translateX(0) rotate(0deg)`;
+        document.getElementById('game-world').style.transform = `translateY(0)`;
         this.createClouds();
         this.spawnCake();
-        
-        if (!this.isInitialized) {
-            this.setupControls();
-            this.loop();
-            this.isInitialized = true;
-        }
+        if (!this.isInitialized) { this.setupControls(); this.loop(); this.isInitialized = true; }
     },
 
     setupControls() {
         const trigger = (e) => { 
             if(ui.gameActive) { 
                 if(e.type === 'keydown' && e.code !== 'Space') return;
-                e.preventDefault(); 
-                this.drop(); 
+                e.preventDefault(); this.drop(); 
             } 
         };
         window.addEventListener('mousedown', trigger);
@@ -50,11 +30,8 @@ const gameMain = {
         for (let i = 0; i < 6; i++) {
             const cloud = document.createElement('div');
             cloud.className = 'cloud';
-            cloud.style.top = (Math.random() * 70) + '%';
+            cloud.style.top = (Math.random() * 60) + '%';
             cloud.style.animationDuration = (Math.random() * 15 + 20) + 's';
-            cloud.style.animationDelay = (Math.random() * 10) + 's';
-            const scale = 0.5 + Math.random();
-            cloud.style.transform = `scale(${scale})`;
             document.body.appendChild(cloud);
         }
     },
@@ -68,30 +45,21 @@ const gameMain = {
 
     loop() {
         if (ui.gameActive) {
-            // LÓGICA DE VIENTO NOTABLE
-            const currentScore = parseInt(ui.score);
-            const windAlert = document.getElementById('wind-alert');
-
-            if (currentScore >= 10) {
-                if (windAlert) windAlert.style.display = 'block';
-
+            // LÓGICA DE VIENTO
+            if (ui.score >= 10) {
+                document.getElementById('wind-alert').style.display = 'block';
                 if (Date.now() > this.nextWindChange) {
-                    // Fuerza de viento aleatoria (empujón lateral)
-                    this.windForce = (Math.random() - 0.5) * 45; 
-                    this.nextWindChange = Date.now() + 2500; 
+                    this.windForce = (Math.random() - 0.5) * 40;
+                    this.nextWindChange = Date.now() + 2500;
                 }
             } else {
-                if (windAlert) windAlert.style.display = 'none';
+                document.getElementById('wind-alert').style.display = 'none';
                 this.windForce = 0;
             }
 
             this.angle += this.speed;
             const oscillation = (Math.sin(this.angle) * 35) + this.windForce;
-            
-            const crane = document.getElementById('crane');
-            if (crane) {
-                crane.style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
-            }
+            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
         }
         requestAnimationFrame(() => this.loop());
     },
@@ -112,42 +80,36 @@ const gameMain = {
         document.body.appendChild(falling);
 
         let pY = rect.top;
+        // Calculamos dónde debe frenar: Base - (Altura tartas ya puestas) + Cámara
         const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
-            pY += 12; 
+            pY += 12;
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
             else this.land(falling, rect.left, color);
         };
-        fall();
+        requestAnimationFrame(fall);
     },
 
     land(falling, x, color) {
         const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
         const absOffset = Math.abs(offset);
-        const isPerfect = absOffset < 7;
+        const isPerfect = absOffset < 8;
 
         if (absOffset < this.width * 0.8) {
             falling.remove();
             if (typeof gameAudio !== 'undefined') gameAudio.success();
 
-            if (isPerfect) {
-                this.comboCount++;
-                this.showText(x + (this.width / 2), `PERFECTO x${this.comboCount}`);
-            } else {
-                this.comboCount = 0;
-            }
-
-            this.createCrumbs(x + (this.width / 2), color);
             this.balance += (offset / 12); 
-            document.getElementById('base-container').style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
+            document.getElementById('base-container').style.transform = `rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
             stacked.className = "cake" + (isPerfect ? " perfect" : "");
+            // IMPORTANTE: 'relative' para que el flexbox column-reverse lo apile arriba
             Object.assign(stacked.style, { 
-                position: 'relative', width: this.width + 'px', left: offset + 'px', 
-                margin: '0 auto', backgroundColor: color 
+                position: 'relative', width: this.width + 'px', 
+                left: offset + 'px', backgroundColor: color 
             });
             document.getElementById('tower').appendChild(stacked);
             
@@ -160,7 +122,6 @@ const gameMain = {
                 this.cameraY = (ui.score - 4) * 40;
                 document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
             }
-            
             this.speed += 0.001;
             this.spawnCake();
         } else {
@@ -168,35 +129,12 @@ const gameMain = {
         }
     },
 
-    createCrumbs(x, color) {
-        for (let i = 0; i < 8; i++) {
-            const crumb = document.createElement('div');
-            crumb.className = "crumb";
-            crumb.style.backgroundColor = color;
-            crumb.style.left = x + 'px';
-            crumb.style.top = (window.innerHeight - 100) + 'px';
-            crumb.style.setProperty('--dx', `${(Math.random() - 0.5) * 120}px`);
-            document.body.appendChild(crumb);
-            setTimeout(() => crumb.remove(), 1000);
-        }
-    },
-
-    showText(x, txt) {
-        const el = document.createElement('div');
-        el.className = "perfect-text";
-        el.innerText = txt;
-        el.style.left = x + 'px';
-        el.style.top = '50%';
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 800);
-    },
-
     gameOverFall() {
         ui.gameActive = false;
         if (typeof gameAudio !== 'undefined') gameAudio.gameOver();
         const base = document.getElementById('base-container');
         base.style.transition = "transform 1s ease-in";
-        base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(800px)`;
+        base.style.transform = `rotate(${this.balance > 0 ? 90 : -90}deg) translateY(800px)`;
         setTimeout(() => ui.showGameOver(ui.score), 1000);
     }
 };
