@@ -153,6 +153,48 @@ body {
     align-items: center;
 }
 
+/* Nubes animadas */
+.cloud {
+    position: fixed;
+    background: white;
+    width: 120px;
+    height: 40px;
+    border-radius: 50px;
+    opacity: 0.6;
+    z-index: -1;
+    pointer-events: none;
+    animation: moveClouds linear infinite;
+}
+
+.cloud::after, .cloud::before {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+
+.cloud::after { width: 50px; height: 50px; top: -25px; left: 20px; }
+.cloud::before { width: 40px; height: 40px; top: -15px; left: 60px; }
+
+@keyframes moveClouds {
+    from { left: -150px; }
+    to { left: 110%; }
+}
+
+/* Indicador de Viento */
+#wind-alert {
+    position: fixed;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #0288d1;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 0 white;
+    display: none;
+    z-index: 100;
+}
+
 /* ==========================================
    TARTAS Y EFECTOS
    ========================================== */
