@@ -1,7 +1,3 @@
-/**
- * main.js - Motor del Juego Pro
- */
-
 const gameMain = {
     speed: 0.02,
     angle: 0,
@@ -26,9 +22,7 @@ const gameMain = {
         document.getElementById('tower').innerHTML = "";
         document.getElementById('base-container').style.transform = `translateX(-50%) rotate(0deg)`;
         
-        // Limpiar y crear nubes decorativas
         this.createClouds();
-        
         this.spawnCake();
         
         if (!this.isInitialized) {
@@ -52,16 +46,13 @@ const gameMain = {
     },
 
     createClouds() {
-        // Eliminar nubes viejas si existen
         document.querySelectorAll('.cloud').forEach(n => n.remove());
-        
         for (let i = 0; i < 6; i++) {
             const cloud = document.createElement('div');
             cloud.className = 'cloud';
             cloud.style.top = (Math.random() * 70) + '%';
-            cloud.style.animationDuration = (Math.random() * 15 + 15) + 's';
+            cloud.style.animationDuration = (Math.random() * 15 + 20) + 's';
             cloud.style.animationDelay = (Math.random() * 10) + 's';
-            // Escala aleatoria para variedad
             const scale = 0.5 + Math.random();
             cloud.style.transform = `scale(${scale})`;
             document.body.appendChild(cloud);
@@ -70,7 +61,6 @@ const gameMain = {
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
-        // Reducción de ancho progresiva
         this.width = Math.max(60, this.width * 0.98);
         container.style.width = this.width + "px";
         container.innerHTML = `<div class="cake f-${Math.floor(Math.random()*3)+1}" style="width:100%"></div>`;
@@ -78,26 +68,30 @@ const gameMain = {
 
     loop() {
         if (ui.gameActive) {
-            // LÓGICA DE VIENTO (Dificultad Progresiva)
-            if (ui.score >= 10) {
-                const windAlert = document.getElementById('wind-alert');
+            // LÓGICA DE VIENTO NOTABLE
+            const currentScore = parseInt(ui.score);
+            const windAlert = document.getElementById('wind-alert');
+
+            if (currentScore >= 10) {
                 if (windAlert) windAlert.style.display = 'block';
 
-                // Cambiar dirección/fuerza del viento cada 3 segundos
                 if (Date.now() > this.nextWindChange) {
-                    this.windForce = (Math.random() - 0.5) * 18; // Desvío aleatorio
-                    this.nextWindChange = Date.now() + 3000;
+                    // Fuerza de viento aleatoria (empujón lateral)
+                    this.windForce = (Math.random() - 0.5) * 45; 
+                    this.nextWindChange = Date.now() + 2500; 
                 }
             } else {
-                const windAlert = document.getElementById('wind-alert');
                 if (windAlert) windAlert.style.display = 'none';
+                this.windForce = 0;
             }
 
             this.angle += this.speed;
-            // Oscilación normal + la influencia del viento
             const oscillation = (Math.sin(this.angle) * 35) + this.windForce;
             
-            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+            const crane = document.getElementById('crane');
+            if (crane) {
+                crane.style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+            }
         }
         requestAnimationFrame(() => this.loop());
     },
@@ -121,7 +115,7 @@ const gameMain = {
         const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
-            pY += 11; // Un poco más rápido para compensar el viento
+            pY += 12; 
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
             else this.land(falling, rect.left, color);
@@ -136,7 +130,6 @@ const gameMain = {
 
         if (absOffset < this.width * 0.8) {
             falling.remove();
-            
             if (typeof gameAudio !== 'undefined') gameAudio.success();
 
             if (isPerfect) {
@@ -147,8 +140,6 @@ const gameMain = {
             }
 
             this.createCrumbs(x + (this.width / 2), color);
-
-            // Balanceo realista
             this.balance += (offset / 12); 
             document.getElementById('base-container').style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
@@ -163,10 +154,8 @@ const gameMain = {
             ui.score++;
             document.getElementById('score').innerText = ui.score;
 
-            // Derrota por equilibrio
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
             
-            // Movimiento de cámara
             if (ui.score > 4) {
                 this.cameraY = (ui.score - 4) * 40;
                 document.getElementById('game-world').style.transform = `translateY(${this.cameraY}px)`;
