@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heavy Cake Stack - Pro</title>
+    <title>Heavy Cake Stack - Pro Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,17 +11,20 @@
     <div id="user-screen">
         <div class="modal">
             <h2>🍰 Registro de Repostero</h2>
-            <p>Apila tartas rápido para puntuar más</p>
+            <p>Apila tartas rápido. ¡Cuidado con el viento!</p>
             <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
             <button id="start-btn">¡A Cocinar!</button>
-            <div id="high-score-board"><p>Cargando ranking...</p></div>
+            
+            <div id="high-score-board">
+                <p>Cargando ranking mundial...</p>
+            </div>
         </div>
     </div>
 
     <div id="game-over-screen" class="hidden">
         <div class="modal">
             <h2>💥 ¡Torre Caída!</h2>
-            <p>Resultado:</p>
+            <p>Tu puntuación final:</p>
             <h3 id="final-score" style="color: #d81b60; font-size: 1.6em; margin: 10px 0;">0</h3>
             
             <button onclick="location.reload()">Reintentar</button>
@@ -30,36 +33,46 @@
     </div>
 
     <div id="ui" class="hidden">
-    <div id="score-box">
-        <h1>🎂 <span id="user-display"></span></h1>
-        <div style="display: flex; gap: 20px; justify-content: center;">
-            <span>Pisos: <b id="score">0</b></span>
-            <span>⏱️ <b id="timer">00:00</b></span>
+        <div id="score-box">
+            <h1>🎂 <span id="user-display"></span></h1>
+            <div style="display: flex; gap: 25px; justify-content: center; align-items: center; margin-top: 5px;">
+                <span>Pisos: <b id="score">0</b></span>
+                <span>⏱️ <b id="timer">00:00</b></span>
+            </div>
         </div>
+        <div id="wind-alert">⚠️ VIENTO FUERTE</div>
     </div>
-    <div id="wind-alert" style="display:none; color: #0288d1; font-weight: bold; margin-top: 10px; text-shadow: 1px 1px white;">⚠️ VIENTO FUERTE</div>
-</div>
 
     <div id="share-template" style="position: absolute; left: -9999px; top: -9999px; width: 500px; height: 300px; background: linear-gradient(135deg, #f06292, #ba68c8); color: white; text-align: center; padding: 40px; border-radius: 20px; font-family: sans-serif; border: 8px solid white;">
         <h1 style="font-size: 35px; margin-bottom: 10px;">¡Enhorabuena crack!</h1>
         <p style="font-size: 24px; margin: 10px 0;">Has conseguido <span id="res-pts" style="font-weight: bold; color: #ffeb3b;">0</span> puntos</p>
         <p style="font-size: 24px; margin: 10px 0;">en un tiempo de <span id="res-time" style="font-weight: bold; color: #ffeb3b;">0</span></p>
-        <p style="margin-top: 30px; font-size: 18px; opacity: 0.8;">Juega a: Heavy Cake Stack</p>
+        <p style="margin-top: 30px; font-size: 18px; opacity: 0.8;">Juego: Heavy Cake Stack</p>
     </div>
 
-    <div id="crane-system" class="hidden"><div id="crane"><div id="active-cake-container"></div></div></div>
+    <div id="crane-system" class="hidden">
+        <div id="crane">
+            <div id="active-cake-container"></div>
+        </div>
+    </div>
+
     <div id="game-world" class="hidden">
-        <div id="base-container"><div id="tower"></div><div id="base"></div></div>
+        <div id="base-container">
+            <div id="tower"></div>
+            <div id="base"></div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
     <script src="config.js"></script>
     <script src="audio.js"></script>
     <script src="physics.js"></script>
     <script src="main.js"></script>
     <script src="ui.js"></script>
+
 </body>
 </html>
