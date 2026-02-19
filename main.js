@@ -1,11 +1,19 @@
 const gameMain = {
     speed: 0.02, angle: 0, width: 160, cameraY: 0, balance: 0, comboCount: 0, isInitialized: false,
+    // --- NUEVAS VARIABLES PARA EL VIENTO ---
+    windForce: 0,
+    nextWindChange: 0,
 
     start() {
         this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0;
+        this.windForce = 0; // Reset viento
         ui.score = 0;
         document.getElementById('tower').innerHTML = "";
         document.getElementById('base-container').style.transform = `translateX(-50%) rotate(0deg)`;
+        
+        // --- INICIAR DECORACIÓN ---
+        this.createClouds(); 
+        
         this.spawnCake();
         if (!this.isInitialized) {
             this.setupControls();
@@ -27,6 +35,19 @@ const gameMain = {
         window.addEventListener('keydown', trigger);
     },
 
+    // --- NUEVA FUNCIÓN DE NUBES ---
+    createClouds() {
+        document.querySelectorAll('.cloud').forEach(n => n.remove()); // Limpiar nubes previas
+        for (let i = 0; i < 5; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.top = (Math.random() * 50) + '%';
+            cloud.style.animationDelay = (Math.random() * 15) + 's';
+            cloud.style.animationDuration = (Math.random() * 10 + 20) + 's';
+            document.body.appendChild(cloud);
+        }
+    },
+
     spawnCake() {
         const container = document.getElementById('active-cake-container');
         this.width = Math.max(60, this.width * 0.98);
@@ -36,8 +57,23 @@ const gameMain = {
 
     loop() {
         if (ui.gameActive) {
+            // --- LÓGICA DE VIENTO (A partir de piso 10) ---
+            if (ui.score >= 10) {
+                const windAlert = document.getElementById('wind-alert');
+                if (windAlert) windAlert.style.display = 'block';
+
+                if (Date.now() > this.nextWindChange) {
+                    this.windForce = (Math.random() - 0.5) * 35; // Intensidad del empujón
+                    this.nextWindChange = Date.now() + 2500; // Cambia cada 2.5 seg
+                }
+            } else {
+                const windAlert = document.getElementById('wind-alert');
+                if (windAlert) windAlert.style.display = 'none';
+            }
+
             this.angle += this.speed;
-            const oscillation = Math.sin(this.angle) * 35;
+            // La oscilación se ve afectada por la fuerza del viento
+            const oscillation = (Math.sin(this.angle) * 35) + this.windForce;
             document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
         }
         requestAnimationFrame(() => this.loop());
@@ -75,7 +111,6 @@ const gameMain = {
         if (absOffset < this.width * 0.8) {
             falling.remove();
             
-            // SONIDO DE ÉXITO
             gameAudio.success();
 
             if (isPerfect) {
@@ -87,7 +122,6 @@ const gameMain = {
 
             this.createCrumbs(x + (this.width / 2), color);
 
-            // BALANCEO REALISTA
             this.balance += (offset / 12); 
             document.getElementById('base-container').style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
@@ -136,7 +170,6 @@ const gameMain = {
 
     gameOverFall() {
         ui.gameActive = false;
-        // SONIDO DERROTA
         gameAudio.gameOver();
         const base = document.getElementById('base-container');
         base.style.transition = "transform 1s ease-in";
