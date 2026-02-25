@@ -79,7 +79,7 @@ const gameMain = {
         const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
-            pY += 3.5; // Decreased from 10 to make drop slower and less jarring
+            pY += 10;
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
             else this.land(falling, rect.left, color);
