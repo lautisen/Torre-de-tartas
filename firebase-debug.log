@@ -1,0 +1,80 @@
+[debug] [2026-02-25T23:31:35.961Z] ----------------------------------------------------------------------
+[debug] [2026-02-25T23:31:35.962Z] Command:       /opt/homebrew/Cellar/node/25.6.1_1/bin/node /Users/lautarosenese/.npm/_npx/ba4f1959e38407b5/node_modules/.bin/firebase init dataconnect --project torre-de-tartas
+[debug] [2026-02-25T23:31:35.962Z] CLI Version:   15.8.0
+[debug] [2026-02-25T23:31:35.962Z] Platform:      darwin
+[debug] [2026-02-25T23:31:35.962Z] Node Version:  v25.6.1
+[debug] [2026-02-25T23:31:35.962Z] Time:          Thu Feb 26 2026 00:31:35 GMT+0100 (Central European Standard Time)
+[debug] [2026-02-25T23:31:35.963Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/lautarosenese/Antigravity projects/Torre de tartas
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-02-25T23:31:36.233Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-25T23:31:36.233Z] > authorizing via signed-in user (bocalauti@gmail.com)
+[debug] [2026-02-25T23:31:36.233Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:36.233Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:36.234Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/torre-de-tartas [none]
+[debug] [2026-02-25T23:31:36.637Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/torre-de-tartas 200
+[debug] [2026-02-25T23:31:36.637Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/torre-de-tartas {"projectId":"torre-de-tartas","projectNumber":"119201007028","displayName":"Torre de tartas","name":"projects/torre-de-tartas","resources":{"hostingSite":"torre-de-tartas","realtimeDatabaseInstance":"torre-de-tartas-default-rtdb"},"state":"ACTIVE","etag":"1_82b935a2-ac98-463e-84fe-ebeffdf420d1"}
+[info] i  Using project torre-de-tartas (Torre de tartas) . 
+[info] 
+=== Dataconnect Setup
+[info] i  dataconnect: ensuring required API firebasedataconnect.googleapis.com is enabled... 
+[debug] [2026-02-25T23:31:36.644Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:36.644Z] Checked if tokens are valid: true, expires at: 1772065213622
+[info] i  dataconnect: ensuring required API sqladmin.googleapis.com is enabled... 
+[debug] [2026-02-25T23:31:36.644Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:36.644Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:36.644Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-25T23:31:36.644Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com  x-goog-user-project=torre-de-tartas
+[debug] [2026-02-25T23:31:36.646Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com [none]
+[debug] [2026-02-25T23:31:36.646Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com  x-goog-user-project=torre-de-tartas
+[debug] [2026-02-25T23:31:37.445Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-25T23:31:37.445Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com [omitted]
+[warn] ⚠  dataconnect: missing required API firebasedataconnect.googleapis.com. Enabling now... 
+[debug] [2026-02-25T23:31:37.446Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:37.446Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:37.446Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com:enable [none]
+[debug] [2026-02-25T23:31:37.446Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com:enable  x-goog-user-project=torre-de-tartas
+[debug] [2026-02-25T23:31:37.448Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com 200
+[debug] [2026-02-25T23:31:37.448Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com [omitted]
+[warn] ⚠  dataconnect: missing required API sqladmin.googleapis.com. Enabling now... 
+[debug] [2026-02-25T23:31:37.448Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:37.448Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:37.448Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com:enable [none]
+[debug] [2026-02-25T23:31:37.448Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com:enable  x-goog-user-project=torre-de-tartas
+[debug] [2026-02-25T23:31:38.162Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com:enable 200
+[debug] [2026-02-25T23:31:38.162Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/sqladmin.googleapis.com:enable [omitted]
+[debug] [2026-02-25T23:31:38.548Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com:enable 200
+[debug] [2026-02-25T23:31:38.548Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/torre-de-tartas/services/firebasedataconnect.googleapis.com:enable [omitted]
+[debug] [2026-02-25T23:31:48.558Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:48.558Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:31:48.559Z] >>> [apiv2][query] GET https://firebasedataconnect.googleapis.com/v1/projects/torre-de-tartas/locations/-/services [none]
+[debug] [2026-02-25T23:31:49.582Z] <<< [apiv2][status] GET https://firebasedataconnect.googleapis.com/v1/projects/torre-de-tartas/locations/-/services 200
+[debug] [2026-02-25T23:31:49.582Z] <<< [apiv2][body] GET https://firebasedataconnect.googleapis.com/v1/projects/torre-de-tartas/locations/-/services {}
+[info] i  Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[debug] [2026-02-25T23:32:51.210Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:32:51.210Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:32:51.210Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/torre-de-tartas/billingInfo [none]
+[debug] [2026-02-25T23:32:51.961Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/torre-de-tartas/billingInfo 200
+[debug] [2026-02-25T23:32:51.961Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/torre-de-tartas/billingInfo {"name":"projects/torre-de-tartas/billingInfo","projectId":"torre-de-tartas","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-25T23:32:51.962Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:32:51.962Z] Checked if tokens are valid: true, expires at: 1772065213622
+[debug] [2026-02-25T23:32:51.962Z] >>> [apiv2][query] GET https://monitoring.googleapis.com/v3/projects/torre-de-tartas/timeSeries/ filter=metric.type%3D%22serviceruntime.googleapis.com%2Fquota%2Fallocation%2Fusage%22+AND+metric.label.quota_metric+%3D+%22sqladmin.googleapis.com%2Ffdc_lifetime_free_trial_per_project%22&interval.endTime=2026-02-25T23%3A32%3A51.962Z&interval.startTime=2026-02-18T23%3A32%3A51.962Z
+[debug] [2026-02-25T23:32:53.044Z] <<< [apiv2][status] GET https://monitoring.googleapis.com/v3/projects/torre-de-tartas/timeSeries/ 200
+[debug] [2026-02-25T23:32:53.044Z] <<< [apiv2][body] GET https://monitoring.googleapis.com/v3/projects/torre-de-tartas/timeSeries/ {"unit":"1"}
+[warn] ⚠  dataconnect: Cannot detect an existing app in the current directory. 
