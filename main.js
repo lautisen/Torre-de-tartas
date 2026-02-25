@@ -10,7 +10,9 @@ const gameMain = {
         baseContainer.style.transform = `translateX(-50%) rotate(0deg)`;
 
         const gameWorld = document.getElementById('game-world');
-        gameWorld.style.transform = `translateY(0px)`;
+        const cameraSystem = document.getElementById('camera-system');
+        cameraSystem.style.transition = 'none'; // reset transition for instant snap back
+        cameraSystem.style.transform = `translateY(0px)`;
 
         // Remove any old falling cakes that act as orphans
         document.querySelectorAll('body > .cake').forEach(c => c.remove());
@@ -28,6 +30,7 @@ const gameMain = {
         // Small timeout to re-enable transitions after the native snap back occurs
         setTimeout(() => {
             baseContainer.style.transition = 'transform 0.2s ease-out';
+            cameraSystem.style.transition = 'transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)';
         }, 50);
     },
 
@@ -76,7 +79,7 @@ const gameMain = {
         const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
 
         const fall = () => {
-            pY += 10;
+            pY += 3.5; // Decreased from 10 to make drop slower and less jarring
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
             else this.land(falling, rect.left, color);
@@ -125,8 +128,9 @@ const gameMain = {
 
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
             if (ui.score > 4) {
+                const cameraSystem = document.getElementById('camera-system');
                 this.cameraY = (ui.score - 4) * 40;
-                gameWorld.style.transform = `translateY(${this.cameraY}px)`;
+                cameraSystem.style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001;
             this.spawnCake();
