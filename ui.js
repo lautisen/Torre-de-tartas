@@ -9,28 +9,36 @@ const ui = {
     init() {
         const btn = document.getElementById('start-btn');
         if (btn) btn.onclick = () => this.startGame();
-        
+
         const shareBtn = document.getElementById('share-btn');
         if (shareBtn) shareBtn.onclick = () => this.shareScoreImage();
 
         this.listenToLeaderboard();
     },
 
-    startGame() {
+    startGame(e) {
+        if (e) e.preventDefault();
         const nameInput = document.getElementById('username');
         const name = nameInput.value.trim();
-        if (!name) return alert("¡Dime tu nombre!");
+
+        // Only require name if we haven't registered yet
+        if (!this.currentUser) {
+            if (!name) return alert("¡Dime tu nombre!");
+            this.currentUser = name;
+            document.getElementById('user-display').innerText = name;
+        }
 
         if (typeof gameAudio !== 'undefined') gameAudio.init();
 
-        this.currentUser = name;
-        document.getElementById('user-display').innerText = name;
         document.getElementById('user-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        // El HUD principal (score y timer)
         document.getElementById('ui').classList.remove('hidden');
         document.getElementById('game-world').classList.remove('hidden');
         document.getElementById('crane-system').classList.remove('hidden');
 
         this.score = 0;
+        document.getElementById('score').innerText = this.score;
         this.startTime = Date.now();
         this.startTimer();
 
@@ -51,7 +59,7 @@ const ui = {
     showGameOver(finalPisos) {
         this.gameActive = false;
         clearInterval(this.timerInterval);
-        
+
         const totalSeconds = Math.floor((Date.now() - this.startTime) / 1000);
         const finalCalculatedScore = Math.max(0, (finalPisos * 100) - (totalSeconds * 5));
         const timeStr = document.getElementById('timer').innerText;
@@ -59,7 +67,7 @@ const ui = {
         // Actualizar UI de Game Over
         document.getElementById('final-score').innerText = `${finalPisos} pisos (${finalCalculatedScore} pts)`;
         document.getElementById('game-over-screen').classList.remove('hidden');
-        
+
         // Preparar plantilla de compartir
         document.getElementById('res-pts').innerText = finalCalculatedScore;
         document.getElementById('res-time').innerText = timeStr;
@@ -69,7 +77,7 @@ const ui = {
 
     shareScoreImage() {
         const template = document.getElementById('share-template');
-        
+
         html2canvas(template).then(canvas => {
             const link = document.createElement('a');
             link.download = `record_${this.currentUser}.png`;
@@ -117,10 +125,10 @@ const ui = {
             data.sort((a, b) => b.score - a.score);
             this.currentTopScore = data[0].score;
 
-            board.innerHTML = "<h3>🏆 Top Mundial</h3>" + 
+            board.innerHTML = "<h3>🏆 Top Mundial</h3>" +
                 data.map((s, i) => `
                     <div style="font-size: 0.8em; border-bottom: 1px solid #eee; padding: 3px;">
-                        ${i+1}. <b>${s.name}</b> - ${s.score} pts
+                        ${i + 1}. <b>${s.name}</b> - ${s.score} pts
                     </div>
                 `).join('');
         });
