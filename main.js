@@ -90,6 +90,22 @@ const gameMain = {
         fall();
     },
 
+    createSparks(x) {
+        for (let i = 0; i < 6; i++) {
+            const spark = document.createElement('div');
+            spark.className = "spark";
+            // Posición base (centro del bloque)
+            spark.style.left = x + 'px';
+            // Arriba del último bloque apilado
+            spark.style.top = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY + 'px';
+            // Trayectoria aleatoria de explosión hacia arriba y los lados
+            spark.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
+            spark.style.setProperty('--dy', (Math.random() * -60 - 20) + 'px');
+            document.getElementById('game-world').appendChild(spark);
+            setTimeout(() => spark.remove(), 600);
+        }
+    },
+
     land(falling, x, color) {
         const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
         const relativeToPrevious = ui.score === 0 ? offset : (offset - this.lastOffset);
@@ -117,12 +133,8 @@ const gameMain = {
             void gameWorld.offsetWidth; // trigger reflow to reset animation
 
             if (isPerfect) {
-                // Flash effect
-                const flash = document.getElementById('perfect-flash');
-                if (flash) {
-                    flash.classList.add('active');
-                    setTimeout(() => flash.classList.remove('active'), 50);
-                }
+                // Sparks effect instead of flash
+                this.createSparks(x + (this.width / 2));
 
                 this.comboCount++;
                 this.showText(x + (this.width / 2), `PERFECTO x${this.comboCount}`);

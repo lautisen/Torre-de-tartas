@@ -165,11 +165,10 @@ const ui = {
                         console.log('Error compartiendo, o el usuario canceló:', error);
                     }
                 } else {
-                    // Fallback para PC / navegadores sin soporte: Descarga normal
-                    const link = document.createElement('a');
-                    link.download = file.name;
-                    link.href = URL.createObjectURL(blob);
-                    link.click();
+                    // Fallback directo a WhatsApp si el navegador no soporta compartir imágenes nativamente
+                    const score = document.getElementById('score').innerText;
+                    const text = encodeURIComponent(`¡He apilado ${score} pisos en Torre de Tartas! 🎂🚀\n¡Intenta superarme jugando aquí!\n👉 https://lautisen.github.io/Torre-de-tartas/`);
+                    window.open(`https://wa.me/?text=${text}`, '_blank');
                 }
 
                 btn.innerHTML = originalText;

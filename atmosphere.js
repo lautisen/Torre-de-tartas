@@ -150,7 +150,7 @@ const atmosphere = {
             <ellipse cx="35" cy="19" rx="4" ry="2.5" fill="#444"/>
         </svg>`;
         document.body.appendChild(bird);
-        setTimeout(() => bird.remove(), 11000);
+        bird.addEventListener('animationend', () => bird.remove());
     },
 
     _spawnCloud() {
@@ -162,7 +162,7 @@ const atmosphere = {
         cloud.style.top = (Math.random() * 45 + 5) + '%';
         cloud.style.animationDuration = (Math.random() * 15 + 18) + 's';
         document.body.appendChild(cloud);
-        setTimeout(() => cloud.remove(), 35000);
+        cloud.addEventListener('animationend', () => cloud.remove());
     },
 
     _spawnPlane() {
@@ -180,7 +180,7 @@ const atmosphere = {
             <circle cx="56" cy="50" r="1.5" fill="white" />
         </svg>`;
         document.body.appendChild(plane);
-        setTimeout(() => plane.remove(), 12000);
+        plane.addEventListener('animationend', () => plane.remove());
     },
 
     _spawnMoon() {
@@ -228,7 +228,7 @@ const atmosphere = {
             <circle cx="50" cy="25" r="4" fill="#3498db" stroke="#1a5276" stroke-width="1"/>
         </svg>`;
         document.body.appendChild(sat);
-        setTimeout(() => sat.remove(), 18000);
+        sat.addEventListener('animationend', () => sat.remove());
     },
 
     _spawnAsteroid() {
@@ -248,7 +248,7 @@ const atmosphere = {
             <ellipse cx="18" cy="14" rx="5" ry="3" fill="rgba(255,255,255,0.12)" transform="rotate(-20 18 14)"/>
         </svg>`;
         document.body.appendChild(asteroid);
-        setTimeout(() => asteroid.remove(), 9000);
+        asteroid.addEventListener('animationend', () => asteroid.remove());
     },
 
     _spawnPlanet(type) {
