@@ -62,9 +62,9 @@ const ui = {
         document.getElementById('user-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
 
-        // Check if we should show the tutorial (first 2 plays)
+        // Check if we should show the tutorial (first play only)
         const plays = parseInt(localStorage.getItem('tdt_plays') || '0', 10);
-        if (plays < 2) {
+        if (plays < 1) {
             localStorage.setItem('tdt_plays', plays + 1);
             // Reset tutorial to step 0 in case it was opened before
             const overlay = document.getElementById('tutorial-overlay');

@@ -123,9 +123,18 @@ const gameMain = {
 
             this.createCrumbs(x + (this.width / 2), color);
 
-            // BALANCEO REALISTA — el efecto se amortigua con el score para no hacerse imposible
+            // BALANCEO:
+            // Si es perfecto, ¡recompensa! Reducimos el balance (la torre recupera estabilidad hacia el centro)
+            // Si no, el balance aumenta según el offset (peor encastre -> más inclinación y riesgo)
             const balanceDivisor = 12 + ui.score * 0.5; // score 0→÷12, score 20→÷22, score 50→÷37
-            this.balance += (offset / balanceDivisor);
+
+            if (isPerfect) {
+                // Reduce la inclinación actual un 20% (multiplica por 0.8) o en un par de grados para premiar
+                this.balance = this.balance * 0.7; // La torre se endereza bastante (gana estabilidad)
+            } else {
+                this.balance += (offset / balanceDivisor);
+            }
+
             const baseContainer = document.getElementById('base-container');
             baseContainer.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
