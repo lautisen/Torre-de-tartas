@@ -558,12 +558,9 @@ body.zone-galaxy {
 /* ---- BIRDS ---- */
 .bird {
     left: 110%;
-    font-size: 20px;
+    width: 80px;
+    height: auto;
     animation: flyAcross linear forwards;
-}
-
-.bird::before {
-    content: '🐦';
 }
 
 /* ---- CLOUDS (dynamic) ---- */
@@ -600,12 +597,9 @@ body.zone-galaxy {
 /* ---- PLANES ---- */
 .plane {
     left: 110%;
-    font-size: 32px;
+    width: 160px;
+    height: auto;
     animation: flyAcross linear forwards;
-}
-
-.plane::before {
-    content: '✈️';
 }
 
 /* ---- MOON ---- */
@@ -629,14 +623,16 @@ body.zone-galaxy {
 /* ---- SATELLITE ---- */
 .satellite {
     left: 110%;
-    font-size: 24px;
+    width: 90px;
+    height: auto;
     animation: flyAcross linear forwards;
 }
 
 /* ---- ASTEROID ---- */
 .asteroid {
     left: 110%;
-    font-size: 26px;
+    width: 80px;
+    height: auto;
     animation: diagonal linear forwards;
 }
 

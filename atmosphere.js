@@ -126,13 +126,14 @@ const atmosphere = {
     // ---- Element creators ----
 
     _spawnBird() {
-        const bird = document.createElement('div');
+        const bird = document.createElement('img');
+        bird.src = 'assets/bird.png';
         bird.className = 'atm-element bird';
         bird.style.top = (Math.random() * 40 + 5) + '%';
         bird.style.animationDuration = (Math.random() * 4 + 5) + 's';
         bird.style.animationDelay = '0s';
         document.body.appendChild(bird);
-        setTimeout(() => bird.remove(), 10000);
+        setTimeout(() => bird.remove(), 11000);
     },
 
     _spawnCloud() {
@@ -148,7 +149,8 @@ const atmosphere = {
     },
 
     _spawnPlane() {
-        const plane = document.createElement('div');
+        const plane = document.createElement('img');
+        plane.src = 'assets/plane.png';
         plane.className = 'atm-element plane';
         plane.style.top = (Math.random() * 30 + 10) + '%';
         plane.style.animationDuration = (Math.random() * 4 + 6) + 's';
@@ -179,9 +181,9 @@ const atmosphere = {
     },
 
     _spawnSatellite() {
-        const sat = document.createElement('div');
+        const sat = document.createElement('img');
+        sat.src = 'assets/satellite.png';
         sat.className = 'atm-element satellite';
-        sat.innerHTML = '🛰️';
         sat.style.top = (Math.random() * 60 + 5) + '%';
         sat.style.animationDuration = (Math.random() * 8 + 8) + 's';
         document.body.appendChild(sat);
@@ -189,9 +191,9 @@ const atmosphere = {
     },
 
     _spawnAsteroid() {
-        const asteroid = document.createElement('div');
+        const asteroid = document.createElement('img');
+        asteroid.src = 'assets/asteroid.png';
         asteroid.className = 'atm-element asteroid';
-        asteroid.innerHTML = '☄️';
         asteroid.style.top = (Math.random() * 70 + 5) + '%';
         asteroid.style.animationDuration = (Math.random() * 4 + 3) + 's';
         document.body.appendChild(asteroid);
@@ -213,11 +215,12 @@ const atmosphere = {
     },
 
     _spawnShootingStar() {
-        const star = document.createElement('div');
+        const star = document.createElement('img');
+        star.src = 'assets/shooting_star.png';
         star.className = 'atm-element shooting-star';
         star.style.top = (Math.random() * 50 + 5) + '%';
         star.style.left = (Math.random() * 60 + 20) + '%';
-        star.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+        star.style.animationDuration = (Math.random() * 0.8 + 0.6) + 's';
         document.body.appendChild(star);
         setTimeout(() => star.remove(), 2000);
     },
