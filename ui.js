@@ -28,6 +28,7 @@ const ui = {
         const total = steps.length;
 
         this._tutorialNext = () => {
+            if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
             steps[current].classList.remove('active');
             dots[current].classList.remove('active');
             current++;
@@ -57,7 +58,11 @@ const ui = {
             document.getElementById('user-display').innerText = name;
         }
 
-        if (typeof gameAudio !== 'undefined') gameAudio.init();
+        if (typeof gameAudio !== 'undefined') {
+            gameAudio.init();
+            gameAudio.uiClick();
+            gameAudio.startBgm();
+        }
 
         document.getElementById('user-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
@@ -112,6 +117,7 @@ const ui = {
     showGameOver(finalPisos) {
         this.gameActive = false;
         clearInterval(this.timerInterval);
+        if (typeof gameAudio !== 'undefined') gameAudio.stopBgm();
 
         const totalSeconds = Math.floor((Date.now() - this.startTime) / 1000);
         const finalCalculatedScore = Math.max(0, (finalPisos * 100) - (totalSeconds * 5));
@@ -129,6 +135,7 @@ const ui = {
     },
 
     shareScoreImage() {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
         const template = document.getElementById('share-template');
 
         html2canvas(template).then(canvas => {

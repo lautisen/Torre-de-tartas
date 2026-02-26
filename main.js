@@ -104,8 +104,12 @@ const gameMain = {
             this.lastWidth = this.width;
             falling.remove();
 
-            // SONIDO DE ÉXITO
-            gameAudio.success();
+            // SONIDO DE ÉXITO basado en la precisión
+            let dropQuality = 'bad';
+            if (isPerfect) dropQuality = 'perfect';
+            else if (absRelative < overlapThreshold * 0.4) dropQuality = 'good';
+
+            gameAudio.success(dropQuality);
 
             // SQUASH & SHAKE JUICE 
             const gameWorld = document.getElementById('game-world');

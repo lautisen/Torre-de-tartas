@@ -25,6 +25,7 @@ const atmosphere = {
         }
 
         this.updateBackground(score);
+        if (typeof gameAudio !== 'undefined') gameAudio.updateBgmState(score);
 
         if (targetZone.name !== this.currentZone) {
             this.setZone(targetZone);
@@ -44,6 +45,11 @@ const atmosphere = {
     },
 
     setZone(zone) {
+        // Only play fanfare if we are actively playing (not on first load when score is 0)
+        if (this.currentZone && typeof gameAudio !== 'undefined') {
+            gameAudio.zoneFanfare();
+        }
+
         this.currentZone = zone.name;
         // Clear old elements and spawn new ones
         this.clearElements();
