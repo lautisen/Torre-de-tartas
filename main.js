@@ -70,12 +70,16 @@ const gameMain = {
         const cake = document.querySelector('#active-cake-container .cake');
         if (!cake) return;
         const rect = cake.getBoundingClientRect();
+
+        // Extraemos la clase de color f-* para mantener el glaseado 3D
+        const fClass = Array.from(cake.classList).find(c => c.startsWith('f-'));
         const color = window.getComputedStyle(cake).backgroundColor;
         cake.remove();
 
         const falling = document.createElement('div');
-        falling.className = "cake";
-        Object.assign(falling.style, { position: 'fixed', left: rect.left + 'px', top: rect.top + 'px', width: this.width + 'px', backgroundColor: color, zIndex: '1000' });
+        falling.className = `cake ${fClass || ''}`;
+        // Solo quitamos bg color manual, dejamos el resto igual para Crumbs/Sparks
+        Object.assign(falling.style, { position: 'fixed', left: rect.left + 'px', top: rect.top + 'px', width: this.width + 'px', zIndex: '1000' });
         document.body.appendChild(falling);
 
         let pY = rect.top;
@@ -85,7 +89,7 @@ const gameMain = {
             pY += 10;
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
-            else this.land(falling, rect.left, color);
+            else this.land(falling, rect.left, fClass, color);
         };
         fall();
     },
@@ -106,7 +110,7 @@ const gameMain = {
         }
     },
 
-    land(falling, x, color) {
+    land(falling, x, fClass, color) {
         const offset = physics.calculateOffset(x, this.width, ui.floors, this.balance);
         const relativeToPrevious = ui.floors === 0 ? offset : (offset - this.lastOffset);
         const absRelative = Math.abs(relativeToPrevious);
@@ -162,8 +166,9 @@ const gameMain = {
             baseContainer.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
-            stacked.className = "cake squash" + (isPerfect ? " perfect" : "");
-            Object.assign(stacked.style, { position: 'relative', width: this.width + 'px', left: offset + 'px', margin: '0 auto', backgroundColor: color });
+            // Mantenemos la clase f-* para que mantenga el estilo premium en la torre
+            stacked.className = `cake squash ${fClass || ''}` + (isPerfect ? " perfect" : "");
+            Object.assign(stacked.style, { position: 'relative', width: this.width + 'px', left: offset + 'px', margin: '0 auto' });
             document.getElementById('tower').appendChild(stacked);
 
             ui.floors++;
