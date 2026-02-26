@@ -2,7 +2,7 @@ const gameMain = {
     speed: 0.02, angle: 0, width: 160, cameraY: 0, balance: 0, comboCount: 0, isInitialized: false,
 
     start() {
-        this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0;
+        this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0;
         this.lastOffset = 0;
         this.lastWidth = 200; // Ancho de la base
         document.getElementById('tower').innerHTML = "";
@@ -54,7 +54,7 @@ const gameMain = {
         const container = document.getElementById('active-cake-container');
         this.width = Math.max(60, this.width * 0.98);
         container.style.width = this.width + "px";
-        container.innerHTML = `<div class="cake f-${Math.floor(Math.random() * 3) + 1}" style="width:100%"></div>`;
+        container.innerHTML = `<div class="cake f-${Math.floor(Math.random() * 5) + 1}" style="width:100%"></div>`;
     },
 
     loop() {
@@ -79,7 +79,7 @@ const gameMain = {
         document.body.appendChild(falling);
 
         let pY = rect.top;
-        const targetY = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY;
+        const targetY = (window.innerHeight - 80) - (ui.floors * 40) + this.cameraY;
 
         const fall = () => {
             pY += 10;
@@ -107,8 +107,8 @@ const gameMain = {
     },
 
     land(falling, x, color) {
-        const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
-        const relativeToPrevious = ui.score === 0 ? offset : (offset - this.lastOffset);
+        const offset = physics.calculateOffset(x, this.width, ui.floors, this.balance);
+        const relativeToPrevious = ui.floors === 0 ? offset : (offset - this.lastOffset);
         const absRelative = Math.abs(relativeToPrevious);
 
         // Umbral de colisión: la suma de los medios anchos (margen del 10% para que se vea que tocan)
@@ -149,7 +149,7 @@ const gameMain = {
             // BALANCEO:
             // Si es perfecto, ¡recompensa! Reducimos el balance (la torre recupera estabilidad hacia el centro)
             // Si no, el balance aumenta según el offset (peor encastre -> más inclinación y riesgo)
-            const balanceDivisor = 12 + ui.score * 0.5; // score 0→÷12, score 20→÷22, score 50→÷37
+            const balanceDivisor = 12 + ui.floors * 0.5; // floors 0→÷12, floors 20→÷22, floors 50→÷37
 
             if (isPerfect) {
                 // Reduce la inclinación actual un 20% (multiplica por 0.8) o en un par de grados para premiar
@@ -166,16 +166,36 @@ const gameMain = {
             Object.assign(stacked.style, { position: 'relative', width: this.width + 'px', left: offset + 'px', margin: '0 auto', backgroundColor: color });
             document.getElementById('tower').appendChild(stacked);
 
-            ui.score++;
+            ui.floors++;
+            const multiplier = 1 + this.comboCount;
+            // Base score per block is 10, times combo multiplier
+            ui.score += (10 * multiplier);
+
             const scoreEl = document.getElementById('score');
+            const floorsEl = document.getElementById('floors-display');
+            const badge = document.getElementById('multiplier-badge');
+
             scoreEl.innerText = ui.score;
+            floorsEl.innerText = ui.floors;
+
+            if (this.comboCount > 0) {
+                badge.innerText = `x${multiplier} 🔥`;
+                badge.style.opacity = '1';
+                badge.style.transform = 'scale(1.1)';
+                setTimeout(() => badge.style.transform = 'scale(1)', 150);
+            } else {
+                badge.innerText = `x1 🔥`;
+                badge.style.opacity = '0.3';
+            }
 
             // Animación de rebote (pop) en el HUD
             scoreEl.classList.remove('score-pop');
+            floorsEl.classList.remove('score-pop');
             void scoreEl.offsetWidth; // trigger reflow
             scoreEl.classList.add('score-pop');
+            floorsEl.classList.add('score-pop');
 
-            atmosphere.update(ui.score);
+            atmosphere.update(ui.floors);
 
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
 
@@ -185,9 +205,9 @@ const gameMain = {
                 this.gameOverFall();
                 return;
             }
-            if (ui.score > 4) {
+            if (ui.floors > 4) {
                 const cameraSystem = document.getElementById('camera-system');
-                this.cameraY = (ui.score - 4) * 40;
+                this.cameraY = (ui.floors - 4) * 40;
                 cameraSystem.style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001;
@@ -230,6 +250,6 @@ const gameMain = {
         const base = document.getElementById('base-container');
         base.style.transition = "transform 1s ease-in";
         base.style.transform = `translateX(-50%) rotate(${this.balance > 0 ? 90 : -90}deg) translateY(800px)`;
-        setTimeout(() => ui.showGameOver(ui.score), 1000);
+        setTimeout(() => ui.showGameOver(ui.floors), 1000);
     }
 };

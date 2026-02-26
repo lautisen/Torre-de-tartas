@@ -1,6 +1,7 @@
 const ui = {
     gameActive: false,
     score: 0,
+    floors: 0,
     startTime: 0,
     timerInterval: null,
     currentUser: "",
@@ -96,7 +97,14 @@ const ui = {
         document.getElementById('crane-system').classList.remove('hidden');
 
         this.score = 0;
+        this.floors = 0;
         document.getElementById('score').innerText = this.score;
+        document.getElementById('floors-display').innerText = this.floors;
+        const badge = document.getElementById('multiplier-badge');
+        if (badge) {
+            badge.style.opacity = '0.3';
+            badge.innerText = 'x1 🔥';
+        }
         this.startTime = Date.now();
         this.startTimer();
 
@@ -120,7 +128,7 @@ const ui = {
         if (typeof gameAudio !== 'undefined') gameAudio.stopBgm();
 
         const totalSeconds = Math.floor((Date.now() - this.startTime) / 1000);
-        const finalCalculatedScore = Math.max(0, (finalPisos * 100) - (totalSeconds * 5));
+        const finalCalculatedScore = ui.score; // Usar el score real del jugador con combos
         const timeStr = document.getElementById('timer').innerText;
 
         // Actualizar UI de Game Over
