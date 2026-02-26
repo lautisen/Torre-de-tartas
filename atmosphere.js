@@ -260,8 +260,7 @@ const atmosphere = {
     },
 
     _spawnShootingStar() {
-        const star = document.createElement('img');
-        star.src = 'assets/shooting_star.png';
+        const star = document.createElement('div');
         star.className = 'atm-element shooting-star';
         star.style.top = (Math.random() * 50 + 5) + '%';
         star.style.left = (Math.random() * 60 + 20) + '%';

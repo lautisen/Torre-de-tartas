@@ -500,43 +500,58 @@ body {
     right: 0;
     bottom: 0;
     z-index: -1;
-    /* Galaxia arriba (0%) → Tierra abajo (100%)
-       background-position-y: 100% = muestra el fondo (tierra) al inicio
-       background-position-y:   0% = muestra el principio (galaxia) al máximo */
+    /* Galaxia arriba (0%) → Tierra abajo (100%) */
     background: linear-gradient(to bottom,
-            /* ---- Galaxia ---- */
-            #0a0020 0%,
-            #1a0540 3%,
-            #2d0b55 6%,
-            /* ---- Espacio profundo ---- */
-            #050215 10%,
-            #0c0524 14%,
+            /* ---- Galaxia: nebulosa rica en magenta/violeta ---- */
+            #080010 0%,
+            #1a0038 2%,
+            #3d0870 4%,
+            #6b1fa8 6%,
+            #8b35c0 7.5%,
+            #6018a0 9%,
+            #380a70 11%,
+            #1e0445 13%,
+            /* ---- Espacio profundo: negro con venas azuladas ---- */
+            #0a0325 15%,
+            #04010f 18%,
+            #020008 21%,
+            #050015 24%,
+            #0a0530 27%,
             /* ---- Espacio ---- */
-            #000005 18%,
-            #04020f 22%,
-            #0a0525 26%,
-            #100830 30%,
-            /* ---- Estratosfera ---- */
-            #020c22 34%,
-            #05174a 39%,
-            #0d3580 44%,
-            #1e5fa0 48%,
-            /* ---- Cielo alto ---- */
-            #083070 51%,
-            #1155a8 57%,
-            #2e7fbf 63%,
-            #6ab2d8 68%,
-            /* ---- Cielo bajo ---- */
-            #0e5c9e 72%,
-            #2d8ec8 78%,
-            #5ab3e0 83%,
-            #a0d8f0 88%,
-            /* ---- Tierra ---- */
-            #1a6ea8 91%,
-            #3a9bd5 94%,
-            #71c3e8 96%,
-            #b8e4f5 98%,
-            #e8f7fd 100%);
+            #050318 30%,
+            #09082a 33%,
+            #0d0c38 36%,
+            #100e40 38%,
+            /* ---- Estratosfera: aurora azul-verde ---- */
+            #071830 41%,
+            #083566 44%,
+            #0a4a78 46%,
+            #0d5e8a 48%,
+            #0f6a94 50%,
+            /* ---- Cielo alto: azul real intenso ---- */
+            #0a5090 53%,
+            #0d68b0 56%,
+            #1275c0 59%,
+            #1a82cc 62%,
+            #2090d0 65%,
+            /* ---- Cielo bajo: celeste vibrante ---- */
+            #28a0d8 68%,
+            #48b5e0 71%,
+            #68c4e8 74%,
+            #8dd4f0 77%,
+            #b0e0f8 80%,
+            /* ---- Horizonte: transición cálida dorada ---- */
+            #c8e6f5 83%,
+            #d8e8ee 85%,
+            #e8ddd0 87%,
+            #f0d0a0 89%,
+            #f5c060 91%,
+            #f0a840 93%,
+            /* ---- Tierra: cálido atardecer → naranja suave ---- */
+            #e89030 95%,
+            #d07818 97%,
+            #c06010 99%,
+            #a84808 100%);
     /* El gradiente ocupa 8× la altura del div (= 800vh efectivos) */
     background-size: 100% 800%;
     /* Empieza mostrando la parte de abajo (tierra) */
@@ -650,6 +665,8 @@ body {
 .airplane-svg {
     width: 100%;
     height: auto;
+    /* Flip horizontal: el avión vuela hacia la izquierda (su nariz apunta izquierda) */
+    transform: scaleX(-1);
     animation: planeBob 3s ease-in-out infinite;
 }
 
@@ -657,13 +674,14 @@ body {
 
     0%,
     100% {
-        transform: translateY(0) rotate(0deg);
+        transform: scaleX(-1) translateY(0) rotate(0deg);
     }
 
     50% {
-        transform: translateY(-8px) rotate(2deg);
+        transform: scaleX(-1) translateY(-8px) rotate(2deg);
     }
 }
+
 
 /* ---- MOON ---- */
 .moon {
@@ -771,16 +789,21 @@ body {
 
 /* ---- GALAXY CORE ---- */
 .galaxy-core {
-    width: 250px;
-    height: 250px;
-    right: -60px;
-    top: 5%;
-    background: radial-gradient(ellipse at center, rgba(160, 80, 220, 0.6) 0%, rgba(80, 20, 140, 0.4) 40%, transparent 75%);
+    width: 320px;
+    height: 320px;
+    right: -80px;
+    top: 4%;
+    background:
+        radial-gradient(ellipse at 45% 45%, rgba(220, 120, 255, 0.7) 0%, transparent 45%),
+        radial-gradient(ellipse at 60% 55%, rgba(100, 50, 200, 0.5) 0%, transparent 55%),
+        radial-gradient(ellipse at 30% 60%, rgba(255, 80, 180, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at center, rgba(160, 80, 220, 0.4) 0%, rgba(80, 20, 140, 0.2) 55%, transparent 80%);
     border-radius: 50%;
-    animation: galaxyPulse 4s ease-in-out infinite;
+    animation: galaxyPulse 5s ease-in-out infinite;
     position: fixed;
     pointer-events: none;
     z-index: 2;
+    filter: blur(4px);
 }
 
 /* ---- SHOOTING STAR ---- */
@@ -835,15 +858,16 @@ body {
 
     0%,
     100% {
-        transform: scale(1);
+        transform: scale(1) rotate(0deg);
         opacity: 0.7;
     }
 
     50% {
-        transform: scale(1.1);
+        transform: scale(1.15) rotate(8deg);
         opacity: 1;
     }
 }
+
 
 @keyframes shootingStar {
     from {
