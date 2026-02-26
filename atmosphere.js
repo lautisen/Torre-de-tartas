@@ -31,15 +31,15 @@ const atmosphere = {
         }
     },
 
-    // Smooth background scroll: maps score to translateY on #bg-scroll
+    // Smooth background scroll: maps score to translateY on #bg-scroll.
+    // #bg-scroll starts at top:0, 800vh tall. Earth is at 0% (top), galaxy at 100% (bottom).
+    // translateY(0)  → viewport sees the very top (earth) = score 0
+    // translateY(-X) → div shifts up → viewport reveals lower sections (space, galaxy)
     updateBackground(score) {
         const bg = document.getElementById('bg-scroll');
         if (!bg) return;
-        // Max score reference: at score >= 80 we show the galaxy top.
-        // #bg-scroll is 800vh tall; viewport is 100vh.
-        // Visible window = bottom 100vh by default (translateY = 0).
-        // At max score, shift the whole div up by 700vh (reveals the top section).
         const maxScore = 80;
+        // At max score, shift the div up by 700vh so the galaxy section is visible.
         const maxShift = window.innerHeight * 7; // 700vh in px
         const progress = Math.min(score / maxScore, 1);
         const shift = -(progress * maxShift);
