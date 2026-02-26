@@ -117,6 +117,13 @@ const gameMain = {
             void gameWorld.offsetWidth; // trigger reflow to reset animation
 
             if (isPerfect) {
+                // Flash effect
+                const flash = document.getElementById('perfect-flash');
+                if (flash) {
+                    flash.classList.add('active');
+                    setTimeout(() => flash.classList.remove('active'), 50);
+                }
+
                 this.comboCount++;
                 this.showText(x + (this.width / 2), `PERFECTO x${this.comboCount}`);
                 gameWorld.classList.add('shake-perfect');
@@ -148,7 +155,14 @@ const gameMain = {
             document.getElementById('tower').appendChild(stacked);
 
             ui.score++;
-            document.getElementById('score').innerText = ui.score;
+            const scoreEl = document.getElementById('score');
+            scoreEl.innerText = ui.score;
+
+            // Animación de rebote (pop) en el HUD
+            scoreEl.classList.remove('score-pop');
+            void scoreEl.offsetWidth; // trigger reflow
+            scoreEl.classList.add('score-pop');
+
             atmosphere.update(ui.score);
 
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }

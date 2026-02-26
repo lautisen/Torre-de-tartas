@@ -134,16 +134,53 @@ const ui = {
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
     },
 
-    shareScoreImage() {
+    async shareScoreImage() {
         if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+
+        const btn = document.getElementById('share-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Generando...';
+        btn.disabled = true;
+
         const template = document.getElementById('share-template');
 
-        html2canvas(template).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `record_${this.currentUser}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-        });
+        try {
+            const canvas = await html2canvas(template, {
+                backgroundColor: null,
+                scale: 2 // High res
+            });
+
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], `record_${this.currentUser}.png`, { type: 'image/png' });
+
+                // Intenta usar la API de compartir nativa (móviles: Instagram, WhatsApp, etc.)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: '¡Mi Récord en Torre de Tartas!',
+                            text: `¡He apilado ${document.getElementById('score').innerText} pisos! ¿Puedes superarme? 🎂🚀`,
+                            files: [file]
+                        });
+                    } catch (error) {
+                        console.log('Error compartiendo, o el usuario canceló:', error);
+                    }
+                } else {
+                    // Fallback para PC / navegadores sin soporte: Descarga normal
+                    const link = document.createElement('a');
+                    link.download = file.name;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                }
+
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 'image/png');
+
+        } catch (err) {
+            console.error(err);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     },
 
     saveScore(pisos, tiempo, totalScore) {
@@ -190,8 +227,10 @@ const ui = {
 
             board.innerHTML = "<h3>🏆 Top Mundial</h3>" +
                 data.map((s, i) => `
-                    <div style="font-size: 0.8em; border-bottom: 1px solid #eee; padding: 3px;">
-                        ${i + 1}. <b>${s.name}</b> - ${s.score} pts
+                    <div class="lb-row">
+                        <span class="lb-pos">${i + 1}.</span>
+                        <span class="lb-name">${s.name}</span>
+                        <span class="lb-score">${s.score} pts</span>
                     </div>
                 `).join('');
         });
