@@ -123,9 +123,11 @@ const gameMain = {
 
             this.createCrumbs(x + (this.width / 2), color);
 
-            // BALANCEO REALISTA
-            this.balance += (offset / 12);
-            document.getElementById('base-container').style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
+            // BALANCEO REALISTA — el efecto se amortigua con el score para no hacerse imposible
+            const balanceDivisor = 12 + ui.score * 0.5; // score 0→÷12, score 20→÷22, score 50→÷37
+            this.balance += (offset / balanceDivisor);
+            const baseContainer = document.getElementById('base-container');
+            baseContainer.style.transform = `translateX(-50%) rotate(${this.balance}deg)`;
 
             const stacked = document.createElement('div');
             stacked.className = "cake squash" + (isPerfect ? " perfect" : "");
@@ -137,6 +139,13 @@ const gameMain = {
             atmosphere.update(ui.score);
 
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
+
+            // Si la torre se ha salido completamente de la pantalla, game over
+            const baseRect = baseContainer.getBoundingClientRect();
+            if (baseRect.right < -60 || baseRect.left > window.innerWidth + 60) {
+                this.gameOverFall();
+                return;
+            }
             if (ui.score > 4) {
                 const cameraSystem = document.getElementById('camera-system');
                 this.cameraY = (ui.score - 4) * 40;
