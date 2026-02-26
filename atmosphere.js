@@ -31,19 +31,16 @@ const atmosphere = {
         }
     },
 
-    // Smooth background scroll: maps score to translateY on #bg-scroll.
-    // #bg-scroll starts at top:0, 800vh tall. Earth is at 0% (top), galaxy at 100% (bottom).
-    // translateY(0)  → viewport sees the very top (earth) = score 0
-    // translateY(-X) → div shifts up → viewport reveals lower sections (space, galaxy)
+    // Smooth background scroll via background-position-y (div always covers full viewport).
+    // Gradient: galaxy at 0% (top), earth at 100% (bottom).
+    // posY=100% → shows earth (score 0). posY=0% → shows galaxy (max score).
     updateBackground(score) {
         const bg = document.getElementById('bg-scroll');
         if (!bg) return;
         const maxScore = 80;
-        // At max score, shift the div up by 700vh so the galaxy section is visible.
-        const maxShift = window.innerHeight * 7; // 700vh in px
         const progress = Math.min(score / maxScore, 1);
-        const shift = -(progress * maxShift);
-        bg.style.transform = `translateY(${shift}px)`;
+        const posY = (1 - progress) * 100;
+        bg.style.backgroundPositionY = posY + '%';
     },
 
     setZone(zone) {
@@ -278,7 +275,7 @@ const atmosphere = {
         if (bg) {
             // Instant snap back to ground (no transition)
             bg.style.transition = 'none';
-            bg.style.transform = 'translateY(0)';
+            bg.style.backgroundPositionY = '100%';
             // Re-enable smooth transition after snap
             setTimeout(() => { bg.style.transition = ''; }, 50);
         }

@@ -491,52 +491,57 @@ body {
     background: #000;
 }
 
-/* Div alto que contiene el gradiente de todas las zonas.
-   Arranca desde top:0. Se desplaza hacia arriba (translateY negativo) al subir el score,
-   revelando zonas más oscuras que están más abajo en el div. */
+/* Cubre exactamente el viewport. El "scroll" lo hace background-position-y,
+   NO translateY, para evitar que el body negro quede al descubierto. */
 #bg-scroll {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 800vh;
+    bottom: 0;
     z-index: -1;
-    /* Tierra arriba (0%) → Galaxia abajo (100%) */
+    /* Galaxia arriba (0%) → Tierra abajo (100%)
+       background-position-y: 100% = muestra el fondo (tierra) al inicio
+       background-position-y:   0% = muestra el principio (galaxia) al máximo */
     background: linear-gradient(to bottom,
-            /* ---- Tierra ---- */
-            #e8f7fd 0%,
-            #b8e4f5 2%,
-            #71c3e8 4%,
-            #3a9bd5 7%,
-            #1a6ea8 10%,
-            /* ---- Cielo bajo ---- */
-            #a0d8f0 14%,
-            #5ab3e0 19%,
-            #2d8ec8 24%,
-            #0e5c9e 30%,
-            /* ---- Cielo alto ---- */
-            #6ab2d8 34%,
-            #2e7fbf 39%,
-            #1155a8 45%,
-            #083070 51%,
-            /* ---- Estratosfera ---- */
-            #1e5fa0 54%,
-            #0d3580 58%,
-            #05174a 63%,
-            #020c22 67%,
-            /* ---- Espacio ---- */
-            #100830 71%,
-            #0a0525 75%,
-            #04020f 79%,
-            #000005 83%,
-            /* ---- Espacio profundo ---- */
-            #0c0524 87%,
-            #050215 91%,
             /* ---- Galaxia ---- */
-            #2d0b55 94%,
-            #1a0540 97%,
-            #0a0020 100%);
-    transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            #0a0020 0%,
+            #1a0540 3%,
+            #2d0b55 6%,
+            /* ---- Espacio profundo ---- */
+            #050215 10%,
+            #0c0524 14%,
+            /* ---- Espacio ---- */
+            #000005 18%,
+            #04020f 22%,
+            #0a0525 26%,
+            #100830 30%,
+            /* ---- Estratosfera ---- */
+            #020c22 34%,
+            #05174a 39%,
+            #0d3580 44%,
+            #1e5fa0 48%,
+            /* ---- Cielo alto ---- */
+            #083070 51%,
+            #1155a8 57%,
+            #2e7fbf 63%,
+            #6ab2d8 68%,
+            /* ---- Cielo bajo ---- */
+            #0e5c9e 72%,
+            #2d8ec8 78%,
+            #5ab3e0 83%,
+            #a0d8f0 88%,
+            /* ---- Tierra ---- */
+            #1a6ea8 91%,
+            #3a9bd5 94%,
+            #71c3e8 96%,
+            #b8e4f5 98%,
+            #e8f7fd 100%);
+    /* El gradiente ocupa 8× la altura del div (= 800vh efectivos) */
+    background-size: 100% 800%;
+    /* Empieza mostrando la parte de abajo (tierra) */
+    background-position-y: 100%;
+    transition: background-position-y 2s ease;
 }
 
 
