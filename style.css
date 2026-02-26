@@ -19,11 +19,19 @@ body {
     /* bg-layer divs handle the background */
     margin: 0;
     padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
     overflow: hidden;
     height: 100vh;
+    height: 100dvh;
+    /* Use dynamic viewport height to avoid mobile browser chrome / notch issues */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     touch-action: manipulation;
     user-select: none;
+}
+
+html {
+    background: #1a6ea8;
+    /* fallback in case bg-scroll hasn't rendered */
 }
 
 .hidden {
@@ -1022,4 +1030,257 @@ h3 {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* ==========================================
+   SHARE IMAGE CARD
+   ========================================== */
+#share-template {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    width: 520px;
+    height: 340px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.share-bg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0d0221 0%, #1a0540 30%, #2d0b55 65%, #4a1070 100%);
+    border-radius: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    color: white;
+    overflow: hidden;
+    position: relative;
+}
+
+.share-stars {
+    position: absolute;
+    top: 14px;
+    font-size: 10px;
+    letter-spacing: 6px;
+    opacity: 0.4;
+    color: #fff;
+}
+
+.share-cake-stack {
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -4px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.share-medal {
+    font-size: 42px;
+    margin-bottom: 4px;
+    filter: drop-shadow(0 4px 16px rgba(255, 215, 0, 0.6));
+}
+
+.share-title {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin: 4px 0 12px;
+    background: linear-gradient(90deg, #f9e15a 0%, #ffb347 50%, #f06292 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+}
+
+.share-score-block {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 10px 28px;
+    margin-bottom: 12px;
+}
+
+.share-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    color: white;
+    text-transform: uppercase;
+}
+
+.share-big-num {
+    font-size: 44px;
+    font-weight: 900;
+    color: #ffd740;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.share-time {
+    font-size: 24px;
+    font-weight: 700;
+    color: #81d4fa;
+}
+
+.share-divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    margin-bottom: 10px;
+}
+
+.share-cta {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 4px;
+}
+
+.share-url {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* ==========================================
+   WORLD RECORD POPUP
+   ========================================== */
+.record-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    z-index: 4000;
+    background: linear-gradient(135deg, #1a0540 0%, #4a1070 100%);
+    border: 2px solid #ffd740;
+    border-radius: 24px;
+    padding: 28px 40px;
+    text-align: center;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.4), 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: recordAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+        recordGlow 1.5s ease-in-out infinite alternate,
+        recordFade 3s ease forwards;
+    pointer-events: none;
+}
+
+.record-message::before {
+    content: '🏆';
+    display: block;
+    font-size: 52px;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+    animation: trophySpin 0.8s ease-out;
+}
+
+.record-message .record-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #ffd740, #ffb347, #ffd740);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    margin: 0 0 4px;
+}
+
+.record-message .record-sub {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+@keyframes recordAppear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes recordGlow {
+    from {
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    to {
+        box-shadow: 0 0 80px rgba(255, 215, 0, 0.7), 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+}
+
+@keyframes recordFade {
+
+    0%,
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes trophySpin {
+    from {
+        transform: rotateY(0deg) scale(0.5);
+    }
+
+    to {
+        transform: rotateY(360deg) scale(1);
+    }
+}
+
+/* ==========================================
+   ZONE LABEL — MOBILE FRIENDLY
+   ========================================== */
+#zone-label {
+    top: 70px;
+    padding: 6px 18px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    #zone-label {
+        top: 60px;
+        font-size: 0.8rem;
+        padding: 5px 14px;
+    }
+
+    /* Ensure atm-element sprites don't overflow on narrow screens */
+    .bird {
+        width: 55px;
+    }
+
+    .plane {
+        width: 110px;
+    }
+
+    .satellite {
+        width: 65px;
+    }
+
+    .asteroid {
+        width: 60px;
+    }
+}
+
+/* Fix bg-scroll covering full dvh on mobile (no black bar) */
+#bg-scroll {
+    height: 100dvh;
 }

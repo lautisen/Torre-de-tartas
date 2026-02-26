@@ -158,10 +158,13 @@ const ui = {
 
     showRecordMessage() {
         const msg = document.createElement('div');
-        msg.className = "record-message";
-        msg.innerHTML = "🏆 ¡NUEVO RÉCORD! 🏆<br><span style='font-size:0.5em'>ERES EL MEJOR</span>";
+        msg.className = 'record-message';
+        msg.innerHTML = `
+            <p class="record-title">¡NUEVO RÉCORD!</p>
+            <p class="record-sub">Eres el mejor del mundo</p>
+        `;
         document.body.appendChild(msg);
-        setTimeout(() => msg.remove(), 3000);
+        setTimeout(() => msg.remove(), 3200);
     },
 
     listenToLeaderboard() {
