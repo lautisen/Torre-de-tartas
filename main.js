@@ -23,6 +23,7 @@ const gameMain = {
         document.querySelectorAll('body > .crumb').forEach(c => c.remove());
 
         this.spawnCake();
+        atmosphere.reset();
         if (!this.isInitialized) {
             this.setupControls();
             this.loop();
@@ -133,6 +134,7 @@ const gameMain = {
 
             ui.score++;
             document.getElementById('score').innerText = ui.score;
+            atmosphere.update(ui.score);
 
             if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
             if (ui.score > 4) {
