@@ -223,30 +223,30 @@ html {
    ========================================== */
 .cake {
     height: var(--cake-h);
-    border-radius: 8px;
+    border-radius: 12px;
     /* Bordes redondeados más suaves */
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(0, 0, 0, 0.2);
     /* Borde más sutil y oscuro */
     box-sizing: border-box;
     position: relative;
     transform-origin: bottom center;
 
-    /* El efecto clave: Degradado cónico para simular relieve */
+    /* Glaseado pastel suave con sombra sutil interior */
     background-image:
-        conic-gradient(from 180deg at 50% 50%,
-            rgba(255, 255, 255, 0.4) 0%,
-            rgba(0, 0, 0, 0.1) 45%,
-            rgba(255, 255, 255, 0.4) 50%,
-            rgba(0, 0, 0, 0.1) 95%),
-        radial-gradient(ellipse at 50% 5%,
+        linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.6) 0%,
+            rgba(255, 255, 255, 0.1) 15%,
+            rgba(0, 0, 0, 0.0) 70%,
+            rgba(0, 0, 0, 0.15) 100%),
+        linear-gradient(to right,
             rgba(255, 255, 255, 0.3) 0%,
-            rgba(255, 255, 255, 0) 60%);
-    background-origin: border-box;
-    background-clip: border-box;
+            rgba(255, 255, 255, 0) 20%,
+            rgba(0, 0, 0, 0) 80%,
+            rgba(0, 0, 0, 0.2) 100%);
 
     /* Sombra de base para el relieve */
-    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2),
-        0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Simulación de la línea de relleno de crema */
@@ -254,41 +254,70 @@ html {
     content: '';
     position: absolute;
     top: 50%;
-    left: 10px;
-    right: 10px;
-    height: 3px;
-    background-color: rgba(255, 255, 255, 0.5);
-    /* Relleno de crema */
+    left: 8px;
+    right: 8px;
+    height: 4px;
+    /* Relleno de crema con su propia sombra para dar volumen */
     border-radius: 2px;
     transform: translateY(-50%);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-/* Colores de tartas Premium del usuario */
+/* Colores Pastel Suaves y Rellenos Únicos */
 .f-1 {
-    background-color: #f7ed85;
+    background-color: #fce4ec;
 }
 
-/* Amarillo */
+/* Vainilla / Fresa Claro */
+.f-1::after {
+    background-color: #f48fb1;
+}
+
+/* Relleno Fresa */
+
 .f-2 {
-    background-color: #aa79c2;
+    background-color: #f3e5f5;
 }
 
-/* Morado */
+/* Lila Pastel */
+.f-2::after {
+    background-color: #ce93d8;
+}
+
+/* Relleno Uva */
+
 .f-3 {
-    background-color: #e56b8f;
+    background-color: #e0f7fa;
 }
 
-/* Rosa */
+/* Celeste Cielo */
+.f-3::after {
+    background-color: #80deea;
+}
+
+/* Relleno Menta Oscuro */
+
 .f-4 {
-    background-color: #8c7365;
+    background-color: #fff8e1;
 }
 
-/* Marrón */
+/* Crema Dulce */
+.f-4::after {
+    background-color: #ffcc80;
+}
+
+/* Relleno Melocotón */
+
 .f-5 {
-    background-color: #b1d4e0;
+    background-color: #efebe9;
 }
 
-/* Azul claro / Piscina */
+/* Bizcocho muy claro */
+.f-5::after {
+    background-color: #bcaaa4;
+}
+
+/* Relleno Chocolate con Leche */
 
 /* Efecto Squash & Stretch */
 .squash {
