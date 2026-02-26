@@ -3,6 +3,7 @@ const gameMain = {
 
     start() {
         this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0;
+        this.lastOffset = 0;
         document.getElementById('tower').innerHTML = "";
 
         const baseContainer = document.getElementById('base-container');
@@ -89,10 +90,13 @@ const gameMain = {
 
     land(falling, x, color) {
         const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
-        const absOffset = Math.abs(offset);
-        const isPerfect = absOffset < 7;
+        const relativeToPrevious = ui.score === 0 ? offset : (offset - this.lastOffset);
+        const absRelative = Math.abs(relativeToPrevious);
+        const isPerfect = absRelative < 7;
+        console.log(`LAND => x: ${x}, offset: ${offset}, lastOffset: ${this.lastOffset}, rel: ${relativeToPrevious}, width: ${this.width}, balance: ${this.balance}`);
 
-        if (absOffset < this.width * 0.8) {
+        if (absRelative < this.width * 0.8) {
+            this.lastOffset = offset;
             falling.remove();
 
             // SONIDO DE ÉXITO
