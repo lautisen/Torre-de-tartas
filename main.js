@@ -4,6 +4,7 @@ const gameMain = {
     start() {
         this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0;
         this.lastOffset = 0;
+        this.lastWidth = 200; // Ancho de la base
         document.getElementById('tower').innerHTML = "";
 
         const baseContainer = document.getElementById('base-container');
@@ -92,11 +93,14 @@ const gameMain = {
         const offset = physics.calculateOffset(x, this.width, ui.score, this.balance);
         const relativeToPrevious = ui.score === 0 ? offset : (offset - this.lastOffset);
         const absRelative = Math.abs(relativeToPrevious);
-        const isPerfect = absRelative < 7;
-        console.log(`LAND => x: ${x}, offset: ${offset}, lastOffset: ${this.lastOffset}, rel: ${relativeToPrevious}, width: ${this.width}, balance: ${this.balance}`);
 
-        if (absRelative < this.width * 0.8) {
+        // Umbral de colisión: la suma de los medios anchos (margen del 10% para que se vea que tocan)
+        const overlapThreshold = ((this.width + this.lastWidth) / 2) * 0.9;
+        const isPerfect = absRelative < 10;
+
+        if (absRelative < overlapThreshold) {
             this.lastOffset = offset;
+            this.lastWidth = this.width;
             falling.remove();
 
             // SONIDO DE ÉXITO
