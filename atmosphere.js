@@ -6,6 +6,7 @@
 const atmosphere = {
     currentZone: null,
     spawnTimers: [],
+    activeLayer: 'a', // tracks which bg layer is currently visible
 
     zones: [
         { name: 'ground', floor: 0, label: '🌿 Tierra', bodyClass: 'zone-ground' },
@@ -30,14 +31,31 @@ const atmosphere = {
     },
 
     setZone(zone) {
-        const body = document.body;
+        const layerA = document.getElementById('bg-layer-a');
+        const layerB = document.getElementById('bg-layer-b');
 
-        // Remove all zone classes
-        this.zones.forEach(z => body.classList.remove(z.bodyClass));
+        // Determine which layer is currently shown, and which is hidden
+        const currentLayer = this.activeLayer === 'a' ? layerA : layerB;
+        const incomingLayer = this.activeLayer === 'a' ? layerB : layerA;
 
-        // Add new zone class (triggers CSS gradient transition)
-        body.classList.add(zone.bodyClass);
+        // Remove all zone classes from both layers
+        this.zones.forEach(z => {
+            layerA.classList.remove(z.bodyClass);
+            layerB.classList.remove(z.bodyClass);
+        });
 
+        // Paint the new gradient on the hidden layer and make it fully transparent
+        incomingLayer.classList.add(zone.bodyClass);
+        incomingLayer.style.opacity = '0';
+
+        // Fade the current layer out and the incoming layer in
+        requestAnimationFrame(() => {
+            currentLayer.style.opacity = '0';
+            incomingLayer.style.opacity = '1';
+        });
+
+        // Flip the active layer tracker after transition
+        this.activeLayer = this.activeLayer === 'a' ? 'b' : 'a';
         this.currentZone = zone.name;
 
         // Clear old elements and spawn new ones
@@ -226,11 +244,31 @@ const atmosphere = {
     },
 
     reset() {
+        const layerA = document.getElementById('bg-layer-a');
+        const layerB = document.getElementById('bg-layer-b');
+
+        // Remove all zone classes from both layers
+        this.zones.forEach(z => {
+            layerA.classList.remove(z.bodyClass);
+            layerB.classList.remove(z.bodyClass);
+        });
+
+        // Snap layer A to ground instantly (no transition)
+        layerA.style.transition = 'none';
+        layerB.style.transition = 'none';
+        layerA.classList.add('zone-ground');
+        layerA.style.opacity = '1';
+        layerB.style.opacity = '0';
+        this.activeLayer = 'a';
+
+        // Re-enable transitions after the snap
+        setTimeout(() => {
+            layerA.style.transition = '';
+            layerB.style.transition = '';
+        }, 50);
+
         this.clearElements();
         this.currentZone = null;
-        this.zones.forEach(z => document.body.classList.remove(z.bodyClass));
-        document.body.classList.add('zone-ground');
-        this.currentZone = 'ground';
-        this.spawnElements('ground');
+        this.update(0);
     }
 };

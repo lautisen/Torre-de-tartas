@@ -485,39 +485,48 @@ h3 {
 }
 
 /* ==========================================
-   ATMOSPHERIC ZONE BACKGROUNDS
+   ATMOSPHERIC ZONE BACKGROUNDS (cross-fade layers)
    ========================================== */
 body {
-    transition: background 3s ease;
+    background: #000;
+    /* fallback */
 }
 
-body.zone-ground {
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    transition: opacity 3s ease;
+}
+
+.bg-layer.zone-ground {
     background: linear-gradient(to bottom, #1a6ea8 0%, #3a9bd5 25%, #71c3e8 55%, #b8e4f5 80%, #e8f7fd 100%);
 }
 
-body.zone-lowsky {
+.bg-layer.zone-lowsky {
     background: linear-gradient(to bottom, #0e5c9e 0%, #2d8ec8 30%, #5ab3e0 65%, #a0d8f0 100%);
 }
 
-body.zone-highsky {
+.bg-layer.zone-highsky {
     background: linear-gradient(to bottom, #083070 0%, #1155a8 30%, #2e7fbf 65%, #6ab2d8 100%);
 }
 
-body.zone-stratosphere {
+.bg-layer.zone-stratosphere {
     background: linear-gradient(to bottom, #020c22 0%, #05174a 35%, #0d3580 60%, #1e5fa0 100%);
 }
 
-body.zone-space {
+.bg-layer.zone-space {
     background: linear-gradient(to bottom, #000005 0%, #04020f 35%, #0a0525 65%, #100830 100%);
 }
 
-body.zone-deepspace {
+.bg-layer.zone-deepspace {
     background: linear-gradient(to bottom, #000000 0%, #02000a 30%, #050215 60%, #0c0524 100%);
 }
 
-body.zone-galaxy {
+.bg-layer.zone-galaxy {
     background: radial-gradient(ellipse at 60% 40%, #2d0b55 0%, #120528 40%, #000000 100%);
 }
+
 
 /* ==========================================
    ZONE LABEL BANNER
