@@ -26,6 +26,49 @@
         </div>
     </div>
 
+    <!-- GUÍA DE JUEGO (primeras 2 partidas) -->
+    <div id="tutorial-overlay" class="hidden">
+        <div id="tutorial-card">
+            <div id="tutorial-steps">
+                <div class="tutorial-step active" id="tut-step-1">
+                    <div class="tut-icon">🎂</div>
+                    <h2>¡Bienvenido a<br>Torre de Tartas!</h2>
+                    <p>Apila tartas lo más alto que puedas sin que se caiga la torre.</p>
+                </div>
+                <div class="tutorial-step" id="tut-step-2">
+                    <div class="tut-icon">👆</div>
+                    <h2>¿Cómo jugar?</h2>
+                    <p><b>Toca o haz clic</b> en la pantalla para soltar la tarta cuando esté centrada sobre la pila.
+                    </p>
+                </div>
+                <div class="tutorial-step" id="tut-step-3">
+                    <div class="tut-icon">⭐</div>
+                    <h2>Apunta al centro</h2>
+                    <p>Una caída <b>perfecta</b> activa un combo y da puntos extra.<br>¡El equilibrio es clave!</p>
+                    <div class="tut-ratings">
+                        <span class="rating perfect">✦ Perfecto</span>
+                        <span class="rating good">▲ Bien</span>
+                        <span class="rating bad">✕ Evita esto</span>
+                    </div>
+                </div>
+                <div class="tutorial-step" id="tut-step-4">
+                    <div class="tut-icon">🚀</div>
+                    <h2>¡Sube hasta el espacio!</h2>
+                    <p>Cuanto más alto llegues, más lejano del suelo estarás… ¡hasta la galaxia!</p>
+                </div>
+            </div>
+            <div id="tutorial-nav">
+                <div id="tutorial-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+                <button id="tutorial-next-btn">Siguiente →</button>
+            </div>
+        </div>
+    </div>
+
     <div id="game-over-screen" class="hidden">
         <div class="modal">
             <h2>💥 ¡Torre Caída!</h2>

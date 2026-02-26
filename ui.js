@@ -14,6 +14,35 @@ const ui = {
         if (shareBtn) shareBtn.onclick = () => this.shareScoreImage();
 
         this.listenToLeaderboard();
+        this._initTutorial();
+    },
+
+    _initTutorial() {
+        const overlay = document.getElementById('tutorial-overlay');
+        const nextBtn = document.getElementById('tutorial-next-btn');
+        if (!overlay || !nextBtn) return;
+
+        const steps = overlay.querySelectorAll('.tutorial-step');
+        const dots = overlay.querySelectorAll('.dot');
+        let current = 0;
+        const total = steps.length;
+
+        this._tutorialNext = () => {
+            steps[current].classList.remove('active');
+            dots[current].classList.remove('active');
+            current++;
+            if (current < total) {
+                steps[current].classList.add('active');
+                dots[current].classList.add('active');
+                if (current === total - 1) nextBtn.textContent = '¡Jugar! 🎂';
+            } else {
+                // Last step -> close tutorial and start game
+                overlay.classList.add('hidden');
+                this._doStartGame();
+            }
+        };
+
+        nextBtn.onclick = () => this._tutorialNext();
     },
 
     startGame(e) {
@@ -23,7 +52,7 @@ const ui = {
 
         // Only require name if we haven't registered yet
         if (!this.currentUser) {
-            if (!name) return alert("¡Dime tu nombre!");
+            if (!name) return alert('¡Dime tu nombre!');
             this.currentUser = name;
             document.getElementById('user-display').innerText = name;
         }
@@ -32,6 +61,30 @@ const ui = {
 
         document.getElementById('user-screen').classList.add('hidden');
         document.getElementById('game-over-screen').classList.add('hidden');
+
+        // Check if we should show the tutorial (first 2 plays)
+        const plays = parseInt(localStorage.getItem('tdt_plays') || '0', 10);
+        if (plays < 2) {
+            localStorage.setItem('tdt_plays', plays + 1);
+            // Reset tutorial to step 0 in case it was opened before
+            const overlay = document.getElementById('tutorial-overlay');
+            const steps = overlay.querySelectorAll('.tutorial-step');
+            const dots = overlay.querySelectorAll('.dot');
+            const nextBtn = document.getElementById('tutorial-next-btn');
+            steps.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            steps[0].classList.add('active');
+            dots[0].classList.add('active');
+            if (nextBtn) nextBtn.textContent = 'Siguiente →';
+            overlay.classList.remove('hidden');
+            // _doStartGame() will be called when tutorial completes
+        } else {
+            this._doStartGame();
+        }
+    },
+
+    _doStartGame() {
+
         // El HUD principal (score y timer)
         document.getElementById('ui').classList.remove('hidden');
         document.getElementById('game-world').classList.remove('hidden');

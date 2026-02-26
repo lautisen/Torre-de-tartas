@@ -15,12 +15,8 @@
 }
 
 body {
-    background: linear-gradient(to bottom,
-            #1a6ea8 0%,
-            #3a9bd5 25%,
-            #71c3e8 55%,
-            #b8e4f5 80%,
-            #e8f7fd 100%);
+    background: transparent;
+    /* bg-layer divs handle the background */
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -487,10 +483,6 @@ h3 {
 /* ==========================================
    ATMOSPHERIC BACKGROUND — scroll continuo
    ========================================== */
-body {
-    background: #000;
-}
-
 /* Cubre exactamente el viewport. El "scroll" lo hace background-position-y,
    NO translateY, para evitar que el body negro quede al descubierto. */
 #bg-scroll {
@@ -563,6 +555,8 @@ body {
 /* ==========================================
    ZONE LABEL BANNER
    ========================================== */
+
+
 #zone-label {
     position: fixed;
     top: 80px;
@@ -879,5 +873,153 @@ body {
     to {
         transform: translate(-200px, 150px) scaleX(8);
         opacity: 0;
+    }
+}
+
+/* ==========================================
+   GUÍA DE JUEGO (TUTORIAL)
+   ========================================== */
+#tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.4s ease;
+}
+
+#tutorial-card {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 24px;
+    padding: 36px 32px 24px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.4s ease;
+}
+
+#tutorial-card h2 {
+    font-size: 1.4rem;
+    color: #3d2b1a;
+    margin: 12px 0 10px;
+}
+
+#tutorial-card p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tut-icon {
+    font-size: 3.2rem;
+    line-height: 1;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* Steps: only .active is shown */
+.tutorial-step {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tutorial-step.active {
+    display: block;
+}
+
+/* Rating badges */
+.tut-ratings {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.rating {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: bold;
+}
+
+.rating.perfect {
+    background: #fff3cd;
+    color: #856404;
+    border: 1.5px solid #ffc107;
+}
+
+.rating.good {
+    background: #d1e7dd;
+    color: #0f5132;
+    border: 1.5px solid #198754;
+}
+
+.rating.bad {
+    background: #f8d7da;
+    color: #842029;
+    border: 1.5px solid #dc3545;
+}
+
+/* Navigation */
+#tutorial-nav {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+#tutorial-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.dot.active {
+    background: #f06292;
+    transform: scale(1.3);
+}
+
+#tutorial-next-btn {
+    background: linear-gradient(135deg, #f06292, #ba68c8);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(240, 98, 146, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#tutorial-next-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(240, 98, 146, 0.55);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
