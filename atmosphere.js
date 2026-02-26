@@ -6,7 +6,6 @@
 const atmosphere = {
     currentZone: null,
     spawnTimers: [],
-    activeLayer: 'a', // tracks which bg layer is currently visible
 
     zones: [
         { name: 'ground', floor: 0, label: '🌿 Tierra', bodyClass: 'zone-ground' },
@@ -25,43 +24,33 @@ const atmosphere = {
             if (score >= zone.floor) targetZone = zone;
         }
 
+        this.updateBackground(score);
+
         if (targetZone.name !== this.currentZone) {
             this.setZone(targetZone);
         }
     },
 
+    // Smooth background scroll: maps score to translateY on #bg-scroll
+    updateBackground(score) {
+        const bg = document.getElementById('bg-scroll');
+        if (!bg) return;
+        // Max score reference: at score >= 80 we show the galaxy top.
+        // #bg-scroll is 800vh tall; viewport is 100vh.
+        // Visible window = bottom 100vh by default (translateY = 0).
+        // At max score, shift the whole div up by 700vh (reveals the top section).
+        const maxScore = 80;
+        const maxShift = window.innerHeight * 7; // 700vh in px
+        const progress = Math.min(score / maxScore, 1);
+        const shift = -(progress * maxShift);
+        bg.style.transform = `translateY(${shift}px)`;
+    },
+
     setZone(zone) {
-        const layerA = document.getElementById('bg-layer-a');
-        const layerB = document.getElementById('bg-layer-b');
-
-        // Determine which layer is currently shown, and which is hidden
-        const currentLayer = this.activeLayer === 'a' ? layerA : layerB;
-        const incomingLayer = this.activeLayer === 'a' ? layerB : layerA;
-
-        // Remove all zone classes from both layers
-        this.zones.forEach(z => {
-            layerA.classList.remove(z.bodyClass);
-            layerB.classList.remove(z.bodyClass);
-        });
-
-        // Paint the new gradient on the hidden layer and make it fully transparent
-        incomingLayer.classList.add(zone.bodyClass);
-        incomingLayer.style.opacity = '0';
-
-        // Fade the current layer out and the incoming layer in
-        requestAnimationFrame(() => {
-            currentLayer.style.opacity = '0';
-            incomingLayer.style.opacity = '1';
-        });
-
-        // Flip the active layer tracker after transition
-        this.activeLayer = this.activeLayer === 'a' ? 'b' : 'a';
         this.currentZone = zone.name;
-
         // Clear old elements and spawn new ones
         this.clearElements();
         this.spawnElements(zone.name);
-
         // Show zone label
         this.showZoneLabel(zone.label);
     },
@@ -144,12 +133,19 @@ const atmosphere = {
     // ---- Element creators ----
 
     _spawnBird() {
-        const bird = document.createElement('img');
-        bird.src = 'assets/bird.png';
+        const bird = document.createElement('div');
         bird.className = 'atm-element bird';
         bird.style.top = (Math.random() * 40 + 5) + '%';
         bird.style.animationDuration = (Math.random() * 4 + 5) + 's';
         bird.style.animationDelay = '0s';
+        bird.innerHTML = `<svg class="bird-svg" viewBox="0 0 70 35" xmlns="http://www.w3.org/2000/svg">
+            <!-- ala izquierda -->
+            <path d="M5,18 Q20,5 35,18" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- ala derecha -->
+            <path d="M35,18 Q50,5 65,18" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- cuerpo pequeño -->
+            <ellipse cx="35" cy="19" rx="4" ry="2.5" fill="#444"/>
+        </svg>`;
         document.body.appendChild(bird);
         setTimeout(() => bird.remove(), 11000);
     },
@@ -167,11 +163,19 @@ const atmosphere = {
     },
 
     _spawnPlane() {
-        const plane = document.createElement('img');
-        plane.src = 'assets/plane.png';
+        const plane = document.createElement('div');
         plane.className = 'atm-element plane';
         plane.style.top = (Math.random() * 30 + 10) + '%';
         plane.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        plane.innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="airplane-svg">
+            <path d="M20,50 Q20,45 80,45 L85,50 L80,55 Q20,55 20,50" fill="#3498db" />
+            <path d="M50,48 L40,25 L55,25 L65,48 Z" fill="#2980b9" />
+            <path d="M50,52 L40,75 L55,75 L65,52 Z" fill="#1c5980" />
+            <path d="M25,46 L15,30 L25,30 L30,46 Z" fill="#2980b9" />
+            <circle cx="70" cy="50" r="1.5" fill="white" />
+            <circle cx="63" cy="50" r="1.5" fill="white" />
+            <circle cx="56" cy="50" r="1.5" fill="white" />
+        </svg>`;
         document.body.appendChild(plane);
         setTimeout(() => plane.remove(), 12000);
     },
@@ -199,21 +203,47 @@ const atmosphere = {
     },
 
     _spawnSatellite() {
-        const sat = document.createElement('img');
-        sat.src = 'assets/satellite.png';
+        const sat = document.createElement('div');
         sat.className = 'atm-element satellite';
         sat.style.top = (Math.random() * 60 + 5) + '%';
         sat.style.animationDuration = (Math.random() * 8 + 8) + 's';
+        sat.innerHTML = `<svg class="satellite-svg" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+            <!-- cuerpo central -->
+            <rect x="38" y="18" width="24" height="14" rx="3" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1.5"/>
+            <!-- panel solar izquierdo -->
+            <rect x="4" y="20" width="30" height="10" rx="2" fill="#2980b9" stroke="#1a5276" stroke-width="1"/>
+            <!-- panel solar derecho -->
+            <rect x="66" y="20" width="30" height="10" rx="2" fill="#2980b9" stroke="#1a5276" stroke-width="1"/>
+            <!-- brazo izquierdo -->
+            <line x1="34" y1="25" x2="38" y2="25" stroke="#7f8c8d" stroke-width="2"/>
+            <!-- brazo derecho -->
+            <line x1="62" y1="25" x2="66" y2="25" stroke="#7f8c8d" stroke-width="2"/>
+            <!-- antena -->
+            <line x1="50" y1="18" x2="50" y2="10" stroke="#95a5a6" stroke-width="1.5"/>
+            <circle cx="50" cy="9" r="2" fill="#ecf0f1"/>
+            <!-- detalle ventana -->
+            <circle cx="50" cy="25" r="4" fill="#3498db" stroke="#1a5276" stroke-width="1"/>
+        </svg>`;
         document.body.appendChild(sat);
         setTimeout(() => sat.remove(), 18000);
     },
 
     _spawnAsteroid() {
-        const asteroid = document.createElement('img');
-        asteroid.src = 'assets/asteroid.png';
+        const asteroid = document.createElement('div');
         asteroid.className = 'atm-element asteroid';
         asteroid.style.top = (Math.random() * 70 + 5) + '%';
         asteroid.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        asteroid.innerHTML = `<svg class="asteroid-svg" viewBox="0 0 55 48" xmlns="http://www.w3.org/2000/svg">
+            <!-- cuerpo irregular tipo roca -->
+            <polygon points="27,2 45,8 53,22 48,38 34,46 16,44 4,32 6,14 18,4"
+                fill="#7f6952" stroke="#5a4a39" stroke-width="1.5"/>
+            <!-- cráteres -->
+            <circle cx="22" cy="18" r="5" fill="#6b5846" stroke="#5a4a39" stroke-width="1"/>
+            <circle cx="36" cy="30" r="4" fill="#6b5846" stroke="#5a4a39" stroke-width="1"/>
+            <circle cx="18" cy="33" r="3" fill="#6b5846" stroke="#5a4a39" stroke-width="1"/>
+            <!-- brillo sutil -->
+            <ellipse cx="18" cy="14" rx="5" ry="3" fill="rgba(255,255,255,0.12)" transform="rotate(-20 18 14)"/>
+        </svg>`;
         document.body.appendChild(asteroid);
         setTimeout(() => asteroid.remove(), 9000);
     },
@@ -244,28 +274,14 @@ const atmosphere = {
     },
 
     reset() {
-        const layerA = document.getElementById('bg-layer-a');
-        const layerB = document.getElementById('bg-layer-b');
-
-        // Remove all zone classes from both layers
-        this.zones.forEach(z => {
-            layerA.classList.remove(z.bodyClass);
-            layerB.classList.remove(z.bodyClass);
-        });
-
-        // Snap layer A to ground instantly (no transition)
-        layerA.style.transition = 'none';
-        layerB.style.transition = 'none';
-        layerA.classList.add('zone-ground');
-        layerA.style.opacity = '1';
-        layerB.style.opacity = '0';
-        this.activeLayer = 'a';
-
-        // Re-enable transitions after the snap
-        setTimeout(() => {
-            layerA.style.transition = '';
-            layerB.style.transition = '';
-        }, 50);
+        const bg = document.getElementById('bg-scroll');
+        if (bg) {
+            // Instant snap back to ground (no transition)
+            bg.style.transition = 'none';
+            bg.style.transform = 'translateY(0)';
+            // Re-enable smooth transition after snap
+            setTimeout(() => { bg.style.transition = ''; }, 50);
+        }
 
         this.clearElements();
         this.currentZone = null;

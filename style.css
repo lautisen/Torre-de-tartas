@@ -485,46 +485,61 @@ h3 {
 }
 
 /* ==========================================
-   ATMOSPHERIC ZONE BACKGROUNDS (cross-fade layers)
+   ATMOSPHERIC BACKGROUND — scroll continuo
    ========================================== */
 body {
     background: #000;
-    /* fallback */
 }
 
-.bg-layer {
+/* Div alto que contiene el gradiente de todas las zonas.
+   Se desplaza hacia arriba (translateY negativo) al subir el score.
+   Zona tierra = parte baja del gradiente; Galaxia = parte alta. */
+#bg-scroll {
     position: fixed;
     inset: 0;
+    width: 100%;
+    /* 800vh = zona suficiente para cubrir todo el viaje */
+    height: 800vh;
+    /* Empieza anclado en la parte baja (tierra visible) */
+    bottom: 0;
+    top: auto;
     z-index: -1;
-    transition: opacity 3s ease;
-}
-
-.bg-layer.zone-ground {
-    background: linear-gradient(to bottom, #1a6ea8 0%, #3a9bd5 25%, #71c3e8 55%, #b8e4f5 80%, #e8f7fd 100%);
-}
-
-.bg-layer.zone-lowsky {
-    background: linear-gradient(to bottom, #0e5c9e 0%, #2d8ec8 30%, #5ab3e0 65%, #a0d8f0 100%);
-}
-
-.bg-layer.zone-highsky {
-    background: linear-gradient(to bottom, #083070 0%, #1155a8 30%, #2e7fbf 65%, #6ab2d8 100%);
-}
-
-.bg-layer.zone-stratosphere {
-    background: linear-gradient(to bottom, #020c22 0%, #05174a 35%, #0d3580 60%, #1e5fa0 100%);
-}
-
-.bg-layer.zone-space {
-    background: linear-gradient(to bottom, #000005 0%, #04020f 35%, #0a0525 65%, #100830 100%);
-}
-
-.bg-layer.zone-deepspace {
-    background: linear-gradient(to bottom, #000000 0%, #02000a 30%, #050215 60%, #0c0524 100%);
-}
-
-.bg-layer.zone-galaxy {
-    background: radial-gradient(ellipse at 60% 40%, #2d0b55 0%, #120528 40%, #000000 100%);
+    /* De arriba (galaxia) a abajo (tierra) */
+    background: linear-gradient(to bottom,
+            /* ---- Galaxia ---- */
+            #0a0020 0%,
+            #1a0540 3%,
+            #2d0b55 6%,
+            /* ---- Espacio profundo ---- */
+            #050215 10%,
+            #0c0524 14%,
+            /* ---- Espacio ---- */
+            #000005 18%,
+            #04020f 22%,
+            #0a0525 26%,
+            #100830 30%,
+            /* ---- Estratosfera ---- */
+            #020c22 34%,
+            #05174a 39%,
+            #0d3580 44%,
+            #1e5fa0 48%,
+            /* ---- Cielo alto ---- */
+            #083070 51%,
+            #1155a8 57%,
+            #2e7fbf 63%,
+            #6ab2d8 68%,
+            /* ---- Cielo bajo ---- */
+            #0e5c9e 72%,
+            #2d8ec8 78%,
+            #5ab3e0 83%,
+            #a0d8f0 88%,
+            /* ---- Tierra ---- */
+            #1a6ea8 91%,
+            #3a9bd5 94%,
+            #71c3e8 96%,
+            #b8e4f5 98%,
+            #e8f7fd 100%);
+    transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 
@@ -567,9 +582,25 @@ body {
 /* ---- BIRDS ---- */
 .bird {
     left: 110%;
-    width: 80px;
-    height: auto;
+    width: 70px;
+    height: 35px;
     animation: flyAcross linear forwards;
+}
+
+.bird-svg {
+    width: 100%;
+    height: 100%;
+    animation: birdFlap 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes birdFlap {
+    from {
+        transform: scaleY(1);
+    }
+
+    to {
+        transform: scaleY(0.6);
+    }
 }
 
 /* ---- CLOUDS (dynamic) ---- */
@@ -606,9 +637,30 @@ body {
 /* ---- PLANES ---- */
 .plane {
     left: 110%;
-    width: 160px;
+    width: 150px;
     height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     animation: flyAcross linear forwards;
+}
+
+.airplane-svg {
+    width: 100%;
+    height: auto;
+    animation: planeBob 3s ease-in-out infinite;
+}
+
+@keyframes planeBob {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
 }
 
 /* ---- MOON ---- */
@@ -632,17 +684,38 @@ body {
 /* ---- SATELLITE ---- */
 .satellite {
     left: 110%;
-    width: 90px;
-    height: auto;
+    width: 100px;
+    height: 50px;
     animation: flyAcross linear forwards;
+}
+
+.satellite-svg {
+    width: 100%;
+    height: 100%;
 }
 
 /* ---- ASTEROID ---- */
 .asteroid {
     left: 110%;
-    width: 80px;
-    height: auto;
+    width: 55px;
+    height: 48px;
     animation: diagonal linear forwards;
+}
+
+.asteroid-svg {
+    width: 100%;
+    height: 100%;
+    animation: asteroidSpin 4s linear infinite;
+}
+
+@keyframes asteroidSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ---- PLANETS ---- */

@@ -78,3 +78,5 @@ You're about to initialize a Firebase project in this directory:
 [debug] [2026-02-25T23:32:53.044Z] <<< [apiv2][status] GET https://monitoring.googleapis.com/v3/projects/torre-de-tartas/timeSeries/ 200
 [debug] [2026-02-25T23:32:53.044Z] <<< [apiv2][body] GET https://monitoring.googleapis.com/v3/projects/torre-de-tartas/timeSeries/ {"unit":"1"}
 [warn] ⚠  dataconnect: Cannot detect an existing app in the current directory. 
+[debug] [2026-02-26T00:45:18.953Z] Error: read EIO
+    at TTY.onStreamRead (node:internal/stream_base_commons:216:20)
