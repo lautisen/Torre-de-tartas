@@ -152,5 +152,69 @@ const gameAudio = {
         }
 
         this.currentStep++;
+    },
+
+    // ==========================================
+    //   AMBIENT SOUND EFFECTS (GENERATIVE)
+    // ==========================================
+
+    // Pájaro: Píos muy agudos y cortos
+    playBird() {
+        if (!this.ctx || !ui.gameActive) return;
+        const freqs = [3500, 4200, 3800];
+        freqs.forEach((f, i) => {
+            setTimeout(() => this.play(f, 'sine', 0.05, 0.02), i * 100);
+        });
+    },
+
+    // Avión: Motor zumbando muy grave y continuo
+    playPlane() {
+        if (!this.ctx || !ui.gameActive) return;
+        this.play(60, 'sawtooth', 3.0, 0.08);
+        this.play(65, 'square', 3.0, 0.04);
+    },
+
+    // Nube/Tormenta: Trueno sordo o viento grave
+    playThunder() {
+        if (!this.ctx || !ui.gameActive) return;
+        this.play(30, 'sawtooth', 2.0, 0.15);
+        setTimeout(() => this.play(35, 'square', 1.5, 0.1), 300);
+        setTimeout(() => this.play(25, 'sawtooth', 2.0, 0.15), 500);
+    },
+
+    // Satélite: Bips telemétricos morse
+    playSatellite() {
+        if (!this.ctx || !ui.gameActive) return;
+        const pattern = [0, 150, 300, 800, 950, 1100];
+        pattern.forEach((t) => {
+            setTimeout(() => this.play(2500, 'square', 0.06, 0.02), t);
+        });
+    },
+
+    // Meteorito/Asteroide: Roce rocoso grave
+    playAsteroid() {
+        if (!this.ctx || !ui.gameActive) return;
+        this.play(40, 'sawtooth', 1.5, 0.2);
+        this.play(32, 'square', 2.0, 0.15);
+    },
+
+    // Estrella Fugaz: Frecuencia de barrido sci-fi 
+    playShootingStar() {
+        if (!this.ctx || !ui.gameActive) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(3000, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.8); // Fiuuum!
+
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.8);
     }
 };

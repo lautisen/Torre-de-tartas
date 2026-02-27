@@ -144,6 +144,8 @@ const atmosphere = {
     // ---- Element creators ----
 
     _spawnBird() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playBird();
+
         const bird = document.createElement('div');
         bird.className = 'atm-element bird';
         bird.style.top = (Math.random() * 40 + 5) + '%';
@@ -162,6 +164,8 @@ const atmosphere = {
     },
 
     _spawnCloud() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playThunder();
+
         const cloud = document.createElement('div');
         cloud.className = 'atm-element cloud-atm';
         const size = Math.random() * 80 + 80;
@@ -174,6 +178,8 @@ const atmosphere = {
     },
 
     _spawnPlane() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playPlane();
+
         const plane = document.createElement('div');
         plane.className = 'atm-element plane';
         plane.style.top = (Math.random() * 30 + 10) + '%';
@@ -214,6 +220,8 @@ const atmosphere = {
     },
 
     _spawnSatellite() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playSatellite();
+
         const sat = document.createElement('div');
         sat.className = 'atm-element satellite';
         sat.style.top = (Math.random() * 60 + 5) + '%';
@@ -240,6 +248,8 @@ const atmosphere = {
     },
 
     _spawnAsteroid() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playAsteroid();
+
         const asteroid = document.createElement('div');
         asteroid.className = 'atm-element asteroid';
         asteroid.style.top = (Math.random() * 70 + 5) + '%';
@@ -274,6 +284,8 @@ const atmosphere = {
     },
 
     _spawnShootingStar() {
+        if (typeof gameAudio !== 'undefined') gameAudio.playShootingStar();
+
         const star = document.createElement('div');
         star.className = 'atm-element shooting-star';
         star.style.top = (Math.random() * 50 + 5) + '%';
