@@ -147,34 +147,33 @@ const ui = {
 
         const btn = document.getElementById('share-btn');
         const originalText = btn.innerHTML;
-        btn.innerHTML = '⏳ Copiando...';
+        btn.innerHTML = '⏳ Compartiendo...';
         btn.disabled = true;
 
         const score = ui.score; // Asumiendo que el score final está aquí
         const pisos = ui.floors;
         const text = `🏗️🎂 Torre de tartas:\n${pisos} Pisos\n${score} Puntos del día\n\n¡Intenta superarme! 👉 https://lautisen.github.io/Torre-de-tartas/`;
 
-        try {
-            // Intentar copiar al portapapeles primero
-            if (navigator.clipboard && window.isSecureContext) {
-                await navigator.clipboard.writeText(text);
-                btn.innerHTML = '¡Copiado! ✅';
-            } else {
-                throw new Error("Clipboard API not available");
+        if (navigator.share) {
+            try {
+                await navigator.share({ text: text });
+                btn.innerHTML = '¡Compartido! ✅';
+            } catch (shareErr) {
+                console.log('Error o cancelado', shareErr);
+                btn.innerHTML = originalText;
             }
-        } catch (err) {
-            console.error('Error al copiar: ', err);
-            // Fallback para móviles que soporten Web Share API
-            if (navigator.share) {
-                try {
-                    await navigator.share({ text: text });
-                    btn.innerHTML = '¡Compartido! ✅';
-                } catch (shareErr) {
-                    console.log('Cancelado o error', shareErr);
+        } else {
+            // Fallback: Copy to clipboard if Web Share API is not supported (e.g. some desktop browsers)
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    btn.innerHTML = '¡Copiado al portapapeles! 📋';
+                } else {
+                    alert('Tu dispositivo no soporta compartir automáticamente.\n\nCopia y pega esto:\n' + text);
                     btn.innerHTML = originalText;
                 }
-            } else {
-                alert('No se pudo copiar. Tu texto es:\n' + text);
+            } catch (err) {
+                console.error('Error al copiar: ', err);
                 btn.innerHTML = originalText;
             }
         }

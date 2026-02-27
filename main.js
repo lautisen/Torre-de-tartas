@@ -95,7 +95,10 @@ const gameMain = {
 
         let pY = rect.top;
         const baseBottomOff = 20; // from CSS bottom: 20px
-        const targetY = (window.innerHeight - baseBottomOff - this.floorH) - (ui.floors * this.floorH) + this.cameraY;
+        const baseHeight = this.floorH * 1.1; // from CSS height: calc(var(--cake-h) * 1.1)
+        // targetY is the TOP coordinate where the block should stop. 
+        // Bottom of screen -> Up to base -> Up to all stacked floors -> Up to top of current block
+        const targetY = (window.innerHeight - baseBottomOff - baseHeight - (ui.floors * this.floorH) - this.floorH) + this.cameraY;
         const fallSpeed = Math.max(8, window.innerHeight * 0.015);
 
         const fall = () => {
