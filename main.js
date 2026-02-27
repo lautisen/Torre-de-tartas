@@ -191,19 +191,20 @@ const gameMain = {
             ui.floors++;
             const multiplier = 1 + this.comboCount;
 
-            // --- NUEVO SISTEMA DE PUNTUACIÓN ---
+            // --- NUEVO SISTEMA DE PUNTUACIÓN (Acumulativo) ---
             // Accuracy de este bloque: 1 (perfecto) o bajando hasta 0 (apenas rozando)
             let dropAccuracy = Math.max(0, 1 - (absRelative / overlapThreshold));
-            this.totalAccuracy += dropAccuracy;
 
-            // Promedio de precisión actual de la torre (0.0 a 1.0)
-            let currentAccuracy = this.totalAccuracy / ui.floors;
+            // Calculamos el tiempo que has tardado en colocar ESTA tarta en específico
+            const now = Date.now();
+            if (!this.lastDropTime) this.lastDropTime = ui.startTime;
+            const timeForThisBlock = (now - this.lastDropTime) / 1000;
+            this.lastDropTime = now;
 
-            // Segundos jugados
-            const timeElapsed = Math.floor((Date.now() - ui.startTime) / 1000);
-
-            // Fórmula pedida: Score = (Floors * 100) * (100 / (Time + 1)) * Accuracy
-            ui.score = Math.floor((ui.floors * 100) * (100 / (timeElapsed + 1)) * currentAccuracy);
+            // Fórmula pedida aplicada de forma incremental: SUMAMOS puntos en vez de reescribirlos
+            // Points = (Base 100 * Nivel) * (100 / (Tiempo + 1)) * Precision * Combo
+            const puntosTarta = Math.floor((ui.floors * 100) * (100 / (timeForThisBlock + 1)) * dropAccuracy * multiplier);
+            ui.score += puntosTarta;
             // ------------------------------------
 
             const scoreEl = document.getElementById('score');
