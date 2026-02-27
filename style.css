@@ -55,14 +55,20 @@ html {
 }
 
 .modal {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
     padding: 35px 30px;
-    border-radius: 32px;
+    border-radius: 40px;
+    /* Esquinas más sutiles y armónicas */
     text-align: center;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), inset 0 2px 0 rgba(255, 255, 255, 1);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    /* Sombras suaves capa sobre capa (Neumorfismo/Glass) */
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05),
+        inset 0 2px 4px rgba(255, 255, 255, 0.8),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.02);
     width: 85%;
     max-width: 400px;
     max-height: 85dvh;
@@ -111,14 +117,17 @@ html {
 }
 
 #score-box {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: inline-block;
-    padding: 10px 30px;
-    border-radius: 50px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    padding: 14px 30px;
+    border-radius: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.06),
+        inset 0 3px 6px rgba(255, 255, 255, 0.9),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.03);
 }
 
 #score-box h1 {
@@ -518,28 +527,44 @@ input[type="text"]:focus {
 }
 
 button {
-    background: linear-gradient(135deg, #f06292, #d81b60);
+    background: linear-gradient(135deg, #ff7ba8, #e91e63);
     color: white;
     border: none;
-    padding: 16px 36px;
-    border-radius: 50px;
+    padding: 18px 36px;
+    border-radius: 24px;
+    /* Esquinas redondeadas suaves tipo rectángulo-píldora */
     font-size: 1.15rem;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.15s ease;
+    /* Efecto neumórfico 'plástico blando' */
+    box-shadow:
+        0 6px 16px rgba(233, 30, 99, 0.25),
+        inset 0 4px 8px rgba(255, 255, 255, 0.35),
+        inset 0 -4px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     width: 100%;
     margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 button:active {
     transform: translateY(2px) scale(0.97);
-    box-shadow: 0 2px 10px rgba(216, 27, 96, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    /* Inversión sutil de resalte simulando botón apretado */
+    box-shadow:
+        0 2px 8px rgba(233, 30, 99, 0.15),
+        inset 0 4px 10px rgba(0, 0, 0, 0.15),
+        inset 0 -2px 4px rgba(255, 255, 255, 0.1);
 }
 
 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px rgba(216, 27, 96, 0.45), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow:
+        0 12px 24px rgba(233, 30, 99, 0.3),
+        inset 0 4px 6px rgba(255, 255, 255, 0.35),
+        inset 0 -4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Secondary Button (Share) Modifier is handled via inline styles for now, but shares base */

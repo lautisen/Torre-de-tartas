@@ -131,13 +131,34 @@ const ui = {
         const finalCalculatedScore = ui.score; // Usar el score real del jugador con combos
         const timeStr = document.getElementById('timer').innerText;
 
-        // Actualizar UI de Game Over
-        document.getElementById('final-score').innerText = `${finalPisos} pisos (${finalCalculatedScore} pts)`;
+        // Actualizar UI de Game Over mostrando el diálogo
+        document.getElementById('final-floors').innerText = `${finalPisos} Pisos (⏱️ ${timeStr})`;
         document.getElementById('game-over-screen').classList.remove('hidden');
 
-        // Preparar plantilla de compartir
-        document.getElementById('res-pts').innerText = finalCalculatedScore;
-        document.getElementById('res-time').innerText = timeStr;
+        // Animación de conteo del puntaje final
+        const scoreEl = document.getElementById('final-score');
+        scoreEl.innerText = "0";
+        const duration = 1200; // 1.2 segundos
+        const startAnimTime = Date.now();
+
+        const countUp = () => {
+            const now = Date.now();
+            const progress = Math.min((now - startAnimTime) / duration, 1);
+            // Ease-out expo curve for a dramatic slowdown at the end
+            const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            const currentVal = Math.floor(easeOut * finalCalculatedScore);
+            scoreEl.innerText = currentVal.toLocaleString();
+
+            if (progress < 1) requestAnimationFrame(countUp);
+            else scoreEl.innerText = finalCalculatedScore.toLocaleString();
+        };
+        requestAnimationFrame(countUp);
+
+        // Preparar variables de compatir ocultas en el DOM (si hicieran falta para fallback)
+        const resPts = document.getElementById('res-pts');
+        const resTime = document.getElementById('res-time');
+        if (resPts) resPts.innerText = finalCalculatedScore;
+        if (resTime) resTime.innerText = timeStr;
 
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
     },

@@ -72,16 +72,24 @@
 
     <div id="game-over-screen" class="hidden">
         <div class="modal">
-            <h2>💥 ¡Torre Caída!</h2>
-            <p>Resultado:</p>
-            <h3 id="final-score" style="color: #d81b60; font-size: 1.6em; margin: 10px 0;">0</h3>
+            <h2 style="margin-bottom:0;">💥 ¡Torre Caída!</h2>
+            <div style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 20px; margin: 15px 0;">
+                <p
+                    style="margin: 0; font-size: 0.9em; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                    Puntuación Final</p>
+                <h3 id="final-score"
+                    style="color: #d81b60; font-size: 3em; font-weight: 900; margin: 5px 0 0; line-height: 1; text-shadow: 0 4px 10px rgba(216,27,96,0.2);">
+                    0</h3>
+                <p id="final-floors" style="margin: 10px 0 0; color: #555; font-size: 1.1em; font-weight: 600;">0 Pisos
+                </p>
+            </div>
 
-            <button onclick="ui.startGame()">Reintentar</button>
+            <button onclick="ui.startGame()">🔄 Reintentar</button>
             <button id="share-btn" class="glow-pulse"
                 style="background: linear-gradient(135deg, #4ade80, #22c55e); margin-top: 10px;">📸 Compartir
                 Logro</button>
             <button onclick="ui.showRankings()"
-                style="background: transparent; border: 2px solid #ddd; color: #888; margin-top: 10px; font-weight: bold;">🏆
+                style="background: transparent; border: 2px solid rgba(0,0,0,0.1); color: #888; margin-top: 10px; box-shadow: none;">🏆
                 Ver Ranking</button>
         </div>
     </div>
