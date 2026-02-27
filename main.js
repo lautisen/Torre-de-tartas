@@ -201,9 +201,15 @@ const gameMain = {
             const timeForThisBlock = (now - this.lastDropTime) / 1000;
             this.lastDropTime = now;
 
-            // Fórmula pedida aplicada de forma incremental: SUMAMOS puntos en vez de reescribirlos
-            // Points = (Base 100 * Nivel) * (100 / (Tiempo + 1)) * Precision * Combo
-            const puntosTarta = Math.floor((ui.floors * 100) * (100 / (timeForThisBlock + 1)) * dropAccuracy * multiplier);
+            // Fórmula ajustada y balanceada para evitar que escale a millones:
+            // 1. Puntos base más lógicos (25 por piso en vez de 100)
+            // 2. Bono de velocidad mitigado
+            // 3. Multiplicador de combo con límite máximo de x10 para que no reviente la matemática
+            const basePoints = 25 + (ui.floors * 5);
+            const speedBonus = 10 / (timeForThisBlock + 2);
+            const comboMultiplier = 1 + Math.min(this.comboCount, 10);
+
+            const puntosTarta = Math.floor(basePoints * speedBonus * dropAccuracy * comboMultiplier);
             ui.score += puntosTarta;
             // ------------------------------------
 
