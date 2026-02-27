@@ -125,12 +125,14 @@ const atmosphere = {
         const el = document.createElement('div');
         el.id = 'zone-label';
         el.innerText = text;
-        document.body.appendChild(el);
-        setTimeout(() => el.classList.add('show'), 50);
-        setTimeout(() => {
-            el.classList.remove('show');
-            setTimeout(() => el.remove(), 600);
-        }, 2500);
+
+        // Append BEFORE #game-world so it's clearly underneath
+        const uiLayer = document.getElementById('ui');
+        document.body.insertBefore(el, uiLayer);
+
+        // Trigger reflow and show
+        void el.offsetWidth;
+        el.classList.add('show');
     },
 
     // ---- Element creators ----

@@ -816,26 +816,28 @@ button:hover {
 
 #zone-label {
     position: fixed;
-    top: 80px;
+    top: 45%;
     left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: rgba(0, 0, 0, 0.55);
+    width: 100vw;
+    text-align: center;
+    transform: translate(-50%, -40%) scale(0.95);
     color: white;
-    padding: 8px 24px;
-    border-radius: 30px;
-    font-size: 1rem;
-    font-weight: bold;
-    z-index: 1500;
+    font-size: min(15vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    z-index: 100;
+    /* Behind crane/tower but above deep sky */
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: opacity 2s ease-out, transform 3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    mix-blend-mode: overlay;
+    /* Blends into gradients beautifully */
 }
 
 #zone-label.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    opacity: 0.25;
+    transform: translate(-50%, -50%) scale(1);
 }
 
 /* ==========================================
@@ -1383,18 +1385,8 @@ button:hover {
 /* ==========================================
    ZONE LABEL — MOBILE FRIENDLY
    ========================================== */
-#zone-label {
-    top: 70px;
-    padding: 6px 18px;
-    font-size: 0.9rem;
-}
-
+/* En móvil, ajustamos elementos flotantes */
 @media (max-width: 480px) {
-    #zone-label {
-        top: 60px;
-        font-size: 0.8rem;
-        padding: 5px 14px;
-    }
 
     /* Ensure atm-element sprites don't overflow on narrow screens */
     .bird {
