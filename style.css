@@ -204,7 +204,7 @@ html {
 
 #base {
     width: 100%;
-    height: 44px;
+    height: calc(var(--cake-h) * 1.1);
     background: linear-gradient(to bottom, #a1887f, #6d4c41);
     border: 3px solid #4e342e;
     border-radius: 10px 10px 4px 4px;

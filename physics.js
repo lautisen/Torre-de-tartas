@@ -3,10 +3,11 @@ const physics = {
         const screenCenter = window.innerWidth / 2;
         const cakeCenterGlobal = x + (width / 2);
 
-        // Cada piso (incluyendo la base) tiene altura 40. 
-        // El pastel que estamos colocando (score) se apila sobre la base + los pasteles anteriores.
-        // Altura = (pasteles anteriores + base) * 40
-        const towerHeight = (score + 1) * 40;
+        // Cada piso (incluyendo la base) tiene altura proporcional
+        const floorH = (typeof gameMain !== 'undefined' && gameMain.floorH) ? gameMain.floorH : 40;
+
+        // Altura a la que debemos medir el centro asumiendo inclinación
+        const towerHeight = (score + 1) * floorH;
         const tiltRadians = balance * (Math.PI / 180);
         const horizontalShift = towerHeight * Math.sin(tiltRadians);
 

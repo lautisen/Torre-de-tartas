@@ -2,9 +2,19 @@ const gameMain = {
     speed: 0.02, angle: 0, width: 160, cameraY: 0, balance: 0, comboCount: 0, isInitialized: false,
 
     start() {
-        this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0;
+        // Dimensiones dinámicas y responsivas según resolución
+        this.floorH = Math.max(30, Math.floor(window.innerHeight * 0.055));
+        this.baseW = Math.max(120, window.innerWidth * 0.5);
+        this.startW = this.baseW * 0.8;
+        this.minW = window.innerWidth * 0.15;
+
+        document.documentElement.style.setProperty('--cake-h', this.floorH + 'px');
+        document.getElementById('base-container').style.width = this.baseW + 'px';
+        document.getElementById('crane').style.height = Math.floor(window.innerHeight * 0.28) + 'px';
+
+        this.width = this.startW; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0;
         this.lastOffset = 0;
-        this.lastWidth = 200; // Ancho de la base
+        this.lastWidth = this.baseW; // Ancho de la base
         this.totalAccuracy = 0; // Para la fórmula de precisión general
         document.getElementById('tower').innerHTML = "";
 
@@ -53,7 +63,7 @@ const gameMain = {
 
     spawnCake() {
         const container = document.getElementById('active-cake-container');
-        this.width = Math.max(60, this.width * 0.98);
+        this.width = Math.max(this.minW, this.width * 0.98); // Reducción ligera
         container.style.width = this.width + "px";
         container.innerHTML = `<div class="cake f-${Math.floor(Math.random() * 5) + 1}" style="width:100%"></div>`;
     },
@@ -84,10 +94,12 @@ const gameMain = {
         document.body.appendChild(falling);
 
         let pY = rect.top;
-        const targetY = (window.innerHeight - 80) - (ui.floors * 40) + this.cameraY;
+        const baseBottomOff = 20; // from CSS bottom: 20px
+        const targetY = (window.innerHeight - baseBottomOff - this.floorH) - (ui.floors * this.floorH) + this.cameraY;
+        const fallSpeed = Math.max(8, window.innerHeight * 0.015);
 
         const fall = () => {
-            pY += 10;
+            pY += fallSpeed;
             falling.style.top = pY + 'px';
             if (pY < targetY) requestAnimationFrame(fall);
             else this.land(falling, rect.left, fClass, color);
@@ -102,7 +114,8 @@ const gameMain = {
             // Posición base (centro del bloque)
             spark.style.left = x + 'px';
             // Arriba del último bloque apilado
-            spark.style.top = (window.innerHeight - 80) - (ui.score * 40) + this.cameraY + 'px';
+            const baseBottomOff = 20;
+            spark.style.top = (window.innerHeight - baseBottomOff - this.floorH) - (ui.floors * this.floorH) + this.cameraY + 'px';
             // Trayectoria aleatoria de explosión hacia arriba y los lados
             spark.style.setProperty('--dx', (Math.random() * 100 - 50) + 'px');
             spark.style.setProperty('--dy', (Math.random() * -60 - 20) + 'px');
@@ -226,7 +239,7 @@ const gameMain = {
             }
             if (ui.floors > 4) {
                 const cameraSystem = document.getElementById('camera-system');
-                this.cameraY = (ui.floors - 4) * 40;
+                this.cameraY = (ui.floors - 4) * this.floorH;
                 cameraSystem.style.transform = `translateY(${this.cameraY}px)`;
             }
             this.speed += 0.001;
