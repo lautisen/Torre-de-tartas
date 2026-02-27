@@ -14,8 +14,27 @@ const ui = {
         const shareBtn = document.getElementById('share-btn');
         if (shareBtn) shareBtn.onclick = () => this.shareScoreImage();
 
+        this.updateMotivationalText();
         this.listenToLeaderboard();
         this._initTutorial();
+    },
+
+    updateMotivationalText() {
+        const phrases = [
+            "Eres mejor que tus colegas, demuéstraselo 😎",
+            "La física no miente, pero tu pulso sí 🏗️",
+            "Nadie en tu grupo de amigos de WhatsApp llega a la Galaxia 🌌",
+            "Concéntrate. Respira. Y no la cagues en el piso 4 🍰",
+            "Menos deslizar en TikTok y más calcular la caída ⏱️",
+            "Esa tarta no se va a apilar sola. ¡A trabajar! 🔥",
+            "Hoy es un buen día para romper un récord mundial 🏆",
+            "Dicen que pasarlo a la primera es un mito... ¿O no? 🤔",
+            "Si llegas a las Nubes, te ganas mi respeto absoluto ☁️",
+            "¿Otra partidita? Venga, que esta es la buena 🚀"
+        ];
+        const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+        const textEl = document.getElementById('motivational-text');
+        if (textEl) textEl.innerText = randomPhrase;
     },
 
     _initTutorial() {
@@ -175,6 +194,9 @@ const ui = {
             const nameInput = document.getElementById('username');
             if (nameInput) nameInput.value = this.currentUser;
         }
+
+        // Rotar la frase cuando vuelven desde game-over
+        this.updateMotivationalText();
     },
 
     async shareScoreImage() {
