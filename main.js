@@ -5,6 +5,7 @@ const gameMain = {
         this.width = 160; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0;
         this.lastOffset = 0;
         this.lastWidth = 200; // Ancho de la base
+        this.totalAccuracy = 0; // Para la fórmula de precisión general
         document.getElementById('tower').innerHTML = "";
 
         const baseContainer = document.getElementById('base-container');
@@ -173,8 +174,21 @@ const gameMain = {
 
             ui.floors++;
             const multiplier = 1 + this.comboCount;
-            // Base score per block is 10, times combo multiplier
-            ui.score += (10 * multiplier);
+
+            // --- NUEVO SISTEMA DE PUNTUACIÓN ---
+            // Accuracy de este bloque: 1 (perfecto) o bajando hasta 0 (apenas rozando)
+            let dropAccuracy = Math.max(0, 1 - (absRelative / overlapThreshold));
+            this.totalAccuracy += dropAccuracy;
+
+            // Promedio de precisión actual de la torre (0.0 a 1.0)
+            let currentAccuracy = this.totalAccuracy / ui.floors;
+
+            // Segundos jugados
+            const timeElapsed = Math.floor((Date.now() - ui.startTime) / 1000);
+
+            // Fórmula pedida: Score = (Floors * 100) * (100 / (Time + 1)) * Accuracy
+            ui.score = Math.floor((ui.floors * 100) * (100 / (timeElapsed + 1)) * currentAccuracy);
+            // ------------------------------------
 
             const scoreEl = document.getElementById('score');
             const floorsEl = document.getElementById('floors-display');

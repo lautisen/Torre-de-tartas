@@ -147,47 +147,42 @@ const ui = {
 
         const btn = document.getElementById('share-btn');
         const originalText = btn.innerHTML;
-        btn.innerHTML = '⏳ Generando...';
+        btn.innerHTML = '⏳ Copiando...';
         btn.disabled = true;
 
-        const template = document.getElementById('share-template');
+        const score = ui.score; // Asumiendo que el score final está aquí
+        const pisos = ui.floors;
+        const text = `🏗️🎂 Torre de tartas:\n${pisos} Pisos\n${score} Puntos del día\n\n¡Intenta superarme! 👉 https://lautisen.github.io/Torre-de-tartas/`;
 
         try {
-            const canvas = await html2canvas(template, {
-                backgroundColor: null,
-                scale: 2 // High res
-            });
-
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], `record_${this.currentUser}.png`, { type: 'image/png' });
-
-                // Intenta usar la API de compartir nativa (móviles: Instagram, WhatsApp, etc.)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            title: '¡Mi Récord en Torre de Tartas!',
-                            text: `¡He apilado ${document.getElementById('score').innerText} pisos! ¿Puedes superarme? 🎂🚀`,
-                            files: [file]
-                        });
-                    } catch (error) {
-                        console.log('Error compartiendo, o el usuario canceló:', error);
-                    }
-                } else {
-                    // Fallback directo a WhatsApp si el navegador no soporta compartir imágenes nativamente
-                    const score = document.getElementById('score').innerText;
-                    const text = encodeURIComponent(`¡He apilado ${score} pisos en Torre de Tartas! 🎂🚀\n¡Intenta superarme jugando aquí!\n👉 https://lautisen.github.io/Torre-de-tartas/`);
-                    window.open(`https://wa.me/?text=${text}`, '_blank');
-                }
-
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 'image/png');
-
+            // Intentar copiar al portapapeles primero
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                btn.innerHTML = '¡Copiado! ✅';
+            } else {
+                throw new Error("Clipboard API not available");
+            }
         } catch (err) {
-            console.error(err);
+            console.error('Error al copiar: ', err);
+            // Fallback para móviles que soporten Web Share API
+            if (navigator.share) {
+                try {
+                    await navigator.share({ text: text });
+                    btn.innerHTML = '¡Compartido! ✅';
+                } catch (shareErr) {
+                    console.log('Cancelado o error', shareErr);
+                    btn.innerHTML = originalText;
+                }
+            } else {
+                alert('No se pudo copiar. Tu texto es:\n' + text);
+                btn.innerHTML = originalText;
+            }
+        }
+
+        setTimeout(() => {
             btn.innerHTML = originalText;
             btn.disabled = false;
-        }
+        }, 2000);
     },
 
     saveScore(pisos, tiempo, totalScore) {
