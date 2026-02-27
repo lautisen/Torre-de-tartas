@@ -142,6 +142,20 @@ const ui = {
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
     },
 
+    showRankings() {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+        document.getElementById('game-over-screen').classList.add('hidden');
+        document.getElementById('user-screen').classList.remove('hidden');
+        // Hide the active game HUD in background to look cleaner
+        document.getElementById('ui').classList.add('hidden');
+
+        // Auto-fill the existing user's name if they've already played
+        if (this.currentUser) {
+            const nameInput = document.getElementById('username');
+            if (nameInput) nameInput.value = this.currentUser;
+        }
+    },
+
     async shareScoreImage() {
         if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
 
