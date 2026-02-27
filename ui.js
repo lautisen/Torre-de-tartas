@@ -152,6 +152,7 @@ const ui = {
 
         // Actualizar UI de Game Over mostrando el diálogo
         document.getElementById('final-floors').innerText = `${finalPisos} Pisos (⏱️ ${timeStr})`;
+        this.updateGameOverText();
         document.getElementById('game-over-screen').classList.remove('hidden');
 
         // Animación de conteo del puntaje final
@@ -180,6 +181,34 @@ const ui = {
         if (resTime) resTime.innerText = timeStr;
 
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
+    },
+
+    updateGameOverText() {
+        const gameoverPhrases = [
+            "¿Eso fue todo? ¡Mis abuelos encajan mejor que eso! 👴",
+            "La gravedad ha ganado hoy, pero tú puedes ganarle mañana 🍎",
+            "Buena técnica, pésima ejecución. ¡Prueba otra vez! 🔨",
+            "Esa tarta se ha estampado con estilo, hay que admitirlo ✨",
+            "Oops. Creo que te saltaste la clase de física cuántica 📐",
+            "¿Tu dedo resbaló por la mantequilla o qué pasó? 🧈",
+            "Nadie dijo que hacer tartas en la estratosfera fuera fácil 🚀",
+            "Casi, casi... Pero el 'casi' no rompe récords mundiales 🏆",
+            "La torre de pisa empezó así y mira, es famosa 🇮🇹",
+            "Se te olvidó soplar las velas antes de tirarla 🎂",
+            "Madre mía qué desastre... Menuda limpieza nos toca hacer 🧹",
+            "¡Amasando la tragedia a proporciones bíblicas! 🌊",
+            "¿Era una torre o estabas intentando hacer una escalera torcida? 📏",
+            "Eso no ha sido un error, ha sido 'deconstrucción culinaria' 👨‍🍳",
+            "Hasta la grúa está decepcionada con ese ángulo 🏗️",
+            "Juega otra, nadie ha visto esa caída estrepitosa 👀",
+            "Has hecho feliz a las hormigas del suelo con tanto pastel 🐜",
+            "Eso duele más que morder una galleta y que sea pasa 🍪",
+            "¡Puf! Una víctima más de la Ley de la Gravedad Universal 🌍",
+            "Si el objetivo era manchar el suelo, felicidades... 🏅"
+        ];
+        const randomPhrase = gameoverPhrases[Math.floor(Math.random() * gameoverPhrases.length)];
+        const textEl = document.getElementById('game-over-phrase');
+        if (textEl) textEl.innerText = randomPhrase;
     },
 
     showRankings() {
