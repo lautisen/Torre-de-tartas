@@ -120,10 +120,16 @@ const atmosphere = {
 
     // ---- Zone label ----
     showZoneLabel(text) {
-        const old = document.getElementById('zone-label');
-        if (old) old.remove();
+        // Enlazar etiquetas antiguas de la pantalla y desvanecerlas suavemente
+        const oldLabels = document.querySelectorAll('.zone-label');
+        oldLabels.forEach(old => {
+            old.classList.remove('show'); // Triggers the CSS transition down to 0 opacity
+            setTimeout(() => old.remove(), 2500); // Remove from DOM after fade-out completes
+        });
+
+        // Generar la nueva marca de agua (fade-in)
         const el = document.createElement('div');
-        el.id = 'zone-label';
+        el.className = 'zone-label';
         el.innerText = text;
 
         // Append BEFORE #game-world so it's clearly underneath
