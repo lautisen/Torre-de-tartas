@@ -2,6 +2,7 @@ const ui = {
     gameActive: false,
     score: 0,
     floors: 0,
+    sessionCoins: 0,
     startTime: 0,
     timerInterval: null,
     currentUser: "",
@@ -76,6 +77,11 @@ const ui = {
             if (!name) return alert('¡Dime tu nombre!');
             this.currentUser = name;
             document.getElementById('user-display').innerText = name;
+
+            // Cargar datos de la tienda y progresos específicos de este usuario
+            if (typeof shop !== 'undefined') {
+                shop.loadData(name);
+            }
         }
 
         if (typeof gameAudio !== 'undefined') {
@@ -117,6 +123,7 @@ const ui = {
 
         this.score = 0;
         this.floors = 0;
+        this.sessionCoins = 0;
         document.getElementById('score').innerText = this.score;
         document.getElementById('floors-display').innerText = this.floors;
         const badge = document.getElementById('multiplier-badge');
@@ -152,6 +159,12 @@ const ui = {
 
         // Actualizar UI de Game Over mostrando el diálogo
         document.getElementById('final-floors').innerText = `${finalPisos} Pisos (⏱️ ${timeStr})`;
+        document.getElementById('final-coins').innerText = `+${ui.sessionCoins} 🪙`;
+
+        if (typeof shop !== 'undefined' && ui.sessionCoins > 0) {
+            shop.addCoins(ui.sessionCoins);
+        }
+
         this.updateGameOverText();
         document.getElementById('game-over-screen').classList.remove('hidden');
 

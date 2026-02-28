@@ -123,8 +123,8 @@ const atmosphere = {
         // Enlazar etiquetas antiguas de la pantalla y desvanecerlas suavemente
         const oldLabels = document.querySelectorAll('.zone-label');
         oldLabels.forEach(old => {
-            old.classList.remove('show'); // Triggers the CSS transition down to 0 opacity
-            setTimeout(() => old.remove(), 2500); // Remove from DOM after fade-out completes
+            old.style.opacity = '0'; // Fix: Force fade-out
+            setTimeout(() => old.remove(), 2500);
         });
 
         // Generar la nueva marca de agua (fade-in)
@@ -156,9 +156,14 @@ const atmosphere = {
 
         // Trigger reflow and show
         void el.offsetWidth;
-        el.classList.add('show');
         el.style.opacity = '0.25';
         el.style.transform = 'translate(-50%, -50%) scale(1)';
+
+        // Fix: Auto fade out after reading time
+        setTimeout(() => {
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 2500);
+        }, 3000);
     },
 
     // ---- Element creators ----

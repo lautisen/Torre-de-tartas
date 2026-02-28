@@ -21,11 +21,32 @@
                 style="min-height: 45px; display: flex; align-items: center; justify-content: center; margin: 5px 0 15px; font-weight: 500; font-size: 0.95em; line-height: 1.3;">
                 Cargando...</p>
             <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
-            <button id="start-btn">¡A Cocinar!</button>
+            <div style="display:flex; justify-content:center; gap: 10px; margin-bottom: 20px;">
+                <button id="start-btn" style="flex:1;">¡A Cocinar!</button>
+                <button id="shop-btn" style="background:#4fc3f7; padding: 15px 20px;">🛒 Tienda</button>
+            </div>
             <div id="high-score-board">
                 <p>Cargando ranking...</p>
             </div>
             <p style="font-size: 0.75em; color: #888; margin-top: 15px; margin-bottom: 0;">v2.0.0</p>
+        </div>
+    </div>
+
+    <!-- TIENDA Y SKINS -->
+    <div id="shop-screen" class="hidden">
+        <div class="modal" style="display: flex; flex-direction: column; max-width: 90%; width: 450px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin:0;">🛒 Tienda</h2>
+                <button id="close-shop-btn"
+                    style="padding: 8px 15px; font-size: 1rem; background: #e0e0e0; color: #333;">✖</button>
+            </div>
+            <p style="text-align: left; font-weight: 500; margin: 0 0 15px 0;">Saldo: <span id="shop-coins-display"
+                    style="color: #fbc02d; font-weight: 900; font-size: 1.2em;">0</span> 🪙</p>
+
+            <div id="shop-items"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
+                <!-- Shop items will be injected here -->
+            </div>
         </div>
     </div>
 
@@ -86,6 +107,8 @@
                     0</h3>
                 <p id="final-floors" style="margin: 10px 0 0; color: #555; font-size: 1.1em; font-weight: 600;">0 Pisos
                 </p>
+                <p id="final-coins" style="margin: 5px 0 0; color: #fbc02d; font-size: 1.2em; font-weight: 900;">+0 🪙
+                </p>
             </div>
 
             <button onclick="ui.startGame()">🔄 Reintentar</button>
@@ -103,6 +126,7 @@
             <h1 style="margin:0; font-size:1.1em; color:#555;">🍰 <span id="user-display"></span></h1>
             <div style="display: flex; gap: 20px; justify-content: center; font-size:1.4em;">
                 <span style="color:var(--pink); font-weight:900;">Puntos: <b id="score">0</b></span>
+                <span style="color:#fbc02d; font-weight:900;"><b id="hud-coins">0</b> 🪙</span>
                 <span id="multiplier-badge"
                     style="opacity:0.3; color:#f59e0b; font-weight:900; transform:scale(0.8); transition:all 0.2s;">x1
                     🔥</span>
@@ -137,6 +161,7 @@
     <script src="audio.js?v=3.0"></script>
     <script src="physics.js?v=3.0"></script>
     <script src="atmosphere.js?v=3.0"></script>
+    <script src="shop.js?v=3.0"></script>
     <script src="main.js?v=3.0"></script>
     <script src="ui.js?v=3.0"></script>
 </body>

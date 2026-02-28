@@ -12,7 +12,8 @@ const gameMain = {
         document.getElementById('base-container').style.width = this.baseW + 'px';
         document.getElementById('crane').style.height = Math.floor(window.innerHeight * 0.28) + 'px';
 
-        this.width = this.startW; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0;
+        this.width = this.startW; this.cameraY = 0; this.balance = 0; this.comboCount = 0; this.speed = 0.02; ui.score = 0; ui.floors = 0; ui.sessionCoins = 0;
+        document.getElementById('hud-coins').innerText = 0;
         this.lastOffset = 0;
         this.lastWidth = this.baseW; // Ancho de la base
         this.totalAccuracy = 0; // Para la fórmula de precisión general
@@ -191,6 +192,10 @@ const gameMain = {
             ui.floors++;
             const multiplier = 1 + this.comboCount;
 
+            // Coins logic
+            const coinsEarned = isPerfect ? 4 : 1; // 1 per floor, extra 3 if perfect (total 4)
+            ui.sessionCoins += coinsEarned;
+
             // --- NUEVO SISTEMA DE PUNTUACIÓN (Acumulativo) ---
             // Accuracy de este bloque: 1 (perfecto) o bajando hasta 0 (apenas rozando)
             let dropAccuracy = Math.max(0, 1 - (absRelative / overlapThreshold));
@@ -216,9 +221,11 @@ const gameMain = {
             const scoreEl = document.getElementById('score');
             const floorsEl = document.getElementById('floors-display');
             const badge = document.getElementById('multiplier-badge');
+            const hudCoins = document.getElementById('hud-coins');
 
             scoreEl.innerText = ui.score;
             floorsEl.innerText = ui.floors;
+            hudCoins.innerText = ui.sessionCoins;
 
             if (this.comboCount > 0) {
                 badge.innerText = `x${multiplier} 🔥`;
