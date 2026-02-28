@@ -132,6 +132,24 @@ const atmosphere = {
         el.className = 'zone-label';
         el.innerText = text;
 
+        // Apply fallback inline styles to guarantee it works even if iOS CSS cache is broken
+        el.style.position = 'fixed';
+        el.style.top = '45%';
+        el.style.left = '50%';
+        el.style.width = '100vw';
+        el.style.textAlign = 'center';
+        el.style.transform = 'translate(-50%, -40%) scale(0.95)';
+        el.style.color = 'white';
+        el.style.fontSize = 'min(15vw, 6rem)';
+        el.style.fontWeight = '900';
+        el.style.lineHeight = '1';
+        el.style.zIndex = '100';
+        el.style.pointerEvents = 'none';
+        el.style.opacity = '0';
+        el.style.transition = 'opacity 2s ease-out, transform 3s cubic-bezier(0.165, 0.84, 0.44, 1)';
+        el.style.textShadow = '0 0 30px rgba(255, 255, 255, 0.4)';
+        el.style.mixBlendMode = 'overlay';
+
         // Append BEFORE #game-world so it's clearly underneath
         const uiLayer = document.getElementById('ui');
         document.body.insertBefore(el, uiLayer);
@@ -139,6 +157,8 @@ const atmosphere = {
         // Trigger reflow and show
         void el.offsetWidth;
         el.classList.add('show');
+        el.style.opacity = '0.25';
+        el.style.transform = 'translate(-50%, -50%) scale(1)';
     },
 
     // ---- Element creators ----

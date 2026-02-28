@@ -210,20 +210,24 @@ const gameAudio = {
         noise.stop(this.ctx.currentTime + duration);
     },
 
-    // Avión: Motor zumbando muy grave y continuo (paso lejano)
+    // Avión: Motor zumbando (adaptado para que el altavoz del móvil lo escuche)
     playPlane() {
         if (!this.ctx || !ui.gameActive) return;
-        // Motor a reaccion o turbohélice muy bajo
-        // Usamos un bandpass ahogado para conseguir el efecto "adentro de cabina / lejos"
-        this._playFilteredNoise(4.0, 'bandpass', 150, 1.5, 0.08);
+        // Mezclamos un chillido de turbina de 140Hz y 144Hz en vez de ruido ahogado, creando armónicos
+        this.play(140, 'sawtooth', 3.5, 0.05);
+        this.play(144, 'square', 3.5, 0.03);
+        // Ruido residual de viento a una frecuencia audible para teléfonos
+        this._playFilteredNoise(4.0, 'bandpass', 350, 1.0, 0.04);
     },
 
-    // Nube/Tormenta: Trueno sordo o viento grave
+    // Nube/Tormenta: Trueno sordo o viento (adaptado para móviles)
     playThunder() {
         if (!this.ctx || !ui.gameActive) return;
-        // Retumbo o tormenta - lowpass muy bajo
-        // Crea un sonido de viento/trueno ultra suave tipo "whoosh" o "rumble"
-        this._playFilteredNoise(3.5, 'lowpass', 80, 0.5, 0.12);
+        // Pasa-bajos a 600Hz para que se escuche el ruido blanco en los móviles
+        this._playFilteredNoise(3.5, 'lowpass', 600, 1.0, 0.25);
+        // Retumbos eléctricos iniciales usando onda cuadrada
+        this.play(100, 'square', 1.5, 0.08);
+        setTimeout(() => this.play(120, 'sawtooth', 2.0, 0.05), 300);
     },
 
     // Satélite: Bips telemétricos morse
