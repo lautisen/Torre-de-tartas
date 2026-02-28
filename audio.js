@@ -239,11 +239,30 @@ const gameAudio = {
         });
     },
 
-    // Meteorito/Asteroide: Roce rocoso grave
+    // Meteorito/Asteroide: Whoosh grave (caída rápida)
     playAsteroid() {
         if (!this.ctx || !ui.gameActive) return;
-        this.play(40, 'sawtooth', 1.5, 0.2);
-        this.play(32, 'square', 2.0, 0.15);
+
+        // Caída de tono pesada (fiuuum grave)
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 1.2);
+
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        // Fade out
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 1.2);
+
+        // Capa de "roce contra el aire"
+        this._playFilteredNoise(1.2, 'bandpass', 500, 1.0, 0.06);
     },
 
     // Estrella Fugaz: Frecuencia de barrido sci-fi 
