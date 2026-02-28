@@ -2,9 +2,12 @@ const gameAudio = {
     ctx: null,
 
     init() {
-        // Inicializa el contexto de audio tras la primera interacción (requisito del navegador)
+        // Inicializa el contexto de audio tras la primera interacción (requisito estricto de iOS/Safari)
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
         }
     },
 
@@ -28,6 +31,10 @@ const gameAudio = {
 
     // Sonido de UI (click en botones)
     uiClick() {
+        // Ensure iOS/Safari forcefully resumes context exactly here during a direct DOM click event
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
         this.play(800, 'sine', 0.05, 0.05);
         setTimeout(() => this.play(1200, 'sine', 0.05, 0.05), 50);
     },
