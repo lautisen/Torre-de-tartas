@@ -174,19 +174,56 @@ const gameAudio = {
         });
     },
 
-    // Avión: Motor zumbando muy grave y continuo
+    // Función de ayuda para crear Ruido Blanco/Rosa realista
+    _playFilteredNoise(duration, filterType, filterFreq, qValue, volumeScale) {
+        if (!this.ctx) return;
+        const bufferSize = this.ctx.sampleRate * duration;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        // Llenar con ruido blanco (-1 a 1)
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        // Filtrar el ruido para hacerlo sonar como viento soplado / motor grave
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = filterType;
+        filter.frequency.value = filterFreq;
+        filter.Q.value = qValue;
+
+        const gain = this.ctx.createGain();
+        gain.gain.setValueAtTime(0, this.ctx.currentTime);
+        // Suave entrada (fade-in)
+        gain.gain.linearRampToValueAtTime(volumeScale, this.ctx.currentTime + duration * 0.2);
+        // Suave salida (fade-out)
+        gain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        noise.start();
+        noise.stop(this.ctx.currentTime + duration);
+    },
+
+    // Avión: Motor zumbando muy grave y continuo (paso lejano)
     playPlane() {
         if (!this.ctx || !ui.gameActive) return;
-        this.play(60, 'sawtooth', 3.0, 0.08);
-        this.play(65, 'square', 3.0, 0.04);
+        // Motor a reaccion o turbohélice muy bajo
+        // Usamos un bandpass ahogado para conseguir el efecto "adentro de cabina / lejos"
+        this._playFilteredNoise(4.0, 'bandpass', 150, 1.5, 0.08);
     },
 
     // Nube/Tormenta: Trueno sordo o viento grave
     playThunder() {
         if (!this.ctx || !ui.gameActive) return;
-        this.play(30, 'sawtooth', 2.0, 0.15);
-        setTimeout(() => this.play(35, 'square', 1.5, 0.1), 300);
-        setTimeout(() => this.play(25, 'sawtooth', 2.0, 0.15), 500);
+        // Retumbo o tormenta - lowpass muy bajo
+        // Crea un sonido de viento/trueno ultra suave tipo "whoosh" o "rumble"
+        this._playFilteredNoise(3.5, 'lowpass', 80, 0.5, 0.12);
     },
 
     // Satélite: Bips telemétricos morse
