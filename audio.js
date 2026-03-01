@@ -81,18 +81,12 @@ const gameAudio = {
     },
 
     // ==========================================
-    //   BACKGROUND MUSIC (SECUENCIADOR EVOLUTIVO)
+    //   BACKGROUND MUSIC (SECUENCIADOR RETRO 140 BPM)
     // ==========================================
     bgmActive: false,
     bgmInterval: null,
     currentStep: 0,
     bgmLevel: 0,
-
-    // Secuencia base (C - E - G - E - C - A - G - A)
-    seqBase: [
-        261.63, null, 329.63, null, 392.00, null, 329.63, null,
-        261.63, null, 220.00, null, 196.00, null, 220.00, null
-    ],
 
     startBgm() {
         if (!this.ctx) this.init();
@@ -100,7 +94,11 @@ const gameAudio = {
         this.bgmActive = true;
         this.currentStep = 0;
         this.bgmLevel = 0;
-        this.bgmInterval = setInterval(() => this._bgmTick(), 150); // ~100 BPM semicorcheas
+
+        // 140 BPM, compás de 4/4
+        // 1 minuto = 60000 ms. 1 negra = 60000 / 140 = 428.57 ms
+        // 1 semicorchea (paso del secuenciador) = 428.57 / 4 = ~107 ms
+        this.bgmInterval = setInterval(() => this._bgmTick(), 107);
     },
 
     stopBgm() {
@@ -119,43 +117,66 @@ const gameAudio = {
         if (!this.ctx || this.ctx.state === 'suspended') return;
 
         const step = this.currentStep % 16;
+        const measure = Math.floor(this.currentStep / 16);
 
-        // --- CAPA 1: Modulable (Tierra) base ---
-        const baseNote = this.seqBase[step];
-        if (baseNote) {
-            let volume = 0.05;
-            let type = 'triangle';
-            if (this.bgmLevel >= 2) {
-                // En el espacio, la base se vuelve más suave y de tipo 'sine'
-                type = 'sine';
-                volume = 0.03;
-            }
-            this.play(baseNote, type, 0.2, volume);
+        // --- CAPA 1: Latido de Construcción (Kick y Hi-hat) ---
+        // Kick marcado en cada negra (Pulsos 0, 4, 8, 12)
+        if (step % 4 === 0) {
+            // Frecuencia baja simulando el bombo profundo (latido)
+            this.play(50, 'sine', 0.2, 0.3);
+            // "Click" del bombo para que marque bien el tempo
+            this.play(120, 'triangle', 0.05, 0.1);
         }
 
-        // --- CAPA 2: Arpegios de Cielo (Nubes y superior) ---
-        if (this.bgmLevel >= 1) {
-            if (step % 2 === 0) { // corcheas
-                const arpNotes = [523.25, 659.25, 783.99, 1046.50]; // Do mayor agudo
-                const note = arpNotes[(step / 2) % 4];
-                this.play(note, 'sine', 0.1, 0.02);
+        // Hi-Hat en las corcheas a contratiempo para empujar el ritmo
+        if (step % 4 === 2) {
+            // Onda cuadrada agudísima simula platillo retro
+            this.play(8000, 'square', 0.02, 0.03);
+            if (this.bgmLevel >= 1) { // Más brillante en el aire
+                this.play(10000, 'square', 0.03, 0.02);
             }
         }
 
-        // --- CAPA 3: Bajo Espacial (Espacio y superior) ---
-        if (this.bgmLevel >= 2) {
-            if (step % 8 === 0) { // blancas
-                const bassNotes = [65.41, 65.41, 55.00, 55.00]; // Do1, Do1, La0, La0
-                const bass = bassNotes[Math.floor((this.currentStep % 32) / 8)];
-                this.play(bass, 'square', 1.0, 0.03); // Onda cuadrada larga
-            }
+        // --- CAPA 2: Melodía de Sintetizador Retro que sube de tono ---
+        // Patrón con sensación de andamiaje y escalada (Synthwave)
+        const melodyRhythm = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0];
+
+        // Escala pentatónica menor (escala épica retro)
+        const scale = [130.81, 155.56, 174.61, 196.00, 233.08, 261.63, 311.13, 349.23, 392.00, 466.16, 523.25, 622.25, 698.46, 783.99, 932.33, 1046.50];
+
+        if (melodyRhythm[step] === 1) {
+            // La progresión de "acordes/tónica" sube cada 2 compases
+            const progressionSteps = [0, 2, 4, 5];
+            const baseIndex = progressionSteps[Math.floor(measure / 2) % progressionSteps.length];
+
+            // Sube dentro del compás
+            const noteIndex = (baseIndex + Math.floor(step / 2)) % scale.length;
+
+            // Si el nivel aumenta (cielo, espacio), transponemos toda la escala
+            const freq = scale[noteIndex] * Math.pow(2, this.bgmLevel);
+
+            const synthType = (this.bgmLevel >= 2) ? 'sawtooth' : 'square';
+            this.play(freq, synthType, 0.1, 0.04);
         }
 
-        // --- CAPA 4: Brillitos Aleatorios (Galaxia) ---
-        if (this.bgmLevel >= 3) {
-            if (Math.random() < 0.2) { // 20% probabilidad de nota aleatoria súper aguda
-                this.play(1046.50 + Math.random() * 500, 'sine', 0.05, 0.01);
-            }
+        // --- CAPA 3: Bajo secuenciado octavado ---
+        // Toca en semicorcheas alternando tónica grave y su octava aguda (estilo retro bass)
+        if (step % 2 === 0) {
+            const isDownbeat = (step % 4 === 0);
+            const bassProgression = [65.41, 73.42, 82.41, 87.31]; // C2, D2, E2, F2
+            let baseFreq = bassProgression[Math.floor(measure / 2) % bassProgression.length];
+
+            // Arriba y abajo
+            if (!isDownbeat) baseFreq *= 2;
+
+            this.play(baseFreq, 'sawtooth', 0.15, 0.07);
+        }
+
+        // --- CAPA 4: Detalles que evocan la altura ---
+        if (this.bgmLevel >= 2 && step === 14) {
+            // Ecos estelares cuando subes muy alto
+            this.play(2000 + Math.random() * 1000, 'sine', 0.1, 0.02);
+            setTimeout(() => { if (this.bgmActive) this.play(2500 + Math.random() * 1000, 'sine', 0.1, 0.015); }, 50);
         }
 
         this.currentStep++;
