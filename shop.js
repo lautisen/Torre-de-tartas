@@ -127,15 +127,11 @@ const shop = {
 
         if (tabSkins && tabBoosters) {
             if (tab === 'skins') {
-                tabSkins.style.background = '#4fc3f7';
-                tabSkins.style.color = '#000';
-                tabBoosters.style.background = '#e0e0e0';
-                tabBoosters.style.color = '#333';
+                tabSkins.className = 'btn-blue';
+                tabBoosters.className = 'btn-gray';
             } else {
-                tabBoosters.style.background = '#4fc3f7';
-                tabBoosters.style.color = '#000';
-                tabSkins.style.background = '#e0e0e0';
-                tabSkins.style.color = '#333';
+                tabBoosters.className = 'btn-blue';
+                tabSkins.className = 'btn-gray';
             }
         }
 
@@ -164,8 +160,8 @@ const shop = {
                     <h4 style="margin: 0 0 5px 0;">${item.name}</h4>
                     <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0; min-height: 48px;">${item.description}</p>
                     ${isOwned
-                        ? `<button id="btn-equip-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: ${isActive ? '#888' : '#2196f3'}">${isActive ? 'Equipado' : 'Equipar'}</button>`
-                        : `<button id="btn-buy-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: #fbc02d; color:#000;">${item.price} 🪙</button>`
+                        ? `<button id="btn-equip-${item.id}" class="${isActive ? 'btn-gray' : 'btn-blue'}" style="width:100%; padding:8px; font-size:0.9em;">${isActive ? 'Equipado' : 'Equipar'}</button>`
+                        : `<button id="btn-buy-${item.id}" class="btn-yellow" style="width:100%; padding:8px; font-size:0.9em;">${item.price} 🪙</button>`
                     }
                 `;
 
@@ -192,7 +188,7 @@ const shop = {
                     <div style="font-size: 2.5em; margin-bottom: 5px;">${b.icon}</div>
                     <h4 style="margin: 0 0 5px 0;">${b.name} <span style="font-size:0.8em; padding:2px 6px; background:#d1c4e9; border-radius:10px;">x${b.count}</span></h4>
                     <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0; min-height: 48px;">${b.description}</p>
-                    <button id="btn-buy-boost-${b.id}" style="width:100%; padding:8px; font-size:0.9em; background: #fbc02d; color:#000;">${b.price} 🪙</button>
+                    <button id="btn-buy-boost-${b.id}" class="btn-yellow" style="width:100%; padding:8px; font-size:0.9em;">${b.price} 🪙</button>
                 `;
 
                 container.appendChild(div);

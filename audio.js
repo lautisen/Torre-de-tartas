@@ -162,126 +162,14 @@ const gameAudio = {
     },
 
     // ==========================================
-    //   AMBIENT SOUND EFFECTS (GENERATIVE)
+    //   AMBIENT SOUND EFFECTS (DISABLED)
     // ==========================================
 
-    // Pájaro: Píos muy agudos y cortos
-    playBird() {
-        if (!this.ctx || !ui.gameActive) return;
-        const freqs = [3500, 4200, 3800];
-        freqs.forEach((f, i) => {
-            setTimeout(() => this.play(f, 'sine', 0.05, 0.02), i * 100);
-        });
-    },
-
-    // Función de ayuda para crear Ruido Blanco/Rosa realista
-    _playFilteredNoise(duration, filterType, filterFreq, qValue, volumeScale) {
-        if (!this.ctx) return;
-        const bufferSize = this.ctx.sampleRate * duration;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-
-        // Llenar con ruido blanco (-1 a 1)
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        // Filtrar el ruido para hacerlo sonar como viento soplado / motor grave
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = filterType;
-        filter.frequency.value = filterFreq;
-        filter.Q.value = qValue;
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0, this.ctx.currentTime);
-        // Suave entrada (fade-in)
-        gain.gain.linearRampToValueAtTime(volumeScale, this.ctx.currentTime + duration * 0.2);
-        // Suave salida (fade-out)
-        gain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        noise.start();
-        noise.stop(this.ctx.currentTime + duration);
-    },
-
-    // Avión: Motor zumbando (adaptado para que el altavoz del móvil lo escuche)
-    playPlane() {
-        if (!this.ctx || !ui.gameActive) return;
-        // Mezclamos un chillido de turbina de 140Hz y 144Hz en vez de ruido ahogado, creando armónicos
-        this.play(140, 'sawtooth', 3.5, 0.05);
-        this.play(144, 'square', 3.5, 0.03);
-        // Ruido residual de viento a una frecuencia audible para teléfonos
-        this._playFilteredNoise(4.0, 'bandpass', 350, 1.0, 0.04);
-    },
-
-    // Nube/Tormenta: Trueno sordo o viento (adaptado para móviles)
-    playThunder() {
-        if (!this.ctx || !ui.gameActive) return;
-        // Pasa-bajos a 600Hz para que se escuche el ruido blanco en los móviles
-        this._playFilteredNoise(3.5, 'lowpass', 600, 1.0, 0.25);
-        // Retumbos eléctricos iniciales usando onda cuadrada
-        this.play(100, 'square', 1.5, 0.08);
-        setTimeout(() => this.play(120, 'sawtooth', 2.0, 0.05), 300);
-    },
-
-    // Satélite: Bips telemétricos morse
-    playSatellite() {
-        if (!this.ctx || !ui.gameActive) return;
-        const pattern = [0, 150, 300, 800, 950, 1100];
-        pattern.forEach((t) => {
-            setTimeout(() => this.play(2500, 'square', 0.06, 0.02), t);
-        });
-    },
-
-    // Meteorito/Asteroide: Whoosh grave (caída rápida)
-    playAsteroid() {
-        if (!this.ctx || !ui.gameActive) return;
-
-        // Caída de tono pesada (fiuuum grave)
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(400, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 1.2);
-
-        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-        // Fade out
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 1.2);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start();
-        osc.stop(this.ctx.currentTime + 1.2);
-
-        // Capa de "roce contra el aire"
-        this._playFilteredNoise(1.2, 'bandpass', 500, 1.0, 0.06);
-    },
-
-    // Estrella Fugaz: Frecuencia de barrido sci-fi 
-    playShootingStar() {
-        if (!this.ctx || !ui.gameActive) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(3000, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.8); // Fiuuum!
-
-        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
-
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.8);
-    }
+    playBird() { },
+    _playFilteredNoise() { },
+    playPlane() { },
+    playThunder() { },
+    playSatellite() { },
+    playAsteroid() { },
+    playShootingStar() { }
 };

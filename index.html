@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Heavy Cake Stack - Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 
@@ -23,7 +25,7 @@
             <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
             <div style="display:flex; justify-content:center; gap: 10px; margin-bottom: 20px;">
                 <button id="start-btn" style="flex:1;">¡A Cocinar!</button>
-                <button id="shop-btn" style="background:#4fc3f7; padding: 15px 20px;">🛒 Tienda</button>
+                <button id="shop-btn" class="btn-blue" style="padding: 15px 20px;">🛒 Tienda</button>
             </div>
             <div id="high-score-board">
                 <p>Cargando ranking...</p>
@@ -37,23 +39,20 @@
         <div class="modal" style="display: flex; flex-direction: column; max-width: 90%; width: 450px; padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 style="margin:0;">🛒 Tienda</h2>
-                <button id="close-shop-btn"
-                    style="padding: 8px 15px; font-size: 1rem; background: #e0e0e0; color: #333;">✖</button>
+                <button id="close-shop-btn" class="btn-gray" style="padding: 8px 15px; font-size: 1rem;">✖</button>
             </div>
             <p style="text-align: left; font-weight: 500; margin: 0 0 15px 0;">Saldo: <span id="shop-coins-display"
                     style="color: #fbc02d; font-weight: 900; font-size: 1.2em;">0</span> 🪙</p>
 
             <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                <button id="shop-tab-skins"
-                    style="flex: 1; padding: 10px; font-size: 0.9em; background: #4fc3f7; color: #000;"
+                <button id="shop-tab-skins" class="btn-blue" style="flex: 1; padding: 10px; font-size: 0.9em;"
                     onclick="shop.switchTab('skins')">🎨 Estilos</button>
-                <button id="shop-tab-boosters"
-                    style="flex: 1; padding: 10px; font-size: 0.9em; background: #e0e0e0; color: #333;"
+                <button id="shop-tab-boosters" class="btn-gray" style="flex: 1; padding: 10px; font-size: 0.9em;"
                     onclick="shop.switchTab('boosters')">🚀 Boosters</button>
             </div>
 
             <div id="shop-items"
-                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding-right: 5px;">
                 <!-- Shop items will be injected here -->
             </div>
         </div>
@@ -65,36 +64,19 @@
             <div id="tutorial-steps">
                 <div class="tutorial-step active" id="tut-step-1">
                     <div class="tut-icon">🎂</div>
-                    <h2>¡Bienvenido a<br>Torre de Tartas!</h2>
+                    <h2>¡Torre de Tartas!</h2>
                     <p>Apila tartas lo más alto que puedas sin que se caiga la torre.</p>
                 </div>
                 <div class="tutorial-step" id="tut-step-2">
                     <div class="tut-icon">👆</div>
                     <h2>¿Cómo jugar?</h2>
-                    <p><b>Toca o haz clic</b> en la pantalla para soltar la tarta cuando esté centrada sobre la pila.
-                    </p>
-                </div>
-                <div class="tutorial-step" id="tut-step-3">
-                    <div class="tut-icon">⭐</div>
-                    <h2>Apunta al centro</h2>
-                    <p>Una caída <b>perfecta</b> activa un combo y da puntos extra.<br>¡El equilibrio es clave!</p>
-                    <div class="tut-ratings">
-                        <span class="rating perfect">✦ Perfecto</span>
-                        <span class="rating good">▲ Bien</span>
-                        <span class="rating bad">✕ Evita esto</span>
-                    </div>
-                </div>
-                <div class="tutorial-step" id="tut-step-4">
-                    <div class="tut-icon">🚀</div>
-                    <h2>¡Sube hasta el espacio!</h2>
-                    <p>Cuanto más alto llegues, más lejano del suelo estarás… ¡hasta la galaxia!</p>
+                    <p><b>Toca o haz clic</b> en la pantalla para soltar la tarta cuando esté bien centrada.<br><br>Una
+                        caída <b>perfecta</b> te da puntos extra.</p>
                 </div>
             </div>
             <div id="tutorial-nav">
                 <div id="tutorial-dots">
                     <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
                     <span class="dot"></span>
                 </div>
                 <button id="tutorial-next-btn">Siguiente →</button>
@@ -121,12 +103,8 @@
             </div>
 
             <button onclick="ui.startGame()">🔄 Reintentar</button>
-            <button id="share-btn" class="glow-pulse"
-                style="background: linear-gradient(135deg, #4ade80, #22c55e); margin-top: 10px;">📸 Compartir
-                Logro</button>
-            <button onclick="ui.showRankings()"
-                style="background: transparent; border: 2px solid rgba(0,0,0,0.1); color: #888; margin-top: 10px; box-shadow: none;">🏆
-                Ver Ranking</button>
+            <button id="share-btn" class="glow-pulse btn-green" style="margin-top: 10px;">📸 Compartir Logro</button>
+            <button onclick="ui.showRankings()" class="btn-outline" style="margin-top: 10px;">🏆 Ver Ranking</button>
         </div>
     </div>
 
