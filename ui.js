@@ -7,6 +7,7 @@ const ui = {
     timerInterval: null,
     currentUser: "",
     currentTopScore: 0,
+    activeBoosters: {},
 
     init() {
         const btn = document.getElementById('start-btn');
@@ -134,8 +135,33 @@ const ui = {
         this.startTime = Date.now();
         this.startTimer();
 
+        // Load consumed boosters for this run if player selected them
+        this.activeBoosters = {
+            slowMotion: false,
+            magnet: false,
+            extraLife: false
+        };
+
+        // Auto-consume 'slowMotion' if they have it
+        if (typeof shop !== 'undefined' && shop.consumeBooster('slowMotion')) {
+            this.activeBoosters.slowMotion = true;
+            this.showBoosterActivation('🐢 Cuerda Lenta Activada');
+        }
+
         this.gameActive = true;
         gameMain.start();
+    },
+
+    showBoosterActivation(msg) {
+        const el = document.createElement('div');
+        el.className = 'perfect-text'; // Reusing this class for the floating text
+        el.innerText = msg;
+        el.style.left = '50%';
+        el.style.top = '30%';
+        el.style.fontSize = '24px';
+        el.style.color = '#cddc39';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2500);
     },
 
     startTimer() {

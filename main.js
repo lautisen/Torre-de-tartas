@@ -161,6 +161,12 @@ const gameMain = {
                 this.comboCount++;
                 this.showText(x + (this.width / 2), `PERFECTO x${this.comboCount}`);
                 gameWorld.classList.add('shake-perfect');
+
+                // --- BOOSTER: SLOW MOTION ---
+                // Reduce extra cord base speed to give more time on next drop
+                if (typeof ui !== 'undefined' && ui.activeBoosters.slowMotion) {
+                    this.speed = Math.max(0.015, this.speed * 0.85);
+                }
             } else {
                 this.comboCount = 0;
                 gameWorld.classList.add('shake-heavy');

@@ -43,6 +43,15 @@
             <p style="text-align: left; font-weight: 500; margin: 0 0 15px 0;">Saldo: <span id="shop-coins-display"
                     style="color: #fbc02d; font-weight: 900; font-size: 1.2em;">0</span> 🪙</p>
 
+            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                <button id="shop-tab-skins"
+                    style="flex: 1; padding: 10px; font-size: 0.9em; background: #4fc3f7; color: #000;"
+                    onclick="shop.switchTab('skins')">🎨 Estilos</button>
+                <button id="shop-tab-boosters"
+                    style="flex: 1; padding: 10px; font-size: 0.9em; background: #e0e0e0; color: #333;"
+                    onclick="shop.switchTab('boosters')">🚀 Boosters</button>
+            </div>
+
             <div id="shop-items"
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px;">
                 <!-- Shop items will be injected here -->

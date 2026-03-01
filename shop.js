@@ -11,6 +11,14 @@ const shop = {
         { id: 'retro', name: 'Arcade 8-Bit', price: 250, description: 'Bloques pixelados colores sólidos.', icon: '🕹️' }
     ],
 
+    boosters: [
+        { id: 'slowMotion', name: 'Cuerda Lenta', price: 20, description: 'La grúa reduce su velocidad base al hacer un Perfecto.', icon: '🐢', count: 0 },
+        { id: 'magnet', name: 'Base Magnética', price: 30, description: 'Mejora ligeramente la tracción de los bloques para que no resbalen (Próximamente).', icon: '🧲', count: 0 },
+        { id: 'extraLife', name: 'Pegamento Extra', price: 50, description: 'Previene 1 caída inminente por partida (Próximamente).', icon: '🧴', count: 0 }
+    ],
+
+    currentTab: 'skins', // 'skins' or 'boosters'
+
     init() {
         this.loadData();
         this.applyTheme(this.currentTheme);
@@ -36,6 +44,16 @@ const shop = {
             this.inventory = ['classic'];
         }
 
+        const boost = localStorage.getItem(`tdt_boosters${this.userKey}`);
+        if (boost) {
+            try {
+                const savedBoosters = JSON.parse(boost);
+                this.boosters.forEach(b => {
+                    if (savedBoosters[b.id] !== undefined) b.count = savedBoosters[b.id];
+                });
+            } catch (e) { console.error("Error loading boosters", e); }
+        }
+
         // After loading a different user's data, we must instantly apply their theme and update top bar
         this.applyTheme(this.currentTheme);
         this.updateUI();
@@ -46,6 +64,11 @@ const shop = {
         localStorage.setItem(`tdt_coins${key}`, this.coins);
         localStorage.setItem(`tdt_theme${key}`, this.currentTheme);
         localStorage.setItem(`tdt_inventory${key}`, JSON.stringify(this.inventory));
+
+        const boostData = {};
+        this.boosters.forEach(b => boostData[b.id] = b.count);
+        localStorage.setItem(`tdt_boosters${key}`, JSON.stringify(boostData));
+
         this.updateUI();
     },
 
@@ -74,7 +97,8 @@ const shop = {
         }
 
         this.updateUI();
-        this.renderShopItems();
+        // Set default tab when opening
+        this.switchTab('skins');
 
         document.getElementById('user-screen').classList.add('hidden');
         const shopScreen = document.getElementById('shop-screen');
@@ -94,40 +118,87 @@ const shop = {
         document.getElementById('user-screen').classList.remove('hidden');
     },
 
+    switchTab(tab) {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+        this.currentTab = tab;
+
+        const tabSkins = document.getElementById('shop-tab-skins');
+        const tabBoosters = document.getElementById('shop-tab-boosters');
+
+        if (tabSkins && tabBoosters) {
+            if (tab === 'skins') {
+                tabSkins.style.background = '#4fc3f7';
+                tabSkins.style.color = '#000';
+                tabBoosters.style.background = '#e0e0e0';
+                tabBoosters.style.color = '#333';
+            } else {
+                tabBoosters.style.background = '#4fc3f7';
+                tabBoosters.style.color = '#000';
+                tabSkins.style.background = '#e0e0e0';
+                tabSkins.style.color = '#333';
+            }
+        }
+
+        this.renderShopItems();
+    },
+
     renderShopItems() {
         const container = document.getElementById('shop-items');
         container.innerHTML = '';
 
-        this.items.forEach(item => {
-            const isOwned = this.inventory.includes(item.id);
-            const isActive = this.currentTheme === item.id;
+        if (this.currentTab === 'skins') {
+            this.items.forEach(item => {
+                const isOwned = this.inventory.includes(item.id);
+                const isActive = this.currentTheme === item.id;
 
-            const div = document.createElement('div');
-            div.className = `shop-item-card`;
-            div.style.border = isActive ? '3px solid #4caf50' : '2px solid #ccc';
-            div.style.borderRadius = '10px';
-            div.style.padding = '10px';
-            div.style.textAlign = 'center';
-            div.style.backgroundColor = isActive ? '#f1f8e9' : '#fff';
+                const div = document.createElement('div');
+                div.className = `shop-item-card`;
+                div.style.border = isActive ? '3px solid #4caf50' : '2px solid #ccc';
+                div.style.borderRadius = '10px';
+                div.style.padding = '10px';
+                div.style.textAlign = 'center';
+                div.style.backgroundColor = isActive ? '#f1f8e9' : '#fff';
 
-            div.innerHTML = `
-                <div style="font-size: 2.5em; margin-bottom: 5px;">${item.icon}</div>
-                <h4 style="margin: 0 0 5px 0;">${item.name}</h4>
-                <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0; min-height: 48px;">${item.description}</p>
-                ${isOwned
-                    ? `<button id="btn-equip-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: ${isActive ? '#888' : '#2196f3'}">${isActive ? 'Equipado' : 'Equipar'}</button>`
-                    : `<button id="btn-buy-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: #fbc02d; color:#000;">${item.price} 🪙</button>`
+                div.innerHTML = `
+                    <div style="font-size: 2.5em; margin-bottom: 5px;">${item.icon}</div>
+                    <h4 style="margin: 0 0 5px 0;">${item.name}</h4>
+                    <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0; min-height: 48px;">${item.description}</p>
+                    ${isOwned
+                        ? `<button id="btn-equip-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: ${isActive ? '#888' : '#2196f3'}">${isActive ? 'Equipado' : 'Equipar'}</button>`
+                        : `<button id="btn-buy-${item.id}" style="width:100%; padding:8px; font-size:0.9em; background: #fbc02d; color:#000;">${item.price} 🪙</button>`
+                    }
+                `;
+
+                container.appendChild(div);
+
+                if (isOwned && !isActive) {
+                    document.getElementById(`btn-equip-${item.id}`).onclick = () => this.equipItem(item.id);
+                } else if (!isOwned) {
+                    document.getElementById(`btn-buy-${item.id}`).onclick = () => this.buyItem(item.id);
                 }
-            `;
+            });
+        } else {
+            // BOOSTERS TAB
+            this.boosters.forEach(b => {
+                const div = document.createElement('div');
+                div.className = `shop-item-card`;
+                div.style.border = '2px solid #b39ddb';
+                div.style.borderRadius = '10px';
+                div.style.padding = '10px';
+                div.style.textAlign = 'center';
+                div.style.backgroundColor = '#f3e5f5';
 
-            container.appendChild(div);
+                div.innerHTML = `
+                    <div style="font-size: 2.5em; margin-bottom: 5px;">${b.icon}</div>
+                    <h4 style="margin: 0 0 5px 0;">${b.name} <span style="font-size:0.8em; padding:2px 6px; background:#d1c4e9; border-radius:10px;">x${b.count}</span></h4>
+                    <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0; min-height: 48px;">${b.description}</p>
+                    <button id="btn-buy-boost-${b.id}" style="width:100%; padding:8px; font-size:0.9em; background: #fbc02d; color:#000;">${b.price} 🪙</button>
+                `;
 
-            if (isOwned && !isActive) {
-                document.getElementById(`btn-equip-${item.id}`).onclick = () => this.equipItem(item.id);
-            } else if (!isOwned) {
-                document.getElementById(`btn-buy-${item.id}`).onclick = () => this.buyItem(item.id);
-            }
-        });
+                container.appendChild(div);
+                document.getElementById(`btn-buy-boost-${b.id}`).onclick = () => this.buyBooster(b.id);
+            });
+        }
     },
 
     buyItem(id) {
@@ -143,6 +214,19 @@ const shop = {
         }
     },
 
+    buyBooster(id) {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+        const b = this.boosters.find(i => i.id === id);
+        if (this.coins >= b.price) {
+            this.coins -= b.price;
+            b.count++;
+            this.saveData();
+            this.renderShopItems(); // Refresh counts
+        } else {
+            alert('¡No tienes suficientes monedas! 🪙 Juega para ganar más.');
+        }
+    },
+
     equipItem(id) {
         if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
         this.currentTheme = id;
@@ -153,6 +237,16 @@ const shop = {
 
     applyTheme(id) {
         document.documentElement.setAttribute('data-theme', id);
+    },
+
+    consumeBooster(id) {
+        const b = this.boosters.find(i => i.id === id);
+        if (b && b.count > 0) {
+            b.count--;
+            this.saveData();
+            return true;
+        }
+        return false;
     }
 };
 
