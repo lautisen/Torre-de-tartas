@@ -116,8 +116,8 @@ const ui = {
         modal.classList.remove('hidden');
         error.innerText = '';
 
-        // Suggest default name (clean up spaces, make it alphanumeric max 12)
-        let suggest = (user.displayName || user.email.split('@')[0]);
+        // Suggest default name (first name only, clean up spaces, make it alphanumeric max 12)
+        let suggest = (user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0]);
         suggest = suggest.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
         input.value = suggest;
 
