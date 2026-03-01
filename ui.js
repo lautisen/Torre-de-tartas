@@ -64,14 +64,16 @@ const ui = {
     listenToAuth() {
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                this.currentUser = user.displayName || user.email.split('@')[0];
-                this.currentUid = user.uid;
-
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('user-info-section').classList.remove('hidden');
-                document.getElementById('logged-in-name').innerText = this.currentUser;
-
-                if (typeof shop !== 'undefined') shop.loadData(this.currentUid);
+                // Determine if user has an alias
+                firebase.database().ref('users/' + user.uid + '/alias').once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        // User has an alias, complete login
+                        this.finalizeLogin(user.uid, snapshot.val());
+                    } else {
+                        // Needs alias
+                        this.showAliasPrompt(user);
+                    }
+                }).catch(e => console.error("Error fetching alias:", e));
             } else {
                 this.currentUid = null;
                 document.getElementById('auth-section').classList.remove('hidden');
@@ -80,14 +82,92 @@ const ui = {
         });
     },
 
-    loginWithGoogle(fromGameOver = false) {
-        firebase.auth().signInWithPopup(provider).then((result) => {
-            console.log("Logged in:", result.user.displayName);
-            if (fromGameOver && this.gameActive === false && !document.getElementById('game-over-screen').classList.contains('hidden')) {
-                this.saveScore(this.floors, Math.floor((Date.now() - this.startTime) / 1000), this.score);
-                document.getElementById('guest-save-prompt').classList.add('hidden');
+    finalizeLogin(uid, alias) {
+        this.currentUser = alias;
+        this.currentUid = uid;
+
+        const authSec = document.getElementById('auth-section');
+        const userInfoSec = document.getElementById('user-info-section');
+        if (authSec) authSec.classList.add('hidden');
+        if (userInfoSec) userInfoSec.classList.remove('hidden');
+
+        const loggedInName = document.getElementById('logged-in-name');
+        if (loggedInName) loggedInName.innerText = this.currentUser;
+
+        if (typeof shop !== 'undefined') shop.loadData(this.currentUid);
+
+        // If from Game Over screen
+        const gameOverScreen = document.getElementById('game-over-screen');
+        if (this.gameActive === false && gameOverScreen && !gameOverScreen.classList.contains('hidden') && this.floors > 0) {
+            this.saveScore(this.floors, Math.floor((Date.now() - this.startTime) / 1000), this.score);
+            const prompt = document.getElementById('guest-save-prompt');
+            if (prompt) prompt.classList.add('hidden');
+        }
+    },
+
+    showAliasPrompt(user) {
+        const modal = document.getElementById('alias-modal');
+        const input = document.getElementById('alias-input');
+        const error = document.getElementById('alias-error');
+        const btn = document.getElementById('btn-save-alias');
+
+        if (!modal) return;
+
+        modal.classList.remove('hidden');
+        error.innerText = '';
+
+        // Suggest default name (clean up spaces, make it alphanumeric max 12)
+        let suggest = (user.displayName || user.email.split('@')[0]);
+        suggest = suggest.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
+        input.value = suggest;
+
+        btn.onclick = () => {
+            const desiredAlias = input.value.trim();
+            if (desiredAlias.length < 3) {
+                error.innerText = "Mínimo 3 caracteres.";
+                return;
             }
-        }).catch((error) => {
+
+            // Check if exists
+            btn.disabled = true;
+            btn.innerText = 'Verificando...';
+            error.innerText = '';
+
+            const aliasKey = desiredAlias.toLowerCase();
+            firebase.database().ref('aliases/' + aliasKey).once('value').then(snap => {
+                if (snap.exists() && snap.val() !== user.uid) {
+                    error.innerText = "❌ Este alias ya está en uso.";
+                    btn.disabled = false;
+                    btn.innerText = 'Guardar Alias';
+                } else {
+                    // Valid, save it
+                    const updates = {};
+                    updates['/users/' + user.uid + '/alias'] = desiredAlias;
+                    updates['/aliases/' + aliasKey] = user.uid;
+
+                    firebase.database().ref().update(updates).then(() => {
+                        modal.classList.add('hidden');
+                        this.finalizeLogin(user.uid, desiredAlias);
+                    }).catch(err => {
+                        error.innerText = "Error al guardar. Intenta de nuevo.";
+                        btn.disabled = false;
+                        btn.innerText = 'Guardar Alias';
+                        console.error(err);
+                    });
+                }
+            }).catch(e => {
+                error.innerText = "Error de conexión.";
+                btn.disabled = false;
+                btn.innerText = 'Guardar Alias';
+                console.error(e);
+            });
+        };
+    },
+
+
+    loginWithGoogle(fromGameOver = false) {
+        // Just trigger popup; the onAuthStateChanged listener handles the rest
+        firebase.auth().signInWithPopup(provider).catch((error) => {
             console.error(error);
             alert("Error al iniciar sesión: " + error.message);
         });

@@ -216,6 +216,21 @@
             </div>
         </div>
     </div>
+    <div id="alias-modal" class="hidden"
+        style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; display:flex; justify-content:center; align-items:center;">
+        <div
+            style="background:white; padding:25px; border-radius:15px; width:90%; max-width:350px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <h2 style="margin-top:0; color:#333;">🎮 Elige tu Alias</h2>
+            <p style="font-size:0.9em; color:#666; margin-bottom:15px;">Cómo quieres aparecer en el Top Mundial. ¡Debe
+                ser único y no podrás cambiarlo!</p>
+            <input type="text" id="alias-input" placeholder="Tu alias..." maxlength="12" autocomplete="off"
+                style="width:100%; border-radius:8px; padding:12px; border:2px solid #ddd; font-size:1.2em; text-align:center; box-sizing:border-box; font-weight:bold; color:#444;">
+            <p id="alias-error"
+                style="color:#d32f2f; font-size:0.85em; margin:8px 0; min-height:1.2em; font-weight:600;"></p>
+            <button id="btn-save-alias" class="glow-pulse btn-green"
+                style="width:100%; margin-top:5px; padding:12px; font-size:1em;">Guardar Alias</button>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
