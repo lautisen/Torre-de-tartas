@@ -6,6 +6,7 @@ const ui = {
     startTime: 0,
     timerInterval: null,
     currentUser: "",
+    currentUid: null,
     currentTopScore: 0,
     activeBoosters: {},
 
@@ -15,6 +16,21 @@ const ui = {
 
         const shareBtn = document.getElementById('share-btn');
         if (shareBtn) shareBtn.onclick = () => this.shareScoreImage();
+
+        const googleLoginBtn = document.getElementById('google-login-btn');
+        if (googleLoginBtn) googleLoginBtn.onclick = () => this.loginWithGoogle();
+
+        const googleLoginBtnGO = document.getElementById('google-login-btn-go');
+        if (googleLoginBtnGO) googleLoginBtnGO.onclick = () => this.loginWithGoogle(true);
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.onclick = () => this.logout();
+
+        const emailLinkBtn = document.getElementById('email-link-btn');
+        if (emailLinkBtn) emailLinkBtn.onclick = () => this.sendEmailLink();
+
+        this.listenToAuth();
+        this.completeEmailLinkSignIn();
 
         this.updateMotivationalText();
         this.listenToLeaderboard();
@@ -37,6 +53,98 @@ const ui = {
         const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
         const textEl = document.getElementById('motivational-text');
         if (textEl) textEl.innerText = randomPhrase;
+    },
+
+    listenToAuth() {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                this.currentUser = user.displayName || user.email.split('@')[0];
+                this.currentUid = user.uid;
+
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('user-info-section').classList.remove('hidden');
+                document.getElementById('logged-in-name').innerText = this.currentUser;
+
+                if (typeof shop !== 'undefined') shop.loadData(this.currentUid);
+            } else {
+                this.currentUid = null;
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('user-info-section').classList.add('hidden');
+            }
+        });
+    },
+
+    loginWithGoogle(fromGameOver = false) {
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            console.log("Logged in:", result.user.displayName);
+            if (fromGameOver && this.gameActive === false && !document.getElementById('game-over-screen').classList.contains('hidden')) {
+                this.saveScore(this.floors, Math.floor((Date.now() - this.startTime) / 1000), this.score);
+                document.getElementById('guest-save-prompt').classList.add('hidden');
+            }
+        }).catch((error) => {
+            console.error(error);
+            alert("Error al iniciar sesión: " + error.message);
+        });
+    },
+
+    sendEmailLink() {
+        const emailInput = document.getElementById('email-link-input');
+        const email = emailInput ? emailInput.value.trim() : '';
+        if (!email) return alert('Introduce tu correo electrónico.');
+
+        const actionCodeSettings = {
+            url: window.location.href.split('?')[0],
+            handleCodeInApp: true
+        };
+
+        firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+            .then(() => {
+                window.localStorage.setItem('emailForSignIn', email);
+                document.getElementById('email-link-section').classList.add('hidden');
+                document.getElementById('email-link-sent').classList.remove('hidden');
+            })
+            .catch((error) => {
+                console.error(error);
+                alert('Error al enviar el enlace: ' + error.message);
+            });
+    },
+
+    completeEmailLinkSignIn() {
+        if (!firebase.auth().isSignInWithEmailLink(window.location.href)) return;
+
+        let email = window.localStorage.getItem('emailForSignIn');
+        if (!email) {
+            email = window.prompt('Por favor, introduce tu email para confirmar el inicio de sesión:');
+        }
+        if (!email) return;
+
+        firebase.auth().signInWithEmailLink(email, window.location.href)
+            .then((result) => {
+                window.localStorage.removeItem('emailForSignIn');
+                // Clean the URL from the sign-in link parameters
+                window.history.replaceState(null, '', window.location.pathname);
+                console.log('Email link sign-in successful:', result.user.email);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert('Error al completar el inicio de sesión: ' + error.message);
+            });
+    },
+
+    logout() {
+        firebase.auth().signOut().then(() => {
+            this.currentUser = "";
+            this.currentUid = null;
+            if (typeof shop !== 'undefined') {
+                const nameInput = document.getElementById('username');
+                if (nameInput && nameInput.value.trim()) {
+                    shop.loadData(nameInput.value.trim());
+                } else {
+                    shop.coins = 0;
+                    document.getElementById('shop-coins-display').innerText = 0;
+                }
+            }
+        });
     },
 
     _initTutorial() {
@@ -70,19 +178,20 @@ const ui = {
 
     startGame(e) {
         if (e) e.preventDefault();
-        const nameInput = document.getElementById('username');
-        const name = nameInput.value.trim();
 
-        // Only require name if we haven't registered yet
-        if (!this.currentUser) {
-            if (!name) return alert('¡Dime tu nombre!');
-            this.currentUser = name;
-            document.getElementById('user-display').innerText = name;
-
-            // Cargar datos de la tienda y progresos específicos de este usuario
-            if (typeof shop !== 'undefined') {
-                shop.loadData(name);
+        if (!this.currentUid) {
+            const nameInput = document.getElementById('username');
+            const name = nameInput.value.trim();
+            if (!this.currentUser && !name) {
+                return alert('¡Dime tu nombre para jugar o inicia sesión con Google!');
             }
+            if (name) {
+                this.currentUser = name;
+                document.getElementById('user-display').innerText = name;
+                if (typeof shop !== 'undefined') shop.loadData(name);
+            }
+        } else {
+            document.getElementById('user-display').innerText = this.currentUser;
         }
 
         if (typeof gameAudio !== 'undefined') {
@@ -239,6 +348,12 @@ const ui = {
         if (resPts) resPts.innerText = finalCalculatedScore;
         if (resTime) resTime.innerText = timeStr;
 
+        if (!this.currentUid && finalPisos > 0) {
+            document.getElementById('guest-save-prompt').classList.remove('hidden');
+        } else {
+            document.getElementById('guest-save-prompt').classList.add('hidden');
+        }
+
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
     },
 
@@ -337,13 +452,16 @@ const ui = {
             if (typeof gameAudio !== 'undefined') gameAudio.worldRecord();
         }
 
-        database.ref('leaderboard').push({
-            name: this.currentUser,
-            pisos: pisos,
-            tiempo: tiempo,
-            score: totalScore,
-            timestamp: Date.now()
-        });
+        if (this.currentUid) {
+            database.ref('leaderboard').push({
+                uid: this.currentUid,
+                name: this.currentUser,
+                pisos: pisos,
+                tiempo: tiempo,
+                score: totalScore,
+                timestamp: Date.now()
+            });
+        }
     },
 
     showRecordMessage() {

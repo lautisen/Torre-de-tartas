@@ -8,6 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=3.0">
+
+    <!-- Google AdSense Auto-Ads Placeholder -->
+    <!-- Reemplaza "ca-pub-XXXXXXXXXXXXXXXX" con tu ID de publicador real -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -22,7 +27,53 @@
             <p id="motivational-text"
                 style="min-height: 45px; display: flex; align-items: center; justify-content: center; margin: 5px 0 15px; font-weight: 500; font-size: 0.95em; line-height: 1.3;">
                 Cargando...</p>
-            <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off">
+
+            <div id="auth-section"
+                style="background: rgba(0,0,0,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                <p style="font-size: 0.85em; color: #555; margin: 0 0 10px; font-weight: 500;">Inicia sesión para
+                    guardar tu progreso, monedas y aparecer en el ranking oficial.</p>
+                <button id="google-login-btn"
+                    style="width: 100%; margin-bottom: 8px; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        style="width: 20px; height: 20px;">
+                    Continuar con Google
+                </button>
+
+                <div style="display:flex; align-items:center; gap:8px; margin: 8px 0;">
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                    <span style="font-size:0.75em; color:#aaa;">o</span>
+                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
+                </div>
+
+                <div id="email-link-section">
+                    <input type="email" id="email-link-input" placeholder="tu@email.com" autocomplete="email"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; font-size:0.9em; margin-bottom:8px; box-sizing:border-box;">
+                    <button id="email-link-btn"
+                        style="width:100%; padding:10px; border-radius:8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color:white; font-weight:bold; border:none; cursor:pointer; font-size:0.9em;">
+                        ✉️ Enviar enlace mágico
+                    </button>
+                </div>
+                <div id="email-link-sent" class="hidden"
+                    style="padding:10px; background:rgba(99,102,241,0.1); border-radius:8px; margin-top:8px;">
+                    <p style="font-size:0.85em; color:#6366f1; margin:0; font-weight:600;">📩 ¡Enlace enviado! Revisa tu
+                        bandeja de entrada y haz clic en el enlace para iniciar sesión.</p>
+                </div>
+
+                <p style="font-size: 0.75em; color: #888; margin: 10px 0 5px;">O juega como invitado (no se guarda en la
+                    nube):</p>
+                <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off"
+                    style="margin-bottom:0;">
+            </div>
+
+            <div id="user-info-section" class="hidden"
+                style="background: rgba(0,0,0,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                <p style="font-size: 1.1em; font-weight: 900; margin: 0 0 5px; color: #333;">¡Hola, <span
+                        id="logged-in-name" style="color: var(--pink);"></span>!</p>
+                <p style="font-size: 0.8em; color: #666; margin: 0 0 10px;">Tu progreso está seguro en la nube ☁️</p>
+                <button id="logout-btn" class="btn-red"
+                    style="padding: 6px 12px; font-size: 0.8em; border-radius: 6px;">Cerrar Sesión</button>
+            </div>
+
             <div style="display:flex; justify-content:center; gap: 10px; margin-bottom: 20px;">
                 <button id="start-btn" style="flex:1;">¡A Cocinar!</button>
                 <button id="shop-btn" class="btn-blue" style="padding: 15px 20px;">🛒 Tienda</button>
@@ -103,6 +154,18 @@
                 </p>
             </div>
 
+            <div id="guest-save-prompt" class="hidden"
+                style="margin-bottom: 15px; padding: 12px; background: rgba(255,193,7,0.1); border: 2px dashed rgba(255,193,7,0.5); border-radius: 10px; text-align: center;">
+                <p style="font-size: 0.85em; margin: 0 0 10px; color: #666; font-weight: bold;">¿Buen récord? ¡Inicia
+                    sesión con Google para guardarlo en el ranking oficial!</p>
+                <button id="google-login-btn-go"
+                    style="width: 100%; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.9em;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
+                        style="width: 16px; height: 16px;">
+                    Guardar progreso
+                </button>
+            </div>
+
             <button onclick="ui.startGame()">🔄 Reintentar</button>
             <button id="share-btn" class="glow-pulse btn-green" style="margin-top: 10px;">📸 Compartir Logro</button>
             <button onclick="ui.showRankings()" class="btn-outline" style="margin-top: 10px;">🏆 Volver al Menú
@@ -146,6 +209,7 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <script src="config.js?v=3.0"></script>
