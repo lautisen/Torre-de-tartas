@@ -154,8 +154,22 @@ const ui = {
             setTimeout(() => this.showBoosterActivation('🧴 Pegamento Extra Activado'), 1500);
         }
 
+        this.updateBoostersHUD();
+
         this.gameActive = true;
         gameMain.start();
+    },
+
+    updateBoostersHUD() {
+        const hud = document.getElementById('active-boosters-hud');
+        if (!hud) return;
+        hud.innerHTML = '';
+        if (this.activeBoosters.slowMotion) {
+            hud.innerHTML += `<div class="booster-icon slow-motion">🐢</div>`;
+        }
+        if (this.activeBoosters.extraLife) {
+            hud.innerHTML += `<div class="booster-icon extra-life">🧴</div>`;
+        }
     },
 
     showBoosterActivation(msg) {

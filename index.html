@@ -109,7 +109,9 @@
     </div>
 
     <div id="ui" class="hidden">
-        <div id="score-box" style="display:flex; flex-direction:column; gap:8px;">
+        <div id="score-box" style="display:flex; flex-direction:column; gap:8px; position:relative;">
+            <div id="active-boosters-hud"
+                style="position:absolute; top:-12px; right:-12px; display:flex; gap:5px; flex-direction:column;"></div>
             <h1 style="margin:0; font-size:1.1em; color:#555;">🍰 <span id="user-display"></span></h1>
             <div style="display: flex; gap: 20px; justify-content: center; font-size:1.4em;">
                 <span style="color:var(--pink); font-weight:900;">Puntos: <b id="score">0</b></span>

@@ -271,14 +271,18 @@ const gameMain = {
             // Clear squash class after animation
             setTimeout(() => stacked.classList.remove('squash'), 300);
         } else {
-            this.attemptGameOver();
+            this.attemptGameOver(falling);
         }
     },
 
-    attemptGameOver() {
+    attemptGameOver(falling = null) {
         if (typeof ui !== 'undefined' && ui.activeBoosters && ui.activeBoosters.extraLife) {
+            // Remove the floating missed block from the screen
+            if (falling) falling.remove();
+
             // Consume extra life
             ui.activeBoosters.extraLife = false;
+            ui.updateBoostersHUD();
             ui.showBoosterActivation('¡🧴 Pegamento Extra te salvó!');
             if (typeof gameAudio !== 'undefined') gameAudio.success('perfect');
 
