@@ -1824,12 +1824,12 @@ button:hover {
    HUD BOOSTERS
    ========================================== */
 .booster-icon {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     background: #fff;
     border: 2px solid var(--pink);
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     display: flex;
     justify-content: center;
     align-items: center;

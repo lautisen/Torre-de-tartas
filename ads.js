@@ -1,91 +1,137 @@
 /**
- * Rewarded Ads Manager
- * Uses Google Ad Placement API (H5 Games Ads) for rewarded video ads.
- * Falls back to a simulated ad if the API isn't available (e.g., ad blockers).
+ * Rewarded Ads Manager using Google IMA SDK v3
+ * Delivers video ads via VAST tags for AdSense/AdMob.
  */
 const rewardedAds = {
     initialized: false,
-    adBreak: null,
+    adsLoader: null,
+    adsManager: null,
+    adDisplayContainer: null,
+    onRewarded: null,
+    onDismissed: null,
+    currentAd: null,
 
     init() {
-        // Set up the Ad Placement API bridge
-        window.adsbygoogle = window.adsbygoogle || [];
-        const _adBreak = window.adConfig = window.adBreak = function (o) {
-            window.adsbygoogle.push(o);
-        };
-        this.adBreak = _adBreak;
-
-        // Configure ad preloading
-        try {
-            this.adBreak({ preloadAdBreaks: 'on', sound: 'on' });
-            this.initialized = true;
-            console.log('[Ads] Ad Placement API initialized.');
-        } catch (e) {
-            console.warn('[Ads] Could not initialize Ad Placement API:', e);
+        if (!window.google || !window.google.ima) {
+            console.warn('[Ads] IMA SDK not loaded.');
+            return;
         }
+
+        const adContainer = document.getElementById('ad-container');
+        if (!adContainer) return;
+
+        this.adDisplayContainer = new google.ima.AdDisplayContainer(adContainer);
+        this.adsLoader = new google.ima.AdsLoader(this.adDisplayContainer);
+
+        this.adsLoader.addEventListener(
+            google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
+            (e) => this._onAdsManagerLoaded(e),
+            false
+        );
+
+        this.adsLoader.addEventListener(
+            google.ima.AdErrorEvent.Type.AD_ERROR,
+            (e) => this._onAdError(e),
+            false
+        );
+
+        this.initialized = true;
+        console.log('[Ads] IMA SDK initialized.');
     },
 
     /**
-     * Show a rewarded ad. If the ad is available it will show;
-     * if not (ad blocker, no fill, etc.) it falls back to a simulated "ad".
-     * @param {string} name - Identifier for the ad placement
-     * @param {function} onRewarded - Callback when the user earns the reward
-     * @param {function} [onDismissed] - Optional callback if user skips/dismisses
+     * Show a rewarded ad using IMA SDK.
      */
     showRewarded(name, onRewarded, onDismissed) {
-        if (!this.initialized || !this.adBreak) {
-            console.warn('[Ads] API not available, using fallback.');
+        this.onRewarded = onRewarded;
+        this.onDismissed = onDismissed;
+
+        if (!this.initialized) {
+            console.warn('[Ads] IMA not initialized, using fallback.');
             this._fallbackAd(name, onRewarded, onDismissed);
             return;
         }
 
+        const adContainer = document.getElementById('ad-container');
+        adContainer.classList.remove('hidden');
+        this.adDisplayContainer.initialize();
+
+        const adsRequest = new google.ima.AdsRequest();
+        adsRequest.adTagUrl = firebaseConfig.adVastTag;
+
+        // Configuration for video area
+        adsRequest.linearAdSlotWidth = window.innerWidth;
+        adsRequest.linearAdSlotHeight = window.innerHeight;
+        adsRequest.nonLinearAdSlotWidth = window.innerWidth;
+        adsRequest.nonLinearAdSlotHeight = window.innerHeight;
+
+        this.adsLoader.requestAds(adsRequest);
+    },
+
+    _onAdsManagerLoaded(adsManagerLoadedEvent) {
+        const adsRenderingSettings = new google.ima.AdsRenderingSettings();
+        adsRenderingSettings.restoreCustomPlaybackStateOnAdBreakComplete = true;
+
+        this.adsManager = adsManagerLoadedEvent.getAdsManager(adsRenderingSettings);
+
+        this.adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, (e) => this._onAdError(e));
+
+        this.adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED, () => {
+            // Pause game audio/logic if needed
+        });
+
+        this.adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, () => {
+            this._closeAd();
+        });
+
+        this.adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, () => {
+            if (this.onRewarded) this.onRewarded();
+            this._closeAd();
+        });
+
+        this.adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, () => {
+            if (this.onDismissed) this.onDismissed();
+            this._closeAd();
+        });
+
         try {
-            this.adBreak({
-                type: 'reward',
-                name: name,
-                beforeReward: (showAdFn) => {
-                    showAdFn();
-                },
-                adViewed: () => {
-                    console.log(`[Ads] Reward earned: ${name}`);
-                    if (onRewarded) onRewarded();
-                },
-                adDismissed: () => {
-                    console.log(`[Ads] Ad dismissed: ${name}`);
-                    if (onDismissed) onDismissed();
-                },
-                adBreakDone: (placementInfo) => {
-                    // If no ad was available (noAdAvailable), use fallback
-                    if (placementInfo && placementInfo.breakStatus === 'notReady') {
-                        console.log('[Ads] No ad available, using fallback.');
-                        this._fallbackAd(name, onRewarded, onDismissed);
-                    }
-                }
-            });
-        } catch (e) {
-            console.warn('[Ads] Error showing ad, using fallback:', e);
-            this._fallbackAd(name, onRewarded, onDismissed);
+            this.adsManager.init(window.innerWidth, window.innerHeight, google.ima.ViewMode.FULLSCREEN);
+            this.adsManager.start();
+        } catch (adError) {
+            this._onAdError(adError);
         }
     },
 
-    /**
-     * Fallback "ad" — shows a brief countdown overlay when real ads aren't available.
-     * This ensures the reward flow always works during development or with ad blockers.
-     */
+    _onAdError(adErrorEvent) {
+        console.warn('[Ads] IMA Ad Error:', adErrorEvent.getError());
+        if (this.adsManager) this.adsManager.destroy();
+        this._fallbackAd('error', this.onRewarded, this.onDismissed);
+        this._closeAd();
+    },
+
+    _closeAd() {
+        const adContainer = document.getElementById('ad-container');
+        if (adContainer) adContainer.classList.add('hidden');
+        if (this.adsManager) {
+            this.adsManager.destroy();
+            this.adsManager = null;
+        }
+    },
+
     _fallbackAd(name, onRewarded, onDismissed) {
         const overlay = document.createElement('div');
         overlay.id = 'fallback-ad-overlay';
         Object.assign(overlay.style, {
             position: 'fixed', inset: '0', background: 'rgba(0,0,0,0.85)',
-            zIndex: '9999', display: 'flex', flexDirection: 'column',
+            zIndex: '10000', display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center', color: 'white',
             fontFamily: 'Outfit, sans-serif', textAlign: 'center'
         });
 
         overlay.innerHTML = `
-            <p style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.7;">📺 Anuncio</p>
+            <p style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.7;">📺 Anuncio (Simulado)</p>
             <p id="fallback-ad-timer" style="font-size: 4em; font-weight: 900; margin: 0;">5</p>
-            <p style="font-size: 0.85em; margin-top: 15px; opacity: 0.5;">El anuncio se mostrará aquí cuando esté disponible</p>
+            <p style="font-size: 0.85em; margin-top: 15px; opacity: 0.5;">Usando modo de compatibilidad IMA</p>
         `;
 
         document.body.appendChild(overlay);
@@ -104,7 +150,6 @@ const rewardedAds = {
     }
 };
 
-// Initialize when the script loads
 window.addEventListener('DOMContentLoaded', () => {
     rewardedAds.init();
 });
