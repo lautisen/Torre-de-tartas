@@ -73,7 +73,11 @@ const ui = {
                         // Needs alias
                         this.showAliasPrompt(user);
                     }
-                }).catch(e => console.error("Error fetching alias:", e));
+                }).catch(e => {
+                    console.error("Error fetching alias:", e);
+                    // Critical error: show something to the user
+                    alert("Error al conectar con la base de datos. Por favor, recarga la página.");
+                });
             } else {
                 this.currentUid = null;
                 document.getElementById('auth-section').classList.remove('hidden');
@@ -156,7 +160,7 @@ const ui = {
                     });
                 }
             }).catch(e => {
-                error.innerText = "Error de conexión.";
+                error.innerText = "❌ Error al verificar disponibilidad. Revisa tu conexión.";
                 btn.disabled = false;
                 btn.innerText = 'Guardar Alias';
                 console.error(e);
