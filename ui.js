@@ -582,7 +582,7 @@ const ui = {
 
         const score = ui.score; // Asumiendo que el score final está aquí
         const pisos = ui.floors;
-        const text = `🏗️🎂 Torre de tartas:\n${pisos} Pisos\n${score} Puntos del día\n\n¡Intenta superarme! 👉 https://lautisen.github.io/Torre-de-tartas/`;
+        const text = `🏗️🎂 Torre de tartas:\n${pisos} Pisos\n${score} Puntos del día\n\n¡Intenta superarme! 👉 https://cake-game.online/`;
 
         if (navigator.share) {
             try {
