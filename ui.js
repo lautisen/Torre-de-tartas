@@ -29,6 +29,12 @@ const ui = {
         const emailLinkBtn = document.getElementById('email-link-btn');
         if (emailLinkBtn) emailLinkBtn.onclick = () => this.sendEmailLink();
 
+        const adReviveBtn = document.getElementById('ad-revive-btn');
+        if (adReviveBtn) adReviveBtn.onclick = () => this.reviveWithAd();
+
+        const adDoubleBtn = document.getElementById('ad-double-coins-btn');
+        if (adDoubleBtn) adDoubleBtn.onclick = () => this.doubleCoinsWithAd();
+
         this.listenToAuth();
         this.completeEmailLinkSignIn();
 
@@ -323,6 +329,14 @@ const ui = {
         this.updateGameOverText();
         document.getElementById('game-over-screen').classList.remove('hidden');
 
+        // Rewarded ad buttons: reset for this game over
+        this._adReviveUsed = false;
+        this._adDoubleUsed = false;
+        const reviveBtn = document.getElementById('ad-revive-btn');
+        const doubleBtn = document.getElementById('ad-double-coins-btn');
+        if (reviveBtn) { reviveBtn.classList.remove('hidden'); reviveBtn.disabled = false; reviveBtn.innerHTML = '🧴 Segunda Vida (Ver anuncio)'; }
+        if (doubleBtn) { doubleBtn.classList.remove('hidden'); doubleBtn.disabled = false; doubleBtn.innerHTML = '🪙 x2 Monedas (Ver anuncio)'; }
+
         // Animación de conteo del puntaje final
         const scoreEl = document.getElementById('final-score');
         scoreEl.innerText = "0";
@@ -355,6 +369,82 @@ const ui = {
         }
 
         this.saveScore(finalPisos, totalSeconds, finalCalculatedScore);
+    },
+
+    reviveWithAd() {
+        if (this._adReviveUsed) return;
+        this._adReviveUsed = true;
+
+        const btn = document.getElementById('ad-revive-btn');
+        if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Cargando anuncio...'; }
+
+        rewardedAds.showRewarded('revive', () => {
+            // REWARD: Revive the player
+            if (btn) btn.classList.add('hidden');
+
+            // Hide game over, show game UI
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('ui').classList.remove('hidden');
+            document.getElementById('game-world').classList.remove('hidden');
+            document.getElementById('crane-system').classList.remove('hidden');
+
+            // Grant extra life booster and resume
+            this.activeBoosters.extraLife = true;
+            this.updateBoostersHUD();
+            this.showBoosterActivation('¡🧴 Pegamento Extra Activado!');
+
+            // Reset balance and resume game
+            this.gameActive = true;
+            gameMain.balance = 0;
+            const container = document.getElementById('base-container');
+            container.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            container.style.transform = 'translateX(-50%) rotate(0deg)';
+            setTimeout(() => { container.style.transition = 'transform 0.2s ease-out'; }, 500);
+
+            // Give a wide block to help them recover
+            gameMain.lastWidth = gameMain.baseW;
+            gameMain.speed = Math.max(0.02, gameMain.speed * 0.8);
+            gameMain.spawnCake();
+
+            this.startTimer();
+            if (typeof gameAudio !== 'undefined') {
+                gameAudio.startBgm();
+                gameAudio.success('perfect');
+            }
+        }, () => {
+            // Dismissed - re-enable button
+            if (btn) { btn.disabled = false; btn.innerHTML = '🧴 Segunda Vida (Ver anuncio)'; }
+            this._adReviveUsed = false;
+        });
+    },
+
+    doubleCoinsWithAd() {
+        if (this._adDoubleUsed) return;
+        this._adDoubleUsed = true;
+
+        const btn = document.getElementById('ad-double-coins-btn');
+        if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Cargando anuncio...'; }
+
+        rewardedAds.showRewarded('double-coins', () => {
+            // REWARD: Double the session coins
+            const bonusCoins = this.sessionCoins;
+            if (typeof shop !== 'undefined' && bonusCoins > 0) {
+                shop.addCoins(bonusCoins);
+            }
+            this.sessionCoins *= 2;
+            document.getElementById('final-coins').innerText = `+${this.sessionCoins} 🪙 (x2!)`;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '✅ ¡Monedas duplicadas!';
+                btn.style.opacity = '0.6';
+            }
+            if (typeof gameAudio !== 'undefined') gameAudio.success('perfect');
+        }, () => {
+            // Dismissed - re-enable
+            if (btn) { btn.disabled = false; btn.innerHTML = '🪙 x2 Monedas (Ver anuncio)'; }
+            this._adDoubleUsed = false;
+        });
     },
 
     updateGameOverText() {

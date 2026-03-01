@@ -9,8 +9,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css?v=3.0">
 
-    <!-- Google AdSense Auto-Ads Placeholder -->
-    <!-- Reemplaza "ca-pub-3539090903954344" con tu ID de publicador real -->
+    <!-- Google Ad Placement API (H5 Games Ads) -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3539090903954344"
         crossorigin="anonymous"></script>
 </head>
@@ -165,6 +164,16 @@
                     Guardar progreso
                 </button>
             </div>
+            <div id="rewarded-ad-section" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                <button id="ad-revive-btn" class="btn-yellow"
+                    style="width:100%; padding:12px; font-size:0.95em; display:flex; align-items:center; justify-content:center; gap:8px; border-radius:10px;">
+                    🧴 Segunda Vida (Ver anuncio)
+                </button>
+                <button id="ad-double-coins-btn"
+                    style="width:100%; padding:10px; font-size:0.9em; display:flex; align-items:center; justify-content:center; gap:8px; border-radius:10px; background: linear-gradient(135deg, #fbc02d, #f9a825); color: #333; font-weight:bold; border:none; cursor:pointer;">
+                    🪙 x2 Monedas (Ver anuncio)
+                </button>
+            </div>
 
             <button onclick="ui.startGame()">🔄 Reintentar</button>
             <button id="share-btn" class="glow-pulse btn-green" style="margin-top: 10px;">📸 Compartir Logro</button>
@@ -212,6 +221,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
+    <script src="ads.js?v=3.0"></script>
     <script src="config.js?v=3.0"></script>
     <script src="audio.js?v=3.0"></script>
     <script src="physics.js?v=3.0"></script>

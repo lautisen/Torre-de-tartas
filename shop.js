@@ -175,6 +175,38 @@ const shop = {
             });
         } else {
             // BOOSTERS TAB
+
+            // Free coins ad button
+            const adCard = document.createElement('div');
+            adCard.className = 'shop-item-card';
+            adCard.style.border = '2px dashed #fbc02d';
+            adCard.style.borderRadius = '10px';
+            adCard.style.padding = '10px';
+            adCard.style.textAlign = 'center';
+            adCard.style.backgroundColor = '#fff8e1';
+            adCard.style.gridColumn = '1 / -1'; // span full width
+
+            const cooldownKey = 'tdt_ad_coins_cooldown';
+            const lastUsed = parseInt(localStorage.getItem(cooldownKey) || '0', 10);
+            const cooldownMs = 60 * 1000; // 60 seconds
+            const canWatch = (Date.now() - lastUsed) > cooldownMs;
+
+            adCard.innerHTML = `
+                <div style="font-size: 2em; margin-bottom: 5px;">📺</div>
+                <h4 style="margin: 0 0 5px 0;">Monedas Gratis</h4>
+                <p style="font-size: 0.8em; color: #666; margin: 0 0 10px 0;">Ve un anuncio y gana 50 🪙 gratis.</p>
+                <button id="btn-ad-free-coins" class="${canWatch ? 'btn-yellow' : 'btn-gray'}" style="width:100%; padding:8px; font-size:0.9em;"
+                    ${canWatch ? '' : 'disabled'}>${canWatch ? '📺 Ver Anuncio (+50 🪙)' : '⏳ Espera un momento...'}</button>
+            `;
+            container.appendChild(adCard);
+
+            if (canWatch) {
+                setTimeout(() => {
+                    const adBtn = document.getElementById('btn-ad-free-coins');
+                    if (adBtn) adBtn.onclick = () => this.watchAdForCoins();
+                }, 0);
+            }
+
             this.boosters.forEach(b => {
                 const div = document.createElement('div');
                 div.className = `shop-item-card`;
@@ -233,6 +265,37 @@ const shop = {
 
     applyTheme(id) {
         document.documentElement.setAttribute('data-theme', id);
+    },
+
+    watchAdForCoins() {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+
+        const btn = document.getElementById('btn-ad-free-coins');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Cargando anuncio...';
+        }
+
+        rewardedAds.showRewarded('free-coins', () => {
+            // REWARD: 50 coins
+            this.addCoins(50);
+            localStorage.setItem('tdt_ad_coins_cooldown', Date.now());
+
+            if (btn) {
+                btn.innerHTML = '✅ ¡Recibiste 50 🪙!';
+                btn.className = 'btn-gray';
+            }
+            if (typeof gameAudio !== 'undefined') gameAudio.success('perfect');
+
+            // Re-render shop items to update UI after a moment
+            setTimeout(() => this.renderShopItems(), 2000);
+        }, () => {
+            // Dismissed
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '📺 Ver Anuncio (+50 🪙)';
+            }
+        });
     },
 
     consumeBooster(id) {
