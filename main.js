@@ -252,12 +252,12 @@ const gameMain = {
 
             atmosphere.update(ui.floors);
 
-            if (Math.abs(this.balance) > 15) { this.gameOverFall(); return; }
+            if (Math.abs(this.balance) > 15) { this.attemptGameOver(); return; }
 
             // Si la torre se ha salido completamente de la pantalla, game over
             const baseRect = baseContainer.getBoundingClientRect();
             if (baseRect.right < -60 || baseRect.left > window.innerWidth + 60) {
-                this.gameOverFall();
+                this.attemptGameOver();
                 return;
             }
             if (ui.floors > 4) {
@@ -270,6 +270,31 @@ const gameMain = {
 
             // Clear squash class after animation
             setTimeout(() => stacked.classList.remove('squash'), 300);
+        } else {
+            this.attemptGameOver();
+        }
+    },
+
+    attemptGameOver() {
+        if (typeof ui !== 'undefined' && ui.activeBoosters && ui.activeBoosters.extraLife) {
+            // Consume extra life
+            ui.activeBoosters.extraLife = false;
+            ui.showBoosterActivation('¡🧴 Pegamento Extra te salvó!');
+            if (typeof gameAudio !== 'undefined') gameAudio.success('perfect');
+
+            // Reset balance straight
+            this.balance = 0;
+            const container = document.getElementById('base-container');
+            container.style.transform = `rotate(0deg)`;
+            container.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            setTimeout(() => { container.style.transition = 'transform 0.1s linear'; }, 500);
+
+            // Give a temporary wide width to save the block
+            this.lastWidth = this.baseW;
+
+            // Generate next block anyway
+            this.speed += 0.001;
+            this.spawnCake();
         } else {
             this.gameOverFall();
         }

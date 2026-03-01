@@ -148,6 +148,12 @@ const ui = {
             this.showBoosterActivation('🐢 Cuerda Lenta Activada');
         }
 
+        // Auto-consume 'extraLife' if they have it
+        if (typeof shop !== 'undefined' && shop.consumeBooster('extraLife')) {
+            this.activeBoosters.extraLife = true;
+            setTimeout(() => this.showBoosterActivation('🧴 Pegamento Extra Activado'), 1500);
+        }
+
         this.gameActive = true;
         gameMain.start();
     },
