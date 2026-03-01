@@ -1808,6 +1808,18 @@ button:hover {
     box-shadow: 0 2px 0 #f57f17, 0 4px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
+.btn-red {
+    background: linear-gradient(to bottom, #ef4444, #dc2626) !important;
+    color: white !important;
+    box-shadow: 0 4px 0 #b91c1c, 0 6px 10px rgba(0, 0, 0, 0.3) !important;
+    text-shadow: none !important;
+}
+
+.btn-red:active {
+    transform: translateY(2px) !important;
+    box-shadow: 0 2px 0 #b91c1c, 0 3px 5px rgba(0, 0, 0, 0.3) !important;
+}
+
 /* ==========================================
    HUD BOOSTERS
    ========================================== */
