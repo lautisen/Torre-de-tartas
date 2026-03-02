@@ -52,6 +52,9 @@ const gameMain = {
     setupControls() {
         const trigger = (e) => {
             if (ui.gameActive) {
+                // If the target is a booster icon or inside the booster HUD, ignore
+                if (e.target.closest('#active-boosters-hud')) return;
+
                 if (e.type === 'keydown' && e.code !== 'Space') return;
                 e.preventDefault();
                 this.drop();
