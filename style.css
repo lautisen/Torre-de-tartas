@@ -1882,10 +1882,16 @@ button:hover {
 /* ==========================================
    HUD BOOSTERS
    ========================================== */
+#active-boosters-hud {
+    pointer-events: auto !important;
+    /* Allow tapping boosters */
+}
+
 .booster-icon {
     font-size: 1.6rem;
     background: #fff;
-    border: 2px solid var(--pink);
+    border: 2px solid #ccc;
+    /* Default available but not active */
     border-radius: 50%;
     width: 44px;
     height: 44px;
@@ -1893,36 +1899,56 @@ button:hover {
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    animation: flashBooster 1.5s infinite alternate;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    opacity: 0.6;
+    /* Semi-transparent when available but inactive */
 }
 
-.booster-icon.extra-life {
+.booster-icon.available {
+    opacity: 0.9;
+    border-color: var(--pink);
+}
+
+.booster-icon.active {
+    opacity: 1;
+    border-color: #ffeb3b;
+    box-shadow: 0 0 15px rgba(255, 235, 59, 0.6);
+    animation: pulseActive 1s infinite alternate;
+}
+
+@keyframes pulseActive {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.1);
+    }
+}
+
+.booster-timer {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #333;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    z-index: 5;
+}
+
+.booster-icon.extra-life.active {
     border-color: #4caf50;
-    animation: flashBoosterGreen 1.5s infinite alternate;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
 }
 
-@keyframes flashBooster {
-    0% {
-        transform: scale(0.95);
-        filter: drop-shadow(0 0 2px var(--pink));
-    }
-
-    100% {
-        transform: scale(1.05);
-        filter: drop-shadow(0 0 10px var(--pink));
-    }
-}
-
-@keyframes flashBoosterGreen {
-    0% {
-        transform: scale(0.95);
-        filter: drop-shadow(0 0 2px #4caf50);
-    }
-
-    100% {
-        transform: scale(1.05);
-        filter: drop-shadow(0 0 10px #4caf50);
-    }
+.booster-icon.slow-motion.active {
+    border-color: #2196f3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.6);
 }
 
 /* ==========================================

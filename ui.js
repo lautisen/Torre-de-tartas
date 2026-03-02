@@ -8,7 +8,8 @@ const ui = {
     currentUser: "",
     currentUid: null,
     currentTopScore: 0,
-    activeBoosters: {},
+    activeBoosters: {}, // Tracks { id: { active: bool, time: num, inventory: num } }
+    boosterInterval: null,
 
     init() {
         const btn = document.getElementById('start-btn');
@@ -334,26 +335,25 @@ const ui = {
         this.startTime = Date.now();
         this.startTimer();
 
-        // Load consumed boosters for this run if player selected them
+        // Set boosters as "available" based on shop inventory (do NOT consume yet)
         this.activeBoosters = {
-            slowMotion: false,
-            magnet: false,
-            extraLife: false
+            slowMotion: { active: false, time: 0, inventory: 0 },
+            magnet: { active: false, time: 0, inventory: 0 },
+            extraLife: { active: false, time: 0, inventory: 0 }
         };
 
-        // Auto-consume 'slowMotion' if they have it
-        if (typeof shop !== 'undefined' && shop.consumeBooster('slowMotion')) {
-            this.activeBoosters.slowMotion = true;
-            this.showBoosterActivation('🐢 Cuerda Lenta Activada');
-        }
-
-        // Auto-consume 'extraLife' if they have it
-        if (typeof shop !== 'undefined' && shop.consumeBooster('extraLife')) {
-            this.activeBoosters.extraLife = true;
-            setTimeout(() => this.showBoosterActivation('🧴 Pegamento Extra Activado'), 1500);
+        if (typeof shop !== 'undefined') {
+            shop.boosters.forEach(b => {
+                if (this.activeBoosters[b.id]) {
+                    this.activeBoosters[b.id].inventory = b.count;
+                }
+            });
         }
 
         this.updateBoostersHUD();
+
+        if (this.boosterInterval) clearInterval(this.boosterInterval);
+        this.boosterInterval = setInterval(() => this.tickBoosters(), 1000);
 
         this.gameActive = true;
         gameMain.start();
@@ -363,12 +363,76 @@ const ui = {
         const hud = document.getElementById('active-boosters-hud');
         if (!hud) return;
         hud.innerHTML = '';
-        if (this.activeBoosters.slowMotion) {
-            hud.innerHTML += `<div class="booster-icon slow-motion">🐢</div>`;
+
+        const boosterIcons = { slowMotion: '🐢', magnet: '🧲', extraLife: '🧴' };
+
+        Object.keys(this.activeBoosters).forEach(id => {
+            const b = this.activeBoosters[id];
+            if (b.inventory > 0 || b.active) {
+                const div = document.createElement('div');
+                div.className = `booster-icon ${id.replace(/([A-Z])/g, "-$1").toLowerCase()} ${b.active ? 'active' : 'available'}`;
+                div.innerHTML = boosterIcons[id];
+
+                if (b.active && b.time > 0) {
+                    div.innerHTML += `<div class="booster-timer">${b.time}s</div>`;
+                }
+
+                if (!b.active && b.inventory > 0) {
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        this.activateBooster(id);
+                    };
+                }
+
+                hud.appendChild(div);
+            }
+        });
+    },
+
+    activateBooster(id) {
+        if (!ui.gameActive) return;
+        const b = this.activeBoosters[id];
+        if (b.active || b.inventory <= 0) return;
+
+        // Consume from shop
+        if (typeof shop !== 'undefined' && shop.consumeBooster(id)) {
+            b.active = true;
+            b.inventory--;
+
+            // Set durations
+            if (id === 'slowMotion') {
+                b.time = 10;
+                this.showBoosterActivation('🐢 Cuerda Lenta: 10 seg');
+                // Apply instant slow if needed
+                if (typeof gameMain !== 'undefined') gameMain.speed *= 0.7;
+            } else if (id === 'magnet') {
+                b.time = 10;
+                this.showBoosterActivation('🧲 Magnetismo: 10 seg');
+            } else if (id === 'extraLife') {
+                b.time = 30;
+                this.showBoosterActivation('🧴 Pegamento: 30 seg');
+            }
+
+            if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+            this.updateBoostersHUD();
         }
-        if (this.activeBoosters.extraLife) {
-            hud.innerHTML += `<div class="booster-icon extra-life">🧴</div>`;
-        }
+    },
+
+    tickBoosters() {
+        if (!this.gameActive) return;
+        let changed = false;
+        Object.keys(this.activeBoosters).forEach(id => {
+            const b = this.activeBoosters[id];
+            if (b.active && b.time > 0) {
+                b.time--;
+                changed = true;
+                if (b.time <= 0) {
+                    b.active = false;
+                    this.showBoosterActivation(`¡${id === 'slowMotion' ? '🐢' : id === 'magnet' ? '🧲' : '🧴'} Agotado!`);
+                }
+            }
+        });
+        if (changed) this.updateBoostersHUD();
     },
 
     showBoosterActivation(msg) {

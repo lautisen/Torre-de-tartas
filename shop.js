@@ -12,9 +12,9 @@ const shop = {
     ],
 
     boosters: [
-        { id: 'slowMotion', name: 'Cuerda Lenta', price: 20, description: 'La grúa reduce su velocidad base al hacer un Perfecto.', icon: '🐢', count: 0 },
-        { id: 'magnet', name: 'Base Magnética', price: 30, description: 'Mejora ligeramente la tracción de los bloques para que no resbalen.', icon: '🧲', count: 0 },
-        { id: 'extraLife', name: 'Pegamento Extra', price: 50, description: 'Previene 1 caída inminente por partida.', icon: '🧴', count: 0 }
+        { id: 'slowMotion', name: 'Cuerda Lenta', price: 20, description: 'REDUCIDO: Reduce la velocidad de la grúa por 10 seg. Actívalo con un toque.', icon: '🐢', count: 0 },
+        { id: 'magnet', name: 'Base Magnética', price: 30, description: 'NUEVO: Atrae las tartas al centro magnéticamente por 10 seg. Actívalo con un toque.', icon: '🧲', count: 0 },
+        { id: 'extraLife', name: 'Pegamento Extra', price: 50, description: 'REDUCIDO: Te protege de 1 caída si ocurre en los próximos 30 seg. Actívalo con un toque.', icon: '🧴', count: 0 }
     ],
 
     currentTab: 'skins', // 'skins' or 'boosters'

@@ -74,6 +74,14 @@ const gameMain = {
             this.angle += this.speed;
             const oscillation = Math.sin(this.angle) * 35;
             document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+
+            // --- BOOSTER: MAGNET ---
+            // If magnet is active, slowly pull the oscillation towards 0 (center)
+            if (typeof ui !== 'undefined' && ui.activeBoosters.magnet && ui.activeBoosters.magnet.active) {
+                // Decay the oscillation towards 0 slowly
+                const pullStrength = 0.05; // Adjust for "magnetic feel"
+                this.angle *= (1 - pullStrength);
+            }
         }
         requestAnimationFrame(() => this.loop());
     },
@@ -164,7 +172,7 @@ const gameMain = {
 
                 // --- BOOSTER: SLOW MOTION ---
                 // Reduce extra cord base speed to give more time on next drop
-                if (typeof ui !== 'undefined' && ui.activeBoosters.slowMotion) {
+                if (typeof ui !== 'undefined' && ui.activeBoosters.slowMotion && ui.activeBoosters.slowMotion.active) {
                     this.speed = Math.max(0.015, this.speed * 0.85);
                 }
             } else {
@@ -276,12 +284,13 @@ const gameMain = {
     },
 
     attemptGameOver(falling = null) {
-        if (typeof ui !== 'undefined' && ui.activeBoosters && ui.activeBoosters.extraLife) {
+        if (typeof ui !== 'undefined' && ui.activeBoosters && ui.activeBoosters.extraLife && ui.activeBoosters.extraLife.active) {
             // Remove the floating missed block from the screen
             if (falling) falling.remove();
 
-            // Consume extra life
-            ui.activeBoosters.extraLife = false;
+            // Consume extra life instance
+            ui.activeBoosters.extraLife.active = false;
+            ui.activeBoosters.extraLife.time = 0;
             ui.updateBoostersHUD();
             ui.showBoosterActivation('¡🧴 Pegamento Extra te salvó!');
             if (typeof gameAudio !== 'undefined') gameAudio.success('perfect');
