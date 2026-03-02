@@ -998,6 +998,65 @@ button:hover {
     }
 }
 
+/* COOKIE CONSENT BANNER */
+#cookie-consent-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.consent-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    text-align: center;
+}
+
+.consent-text p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #444;
+    line-height: 1.4;
+    font-family: 'Inter', sans-serif;
+}
+
+.consent-text a {
+    color: var(--pink);
+    font-weight: 600;
+}
+
+.consent-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.consent-actions button {
+    flex: 1;
+    margin: 0 !important;
+    padding: 10px !important;
+    font-size: 0.9em !important;
+}
+
+@media (max-width: 480px) {
+    #cookie-consent-banner {
+        bottom: 10px;
+        padding: 15px;
+    }
+}
+
 /* ---- PLANETS ---- */
 .planet {
     border-radius: 50%;

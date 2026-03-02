@@ -12,6 +12,12 @@ const rewardedAds = {
     currentAd: null,
 
     init() {
+        // Enforce consent check if the privacyManager is available
+        if (window.privacyManager && !window.privacyManager.hasConsent()) {
+            console.warn('[Ads] Consent not granted yet. Waiting.');
+            return;
+        }
+
         if (!window.google || !window.google.ima) {
             console.warn('[Ads] IMA SDK not loaded.');
             return;
