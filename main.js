@@ -75,16 +75,15 @@ const gameMain = {
     loop() {
         if (ui.gameActive) {
             this.angle += this.speed;
-            const oscillation = Math.sin(this.angle) * 35;
-            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
+            let oscillation = Math.sin(this.angle) * 35;
 
             // --- BOOSTER: MAGNET ---
-            // If magnet is active, slowly pull the oscillation towards 0 (center)
+            // If magnet is active, reduce the swing amplitude to center it
             if (typeof ui !== 'undefined' && ui.activeBoosters.magnet && ui.activeBoosters.magnet.active) {
-                // Decay the oscillation towards 0 slowly
-                const pullStrength = 0.05; // Adjust for "magnetic feel"
-                this.angle *= (1 - pullStrength);
+                oscillation *= 0.25; // Narrower swing
             }
+
+            document.getElementById('crane').style.transform = `translateX(-50%) rotate(${oscillation}deg)`;
         }
         requestAnimationFrame(() => this.loop());
     },
@@ -140,7 +139,15 @@ const gameMain = {
     },
 
     land(falling, x, fClass, color) {
-        const offset = physics.calculateOffset(x, this.width, ui.floors, this.balance);
+        const offsetRaw = physics.calculateOffset(x, this.width, ui.floors, this.balance);
+
+        // --- BOOSTER: MAGNET ---
+        // If magnet is active, pull the landing offset towards 0 (center)
+        let offset = offsetRaw;
+        if (typeof ui !== 'undefined' && ui.activeBoosters.magnet && ui.activeBoosters.magnet.active) {
+            offset *= 0.4; // Magnetic pull towards center
+        }
+
         const relativeToPrevious = ui.floors === 0 ? offset : (offset - this.lastOffset);
         const absRelative = Math.abs(relativeToPrevious);
 
