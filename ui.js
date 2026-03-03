@@ -25,7 +25,27 @@ const ui = {
         if (googleLoginBtnGO) googleLoginBtnGO.onclick = () => this.loginWithGoogle(true);
 
         const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.onclick = () => this.logout();
+        if (logoutBtn) logoutBtn.onclick = () => {
+            if (document.getElementById('settings-screen') && !document.getElementById('settings-screen').classList.contains('hidden')) {
+                this.closeSettings();
+            }
+            this.logout();
+        };
+
+        const settingsBtn = document.getElementById('settings-open-btn');
+        if (settingsBtn) settingsBtn.onclick = () => this.openSettings();
+
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        if (closeSettingsBtn) closeSettingsBtn.onclick = () => this.closeSettings();
+
+        const changeNameBtn = document.getElementById('settings-change-name-btn');
+        if (changeNameBtn) changeNameBtn.onclick = () => {
+            this.closeSettings();
+            this.showAliasPrompt(firebase.auth().currentUser, true);
+        };
+
+        const deleteAccBtn = document.getElementById('settings-delete-account-btn');
+        if (deleteAccBtn) deleteAccBtn.onclick = () => this.deleteAccount();
 
         const emailLinkBtn = document.getElementById('email-link-btn');
         if (emailLinkBtn) emailLinkBtn.onclick = () => this.sendEmailLink();
@@ -110,7 +130,7 @@ const ui = {
         }
     },
 
-    showAliasPrompt(user) {
+    showAliasPrompt(user, isRename = false) {
         const modal = document.getElementById('alias-modal');
         const input = document.getElementById('alias-input');
         const error = document.getElementById('alias-error');
@@ -121,10 +141,14 @@ const ui = {
         modal.classList.remove('hidden');
         error.innerText = '';
 
-        // Suggest default name (first name only, clean up spaces, make it alphanumeric max 12)
-        let suggest = (user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0]);
-        suggest = suggest.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
-        input.value = suggest;
+        if (isRename && this.currentUser) {
+            input.value = this.currentUser;
+        } else {
+            // Suggest default name (first name only, clean up spaces, make it alphanumeric max 12)
+            let suggest = (user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0]);
+            suggest = suggest.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
+            input.value = suggest;
+        }
 
         btn.onclick = () => {
             const desiredAlias = input.value.trim();
@@ -147,6 +171,12 @@ const ui = {
                 } else {
                     // Valid, save it
                     const updates = {};
+
+                    // Note: If they already had a name, delete the old alias from registry
+                    if (isRename && this.currentUser) {
+                        updates['/aliases/' + this.currentUser.toLowerCase()] = null;
+                    }
+
                     updates['/users/' + user.uid + '/alias'] = desiredAlias;
                     updates['/aliases/' + aliasKey] = user.uid;
 
@@ -169,6 +199,55 @@ const ui = {
         };
     },
 
+    openSettings() {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+        document.getElementById('user-screen').classList.add('hidden');
+        const screen = document.getElementById('settings-screen');
+        screen.classList.remove('hidden');
+        screen.style.position = 'fixed';
+        screen.style.inset = '0';
+        screen.style.background = 'rgba(0,0,0,0.8)';
+        screen.style.zIndex = '2100';
+        screen.style.display = 'flex';
+        screen.style.justifyContent = 'center';
+        screen.style.alignItems = 'center';
+    },
+
+    closeSettings() {
+        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+        document.getElementById('settings-screen').classList.add('hidden');
+        document.getElementById('user-screen').classList.remove('hidden');
+    },
+
+    deleteAccount() {
+        if (!confirm("⚠️ ¿Estás COMPLETAMENTE SEGURO de que quieres borrar tu cuenta? Perderás todo tu progreso, monedas y récords. Esta acción NO se puede deshacer.")) return;
+
+        const user = firebase.auth().currentUser;
+        if (!user) return;
+
+        const uid = user.uid;
+        const aliasKey = this.currentUser ? this.currentUser.toLowerCase() : null;
+
+        user.delete().then(() => {
+            // Cleanup DB
+            const updates = {};
+            updates['/users/' + uid] = null;
+            if (aliasKey) updates['/aliases/' + aliasKey] = null;
+
+            firebase.database().ref().update(updates).catch(console.error);
+
+            this.closeSettings();
+            alert("Tu cuenta ha sido eliminada exitosamente.");
+        }).catch(error => {
+            if (error.code === 'auth/requires-recent-login') {
+                alert("Por motivos de seguridad, necesitas volver a iniciar sesión para borrar tu cuenta.");
+                this.closeSettings();
+                this.logout();
+            } else {
+                alert("Error al borrar la cuenta: " + error.message);
+            }
+        });
+    },
 
     loginWithGoogle(fromGameOver = false) {
         // Just trigger popup; the onAuthStateChanged listener handles the rest

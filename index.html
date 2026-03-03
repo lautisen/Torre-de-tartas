@@ -73,8 +73,8 @@
                 <p style="font-size: 1.1em; font-weight: 900; margin: 0 0 5px; color: #333;">¡Hola, <span
                         id="logged-in-name" style="color: var(--pink);"></span>!</p>
                 <p style="font-size: 0.8em; color: #666; margin: 0 0 10px;">Tu progreso está seguro en la nube ☁️</p>
-                <button id="logout-btn" class="btn-red"
-                    style="padding: 6px 12px; font-size: 0.8em; border-radius: 6px;">Cerrar Sesión</button>
+                <button id="settings-open-btn" class="btn-gray"
+                    style="padding: 6px 12px; font-size: 0.8em; border-radius: 6px;">⚙️ Ajustes de Cuenta</button>
             </div>
 
             <div style="display:flex; justify-content:center; gap: 10px; margin-bottom: 20px;">
@@ -114,6 +114,32 @@
             </div>
         </div>
     </div>
+
+    <!-- AJUSTES DE CUENTA -->
+    <div id="settings-screen" class="hidden">
+        <div class="modal" style="display: flex; flex-direction: column; max-width: 90%; width: 400px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin:0;">⚙️ Ajustes</h2>
+                <button id="close-settings-btn" class="btn-red"
+                    style="padding: 6px 14px; font-size: 0.9rem; width: auto; margin:0; border-radius: 8px;">✖</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="settings-change-name-btn" class="btn-blue" style="padding: 12px; font-size: 1em;">✏️
+                    Modificar Nombre</button>
+                <button id="logout-btn" class="btn-gray" style="padding: 12px; font-size: 1em;">🚪 Cerrar
+                    Sesión</button>
+
+                <hr style="border:none; border-top:1px solid #ddd; margin: 10px 0;">
+
+                <button id="settings-delete-account-btn" class="btn-red"
+                    style="padding: 12px; font-size: 1em; background-color: #d32f2f;">🚨 Borrar Cuenta</button>
+                <p style="font-size: 0.75em; color: #888; margin: 0; text-align: center;">Borrar la cuenta es
+                    irreversible y perderás todo tu progreso.</p>
+            </div>
+        </div>
+    </div>
+
 
     <!-- GUÍA DE JUEGO (primeras 2 partidas) -->
     <div id="tutorial-overlay" class="hidden">
