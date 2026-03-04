@@ -320,6 +320,7 @@ const ui = {
     _initTutorial() {
         const overlay = document.getElementById('tutorial-overlay');
         const nextBtn = document.getElementById('tutorial-next-btn');
+        const skipBtn = document.getElementById('tutorial-skip-btn');
         if (!overlay || !nextBtn) return;
 
         const steps = overlay.querySelectorAll('.tutorial-step');
@@ -342,6 +343,16 @@ const ui = {
                 this._doStartGame();
             }
         };
+
+        if (skipBtn) {
+            skipBtn.onclick = () => {
+                if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
+                overlay.classList.add('hidden');
+                // Salta directamente al juego guardando el progreso del tutorial
+                localStorage.setItem('tutorialDone', 'true');
+                this._doStartGame();
+            };
+        }
 
         nextBtn.onclick = () => this._tutorialNext();
     },
