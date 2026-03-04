@@ -55,6 +55,25 @@
             padding: 0;
             display: flex;
             gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 16px;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            .nav-logo {
+                font-size: 1.6em;
+            }
         }
 
         nav ul li a {
