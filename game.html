@@ -31,37 +31,8 @@
 
             <div id="auth-section"
                 style="background: rgba(0,0,0,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
-                <p style="font-size: 0.85em; color: #555; margin: 0 0 10px; font-weight: 500;">Inicia sesión para
-                    guardar tu progreso, monedas y aparecer en el ranking oficial.</p>
-                <button id="google-login-btn"
-                    style="width: 100%; margin-bottom: 8px; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
-                        style="width: 20px; height: 20px;">
-                    Continuar con Google
-                </button>
-
-                <div style="display:flex; align-items:center; gap:8px; margin: 8px 0;">
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                    <span style="font-size:0.75em; color:#aaa;">o</span>
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                </div>
-
-                <div id="email-link-section">
-                    <input type="email" id="email-link-input" placeholder="tu@email.com" autocomplete="email"
-                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; font-size:0.9em; margin-bottom:8px; box-sizing:border-box;">
-                    <button id="email-link-btn"
-                        style="width:100%; padding:10px; border-radius:8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color:white; font-weight:bold; border:none; cursor:pointer; font-size:0.9em;">
-                        ✉️ Enviar enlace mágico
-                    </button>
-                </div>
-                <div id="email-link-sent" class="hidden"
-                    style="padding:10px; background:rgba(99,102,241,0.1); border-radius:8px; margin-top:8px;">
-                    <p style="font-size:0.85em; color:#6366f1; margin:0; font-weight:600;">📩 ¡Enlace enviado! Revisa tu
-                        bandeja de entrada y haz clic en el enlace para iniciar sesión.</p>
-                </div>
-
-                <p style="font-size: 0.75em; color: #888; margin: 10px 0 5px;">O juega como invitado (no se guarda en la
-                    nube):</p>
+                <p style="font-size: 0.85em; color: #555; margin: 0 0 10px; font-weight: 500;">Introduce tu nombre para
+                    empezar. Tu progreso se guardará en este dispositivo.</p>
                 <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off"
                     style="margin-bottom:0;">
             </div>
@@ -184,17 +155,6 @@
                 </p>
             </div>
 
-            <div id="guest-save-prompt" class="hidden"
-                style="margin-bottom: 15px; padding: 12px; background: rgba(255,193,7,0.1); border: 2px dashed rgba(255,193,7,0.5); border-radius: 10px; text-align: center;">
-                <p style="font-size: 0.85em; margin: 0 0 10px; color: #666; font-weight: bold;">¿Buen récord? ¡Inicia
-                    sesión con Google para guardarlo en el ranking oficial!</p>
-                <button id="google-login-btn-go"
-                    style="width: 100%; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.9em;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
-                        style="width: 16px; height: 16px;">
-                    Guardar progreso
-                </button>
-            </div>
             <div id="rewarded-ad-section" class="hidden"
                 style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
                 <button id="ad-revive-btn" class="btn-yellow"

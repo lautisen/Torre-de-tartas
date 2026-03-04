@@ -18,12 +18,6 @@ const ui = {
         const shareBtn = document.getElementById('share-btn');
         if (shareBtn) shareBtn.onclick = () => this.shareScoreImage();
 
-        const googleLoginBtn = document.getElementById('google-login-btn');
-        if (googleLoginBtn) googleLoginBtn.onclick = () => this.loginWithGoogle();
-
-        const googleLoginBtnGO = document.getElementById('google-login-btn-go');
-        if (googleLoginBtnGO) googleLoginBtnGO.onclick = () => this.loginWithGoogle(true);
-
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) logoutBtn.onclick = () => {
             if (document.getElementById('settings-screen') && !document.getElementById('settings-screen').classList.contains('hidden')) {
@@ -56,8 +50,7 @@ const ui = {
         const adDoubleBtn = document.getElementById('ad-double-coins-btn');
         if (adDoubleBtn) adDoubleBtn.onclick = () => this.doubleCoinsWithAd();
 
-        this.listenToAuth();
-        this.completeEmailLinkSignIn();
+        this.initUserFromLocalStorage();
 
         this.updateMotivationalText();
         this.listenToLeaderboard();
@@ -82,240 +75,37 @@ const ui = {
         if (textEl) textEl.innerText = randomPhrase;
     },
 
-    listenToAuth() {
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // Determine if user has an alias
-                firebase.database().ref('users/' + user.uid + '/alias').once('value').then((snapshot) => {
-                    if (snapshot.exists()) {
-                        // User has an alias, complete login
-                        this.finalizeLogin(user.uid, snapshot.val());
-                    } else {
-                        // Needs alias
-                        this.showAliasPrompt(user);
-                    }
-                }).catch(e => {
-                    console.error("Error fetching alias:", e);
-                    // Critical error: show something to the user
-                    alert("Error al conectar con la base de datos. Por favor, recarga la página.");
-                });
-            } else {
-                this.currentUid = null;
-                document.getElementById('auth-section').classList.remove('hidden');
-                document.getElementById('user-info-section').classList.add('hidden');
-            }
-        });
-    },
-
-    finalizeLogin(uid, alias) {
-        this.currentUser = alias;
-        this.currentUid = uid;
-
-        const authSec = document.getElementById('auth-section');
-        const userInfoSec = document.getElementById('user-info-section');
-        if (authSec) authSec.classList.add('hidden');
-        if (userInfoSec) userInfoSec.classList.remove('hidden');
-
-        const loggedInName = document.getElementById('logged-in-name');
-        if (loggedInName) loggedInName.innerText = this.currentUser;
-
-        if (typeof shop !== 'undefined') shop.loadData(this.currentUid);
-
-        // If from Game Over screen
-        const gameOverScreen = document.getElementById('game-over-screen');
-        if (this.gameActive === false && gameOverScreen && !gameOverScreen.classList.contains('hidden') && this.floors > 0) {
-            this.saveScore(this.floors, Math.floor((Date.now() - this.startTime) / 1000), this.score);
-            const prompt = document.getElementById('guest-save-prompt');
-            if (prompt) prompt.classList.add('hidden');
+    // All Firebase auth removed. Users are identified by a local username in localStorage.
+    initUserFromLocalStorage() {
+        const savedName = localStorage.getItem('playerName');
+        if (savedName) {
+            this.currentUser = savedName;
+            if (typeof shop !== 'undefined') shop.loadData(savedName);
+            const userDisplay = document.getElementById('user-display');
+            if (userDisplay) userDisplay.innerText = savedName;
         }
-    },
-
-    showAliasPrompt(user, isRename = false) {
-        const modal = document.getElementById('alias-modal');
-        const input = document.getElementById('alias-input');
-        const error = document.getElementById('alias-error');
-        const btn = document.getElementById('btn-save-alias');
-
-        if (!modal) return;
-
-        modal.classList.remove('hidden');
-        error.innerText = '';
-
-        if (isRename && this.currentUser) {
-            input.value = this.currentUser;
-        } else {
-            // Suggest default name (first name only, clean up spaces, make it alphanumeric max 12)
-            let suggest = (user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0]);
-            suggest = suggest.replace(/[^a-zA-Z0-9]/g, '').substring(0, 12);
-            input.value = suggest;
-        }
-
-        btn.onclick = () => {
-            const desiredAlias = input.value.trim();
-            if (desiredAlias.length < 3) {
-                error.innerText = "Mínimo 3 caracteres.";
-                return;
-            }
-
-            // Check if exists
-            btn.disabled = true;
-            btn.innerText = 'Verificando...';
-            error.innerText = '';
-
-            const aliasKey = desiredAlias.toLowerCase();
-            firebase.database().ref('aliases/' + aliasKey).once('value').then(snap => {
-                if (snap.exists() && snap.val() !== user.uid) {
-                    error.innerText = "❌ Este alias ya está en uso.";
-                    btn.disabled = false;
-                    btn.innerText = 'Guardar Alias';
-                } else {
-                    // Valid, save it
-                    const updates = {};
-
-                    // Note: If they already had a name, delete the old alias from registry
-                    if (isRename && this.currentUser) {
-                        updates['/aliases/' + this.currentUser.toLowerCase()] = null;
-                    }
-
-                    updates['/users/' + user.uid + '/alias'] = desiredAlias;
-                    updates['/aliases/' + aliasKey] = user.uid;
-
-                    firebase.database().ref().update(updates).then(() => {
-                        modal.classList.add('hidden');
-                        this.finalizeLogin(user.uid, desiredAlias);
-                    }).catch(err => {
-                        error.innerText = "Error al guardar. Intenta de nuevo.";
-                        btn.disabled = false;
-                        btn.innerText = 'Guardar Alias';
-                        console.error(err);
-                    });
-                }
-            }).catch(e => {
-                error.innerText = "❌ Error al verificar disponibilidad. Revisa tu conexión.";
-                btn.disabled = false;
-                btn.innerText = 'Guardar Alias';
-                console.error(e);
-            });
-        };
-    },
-
-    openSettings() {
-        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
-        document.getElementById('user-screen').classList.add('hidden');
-        const screen = document.getElementById('settings-screen');
-        screen.classList.remove('hidden');
-        screen.style.position = 'fixed';
-        screen.style.inset = '0';
-        screen.style.background = 'rgba(0,0,0,0.8)';
-        screen.style.zIndex = '2100';
-        screen.style.display = 'flex';
-        screen.style.justifyContent = 'center';
-        screen.style.alignItems = 'center';
-    },
-
-    closeSettings() {
-        if (typeof gameAudio !== 'undefined') gameAudio.uiClick();
-        document.getElementById('settings-screen').classList.add('hidden');
-        document.getElementById('user-screen').classList.remove('hidden');
-    },
-
-    deleteAccount() {
-        if (!confirm("⚠️ ¿Estás COMPLETAMENTE SEGURO de que quieres borrar tu cuenta? Perderás todo tu progreso, monedas y récords. Esta acción NO se puede deshacer.")) return;
-
-        const user = firebase.auth().currentUser;
-        if (!user) return;
-
-        const uid = user.uid;
-        const aliasKey = this.currentUser ? this.currentUser.toLowerCase() : null;
-
-        user.delete().then(() => {
-            // Cleanup DB
-            const updates = {};
-            updates['/users/' + uid] = null;
-            if (aliasKey) updates['/aliases/' + aliasKey] = null;
-
-            firebase.database().ref().update(updates).catch(console.error);
-
-            this.closeSettings();
-            alert("Tu cuenta ha sido eliminada exitosamente.");
-        }).catch(error => {
-            if (error.code === 'auth/requires-recent-login') {
-                alert("Por motivos de seguridad, necesitas volver a iniciar sesión para borrar tu cuenta.");
-                this.closeSettings();
-                this.logout();
-            } else {
-                alert("Error al borrar la cuenta: " + error.message);
-            }
-        });
-    },
-
-    loginWithGoogle(fromGameOver = false) {
-        // Just trigger popup; the onAuthStateChanged listener handles the rest
-        firebase.auth().signInWithPopup(provider).catch((error) => {
-            console.error(error);
-            alert("Error al iniciar sesión: " + error.message);
-        });
-    },
-
-    sendEmailLink() {
-        const emailInput = document.getElementById('email-link-input');
-        const email = emailInput ? emailInput.value.trim() : '';
-        if (!email) return alert('Introduce tu correo electrónico.');
-
-        const actionCodeSettings = {
-            url: window.location.href.split('?')[0],
-            handleCodeInApp: true
-        };
-
-        firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
-            .then(() => {
-                window.localStorage.setItem('emailForSignIn', email);
-                document.getElementById('email-link-section').classList.add('hidden');
-                document.getElementById('email-link-sent').classList.remove('hidden');
-            })
-            .catch((error) => {
-                console.error(error);
-                alert('Error al enviar el enlace: ' + error.message);
-            });
-    },
-
-    completeEmailLinkSignIn() {
-        if (!firebase.auth().isSignInWithEmailLink(window.location.href)) return;
-
-        let email = window.localStorage.getItem('emailForSignIn');
-        if (!email) {
-            email = window.prompt('Por favor, introduce tu email para confirmar el inicio de sesión:');
-        }
-        if (!email) return;
-
-        firebase.auth().signInWithEmailLink(email, window.location.href)
-            .then((result) => {
-                window.localStorage.removeItem('emailForSignIn');
-                // Clean the URL from the sign-in link parameters
-                window.history.replaceState(null, '', window.location.pathname);
-                console.log('Email link sign-in successful:', result.user.email);
-            })
-            .catch((error) => {
-                console.error(error);
-                alert('Error al completar el inicio de sesión: ' + error.message);
-            });
     },
 
     logout() {
-        firebase.auth().signOut().then(() => {
-            this.currentUser = "";
-            this.currentUid = null;
-            if (typeof shop !== 'undefined') {
-                const nameInput = document.getElementById('username');
-                if (nameInput && nameInput.value.trim()) {
-                    shop.loadData(nameInput.value.trim());
-                } else {
-                    shop.coins = 0;
-                    document.getElementById('shop-coins-display').innerText = 0;
-                }
-            }
-        });
+        localStorage.removeItem('playerName');
+        this.currentUser = '';
+        this.currentUid = null;
+        if (typeof shop !== 'undefined') {
+            shop.coins = 0;
+            const coinsEl = document.getElementById('shop-coins-display');
+            if (coinsEl) coinsEl.innerText = 0;
+        }
     },
+
+    loginWithGoogle() { /* Disabled */ },
+    sendEmailLink() { /* Disabled */ },
+    completeEmailLinkSignIn() { /* Disabled */ },
+    finalizeLogin() { /* Disabled */ },
+    showAliasPrompt() { /* Disabled */ },
+    openSettings() { /* Disabled - no accounts */ },
+    closeSettings() { /* Disabled - no accounts */ },
+    deleteAccount() { /* Disabled - no accounts */ },
+
 
     _initTutorial() {
         const overlay = document.getElementById('tutorial-overlay');
@@ -360,19 +150,20 @@ const ui = {
     startGame(e) {
         if (e) e.preventDefault();
 
-        if (!this.currentUid) {
-            const nameInput = document.getElementById('username');
-            const name = nameInput.value.trim();
-            if (!this.currentUser && !name) {
-                return alert('¡Dime tu nombre para jugar o inicia sesión con Google!');
-            }
-            if (name) {
-                this.currentUser = name;
-                document.getElementById('user-display').innerText = name;
-                if (typeof shop !== 'undefined') shop.loadData(name);
-            }
+        const nameInput = document.getElementById('username');
+        const name = nameInput ? nameInput.value.trim() : '';
+        if (!this.currentUser && !name) {
+            return alert('¡Introduce tu nombre para jugar!');
+        }
+        if (name) {
+            this.currentUser = name;
+            localStorage.setItem('playerName', name);
+            const userDisplay = document.getElementById('user-display');
+            if (userDisplay) userDisplay.innerText = name;
+            if (typeof shop !== 'undefined') shop.loadData(name);
         } else {
-            document.getElementById('user-display').innerText = this.currentUser;
+            const userDisplay = document.getElementById('user-display');
+            if (userDisplay) userDisplay.innerText = this.currentUser;
         }
 
         if (typeof gameAudio !== 'undefined') {
