@@ -1,13 +1,16 @@
 /**
  * Torre de Tartas - Privacy & Consent Manager
+ * The cookie banner is managed by Google AdSense's official
+ * Privacy & Messaging tool. This module only tracks the consent
+ * state for internal use (e.g., blocking ads until consent is given).
  */
 const privacyManager = {
     CONSENT_KEY: 'cake-tower-consent',
 
     init() {
-        if (!this.hasUserInteracted()) {
-            this.showBanner();
-        }
+        // The Google AdSense CMP (created at cake-game.online/privacysettings)
+        // handles the consent banner automatically via the AdSense script.
+        // We do not show a custom banner here to avoid policy conflicts.
     },
 
     hasUserInteracted() {
@@ -15,50 +18,18 @@ const privacyManager = {
     },
 
     hasConsent() {
-        return localStorage.getItem(this.CONSENT_KEY) === 'true';
+        // Default to true to not block ads — the Google CMP manages GDPR consent.
+        // If you want to block ads until the Google CMP fires, wire this up
+        // to the __tcfapi callback instead.
+        return true;
     },
 
     acceptAll() {
         localStorage.setItem(this.CONSENT_KEY, 'true');
-        this.hideBanner();
-        // Trigger ad reload or initialization if needed
-        if (window.rewardedAds) {
-            window.rewardedAds.init();
-        }
     },
 
     declineAll() {
         localStorage.setItem(this.CONSENT_KEY, 'false');
-        this.hideBanner();
-    },
-
-    showBanner() {
-        const banner = document.createElement('div');
-        banner.id = 'cookie-consent-banner';
-        banner.innerHTML = `
-            <div class="consent-content">
-                <div class="consent-text">
-                    <p>🍪 Usamos cookies para mejorar tu experiencia y mostrar anuncios relevantes. 
-                    Al jugar, aceptas nuestra <a href="privacy.html" target="_blank">Política de Privacidad</a>.</p>
-                </div>
-                <div class="consent-actions">
-                    <button id="consent-accept" class="btn-green">Aceptar</button>
-                    <button id="consent-decline" class="btn-outline" style="font-size: 0.8em; opacity: 0.7;">Solo esenciales</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(banner);
-
-        document.getElementById('consent-accept').addEventListener('click', () => this.acceptAll());
-        document.getElementById('consent-decline').addEventListener('click', () => this.declineAll());
-    },
-
-    hideBanner() {
-        const banner = document.getElementById('cookie-consent-banner');
-        if (banner) {
-            banner.style.transform = 'translateY(100%)';
-            setTimeout(() => banner.remove(), 400);
-        }
     }
 };
 

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros - Torre de Tartas</title>
+    <meta name="description"
+        content="La historia detrás de Torre de Tartas. Un aficionado a la tecnología que siempre soñó con crear su propio videojuego.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4.0">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .about-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .about-nav .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.3em;
+            color: white;
+            text-decoration: none;
+        }
+
+        .about-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .about-nav ul li a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .about-nav ul li a:hover,
+        .about-nav ul li a.active {
+            color: #f06292;
+        }
+
+        .about-content {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        .about-content h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8em;
+            font-weight: 900;
+            margin: 0 0 10px;
+            background: linear-gradient(135deg, #f06292, #ff8a65);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .about-content .subtitle {
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+        }
+
+        .about-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 36px 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .about-card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5em;
+            color: #f06292;
+            margin-top: 0;
+        }
+
+        .about-card p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.82);
+            margin: 0 0 16px;
+        }
+
+        .about-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about-card .emoji-big {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .play-cta {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #f06292, #ff8a65);
+            color: white;
+            font-weight: 900;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2em;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(240, 98, 146, 0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .play-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(240, 98, 146, 0.55);
+        }
+
+        .about-footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .about-footer a {
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="about-nav">
+        <a class="logo" href="index.html">🍰 Torre de Tartas</a>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="game.html">Jugar</a></li>
+            <li><a href="about.html" class="active">Sobre Nosotros</a></li>
+            <li><a href="privacy.html">Privacidad</a></li>
+        </ul>
+    </nav>
+
+    <div class="about-content">
+        <h1>👋 Sobre este proyecto</h1>
+        <p class="subtitle">La historia de cómo un aficionado a la tecnología convirtió una idea en un juego real.</p>
+
+        <div class="about-card">
+            <span class="emoji-big">💡</span>
+            <h2>¿Quién hay detrás de Torre de Tartas?</h2>
+            <p>
+                Me llamo Lautaro y soy un apasionado de la tecnología que lleva años soñando con una misma cosa:
+                crear su propio videojuego desde cero. No soy un desarrollador profesional. No tengo una empresa.
+                Solo tengo curiosidad, ganas de aprender y muchas horas dedicadas delante de la pantalla.
+            </p>
+            <p>
+                Siempre me ha fascinado cómo funcionan las cosas por dentro — los móviles, los sistemas, el código.
+                Pero crear algo que la gente pudiera jugar y disfrutar era una asignatura pendiente que tenía conmigo
+                mismo.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <span class="emoji-big">🎂</span>
+            <h2>¿Cómo nació el juego?</h2>
+            <p>
+                Torre de Tartas empezó como un experimento: quería ver si era capaz de construir un juego de físicas
+                con navegador web que fuera divertido y adictivo sin necesitar instalar nada. La mecánica de apilar
+                objetos controlando una grúa me pareció sencilla de entender pero difícil de dominar — exactamente
+                lo que busco en un buen juego.
+            </p>
+            <p>
+                Empecé con lo más básico — un bloque que caía — y poco a poco fui añadiendo pisos, zonas atmosféricas
+                (Tierra, Cielo, Nubes, Galaxia...), monedas, skins, boosters, un ranking global... Cada nueva función
+                era una lección nueva. Cada bug, una aventura.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <span class="emoji-big">🛠️</span>
+            <h2>¿Cómo está hecho?</h2>
+            <p>
+                Todo el juego está desarrollado con tecnologías web estándar: <strong>HTML, CSS y JavaScript
+                    puro</strong>,
+                sin ningún motor de juegos ni framework externo. La física, las animaciones, el sistema de cámara que
+                sube mientras construyes la torre... todo está programado a mano.
+            </p>
+            <p>
+                Para el login y el ranking global uso <strong>Firebase</strong> de Google, que me permite guardar
+                las puntuaciones en tiempo real. Es perfecto para un proyecto así: potente, gratis dentro de unos
+                límites
+                y fácil de integrar.
+            </p>
+            <p>
+                Lo más complicado ha sido hacer que todo funcionara bien en móvil — que los toques fueran precisos,
+                que el juego fuera fluido incluso con muchas tartas en pantalla y que la cámara siguiera la torre
+                sin marear. ¡Muchas noches de prueba y error invertidas en ello!
+            </p>
+        </div>
+
+        <div class="about-card">
+            <span class="emoji-big">🚀</span>
+            <h2>¿Y ahora qué?</h2>
+            <p>
+                Torre de Tartas sigue evolucionando. Tengo ideas para nuevos modos de juego, más skins, eventos
+                especiales y, quien sabe, quizás algún día una versión para Android o iOS. El proyecto es un hobby
+                que disfruto enormemente y que espero que vosotros también disfrutéis jugando.
+            </p>
+            <p>
+                Si quieres darme feedback, reportar un bug o simplemente decirme que te ha gustado, no dudes en
+                contactarme. ¡Cada comentario me ayuda a mejorar el juego!
+            </p>
+            <p>
+                Gracias por jugar. ¡Y que la torre aguante! 🍰🏆
+            </p>
+
+            <a href="game.html" class="play-cta">🎂 ¡Jugar Ahora!</a>
+        </div>
+    </div>
+
+    <footer class="about-footer">
+        <p>© 2025 Torre de Tartas · <a href="privacy.html">Privacidad y Cookies</a> · Hecho con ❤️ y mucho café.</p>
+    </footer>
+
+</body>
+
+</html>

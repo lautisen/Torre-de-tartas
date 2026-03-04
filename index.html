@@ -3,284 +3,402 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heavy Cake Stack - Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torre de Tartas - El juego de apilar pasteles online</title>
+    <meta name="description"
+        content="Torre de Tartas es un juego de física gratuito en el navegador. Apila pasteles con una grúa y construye la torre más alta del mundo. ¡Reta a tus amigos en el ranking global!">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.0">
     <link rel="icon" type="image/png" href="assets/favicon.png">
-
-    <!-- Google IMA SDK for Rewarded Ads (VAST) -->
-    <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
-
-    <!-- Google Ad Placement API (H5 Games Ads) - Keep for compatibility if needed, but IMA will take over rewards -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3539090903954344"
         crossorigin="anonymous"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #0f0f1a;
+            color: #f0f0f0;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.4em;
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 24px;
+        }
+
+        nav ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            color: #f06292;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            text-align: center;
+            padding: 80px 24px 60px;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(240, 98, 146, 0.18) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5em, 6vw, 4.5em);
+            font-weight: 900;
+            margin: 0 0 16px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #f06292 60%, #ff8a65 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1em, 2.5vw, 1.25em);
+            color: rgba(255, 255, 255, 0.65);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .btn-play {
+            display: inline-block;
+            padding: 18px 52px;
+            background: linear-gradient(135deg, #f06292, #ff8a65);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.3em;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 8px 30px rgba(240, 98, 146, 0.45);
+            transition: transform 0.15s, box-shadow 0.15s;
+            animation: pulse-glow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 8px 30px rgba(240, 98, 146, 0.45);
+            }
+
+            50% {
+                box-shadow: 0 12px 45px rgba(240, 98, 146, 0.7);
+            }
+        }
+
+        .btn-play:hover {
+            transform: translateY(-3px);
+        }
+
+        .hero-note {
+            margin-top: 16px;
+            font-size: 0.82em;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ─── PREVIEW GIF / EMOJI PREVIEW ─── */
+        .game-preview {
+            max-width: 340px;
+            margin: 0 auto 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 28px;
+            font-size: 4em;
+            line-height: 1;
+            text-align: center;
+            letter-spacing: -4px;
+        }
+
+        .game-preview p {
+            font-size: 0.25em;
+            letter-spacing: 0;
+            color: rgba(255, 255, 255, 0.4);
+            margin: 12px 0 0;
+            line-height: 1.4;
+        }
+
+        /* ─── SECTIONS ─── */
+        section {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+
+        section h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2em;
+            color: #f06292;
+            margin: 0 0 28px;
+            text-align: center;
+        }
+
+        /* ─── HOW TO PLAY ─── */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 18px;
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        .step-card .step-num {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            background: linear-gradient(135deg, #f06292, #ff8a65);
+            border-radius: 50%;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1em;
+            margin-bottom: 12px;
+        }
+
+        .step-card .step-icon {
+            font-size: 2.4em;
+            margin-bottom: 10px;
+        }
+
+        .step-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1em;
+            margin: 0 0 8px;
+            color: white;
+        }
+
+        .step-card p {
+            font-size: 0.92em;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* ─── FEATURES ─── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .feature-badge .icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .feature-badge h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95em;
+            margin: 0 0 4px;
+            color: white;
+        }
+
+        .feature-badge p {
+            font-size: 0.82em;
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* ─── CTA BOTTOM ─── */
+        .cta-bottom {
+            text-align: center;
+            padding: 60px 24px 80px;
+            background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(240, 98, 146, 0.12) 0%, transparent 70%);
+        }
+
+        .cta-bottom h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2em;
+            margin: 0 0 16px;
+            color: white;
+        }
+
+        .cta-bottom p {
+            color: rgba(255, 255, 255, 0.55);
+            margin: 0 0 32px;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            text-align: center;
+            padding: 30px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 0.82em;
+            color: rgba(255, 255, 255, 0.28);
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.38);
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- FONDO: scroll continuo desde tierra hasta galaxia -->
-    <div id="bg-scroll"></div>
-    <div id="perfect-flash"></div>
+    <!-- NAV -->
+    <nav>
+        <a class="nav-logo" href="index.html">🍰 Torre de Tartas</a>
+        <ul>
+            <li><a href="index.html" class="active">Inicio</a></li>
+            <li><a href="game.html">Jugar</a></li>
+            <li><a href="about.html">Sobre Nosotros</a></li>
+            <li><a href="privacy.html">Privacidad</a></li>
+        </ul>
+    </nav>
 
-    <div id="user-screen">
-        <div class="modal">
-            <h2>🍰 Torre de Tartas <span style="color:var(--pink); font-size: 0.8em; vertical-align:top;">V2</span></h2>
-            <p id="motivational-text"
-                style="min-height: 45px; display: flex; align-items: center; justify-content: center; margin: 5px 0 15px; font-weight: 500; font-size: 0.95em; line-height: 1.3;">
-                Cargando...</p>
+    <!-- HERO -->
+    <header class="hero">
+        <h1>🍰 Torre de Tartas</h1>
+        <p>El juego de física de pasteles más adictivo del navegador. Apila tartas con una grúa, supera a tus amigos y
+            conquista el ranking mundial.</p>
+        <a href="game.html" class="btn-play">🎂 ¡Jugar Gratis!</a>
+        <p class="hero-note">Sin descargas · Sin registro obligatorio · Gratis</p>
+    </header>
 
-            <div id="auth-section"
-                style="background: rgba(0,0,0,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
-                <p style="font-size: 0.85em; color: #555; margin: 0 0 10px; font-weight: 500;">Inicia sesión para
-                    guardar tu progreso, monedas y aparecer en el ranking oficial.</p>
-                <button id="google-login-btn"
-                    style="width: 100%; margin-bottom: 8px; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
-                        style="width: 20px; height: 20px;">
-                    Continuar con Google
-                </button>
-
-                <div style="display:flex; align-items:center; gap:8px; margin: 8px 0;">
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                    <span style="font-size:0.75em; color:#aaa;">o</span>
-                    <hr style="flex:1; border:none; border-top:1px solid #ddd;">
-                </div>
-
-                <div id="email-link-section">
-                    <input type="email" id="email-link-input" placeholder="tu@email.com" autocomplete="email"
-                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; font-size:0.9em; margin-bottom:8px; box-sizing:border-box;">
-                    <button id="email-link-btn"
-                        style="width:100%; padding:10px; border-radius:8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color:white; font-weight:bold; border:none; cursor:pointer; font-size:0.9em;">
-                        ✉️ Enviar enlace mágico
-                    </button>
-                </div>
-                <div id="email-link-sent" class="hidden"
-                    style="padding:10px; background:rgba(99,102,241,0.1); border-radius:8px; margin-top:8px;">
-                    <p style="font-size:0.85em; color:#6366f1; margin:0; font-weight:600;">📩 ¡Enlace enviado! Revisa tu
-                        bandeja de entrada y haz clic en el enlace para iniciar sesión.</p>
-                </div>
-
-                <p style="font-size: 0.75em; color: #888; margin: 10px 0 5px;">O juega como invitado (no se guarda en la
-                    nube):</p>
-                <input type="text" id="username" placeholder="Tu nombre..." maxlength="12" autocomplete="off"
-                    style="margin-bottom:0;">
-            </div>
-
-            <div id="user-info-section" class="hidden"
-                style="background: rgba(0,0,0,0.03); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
-                <p style="font-size: 1.1em; font-weight: 900; margin: 0 0 5px; color: #333;">¡Hola, <span
-                        id="logged-in-name" style="color: var(--pink);"></span>!</p>
-                <p style="font-size: 0.8em; color: #666; margin: 0 0 10px;">Tu progreso está seguro en la nube ☁️</p>
-                <button id="settings-open-btn" class="btn-gray"
-                    style="padding: 6px 12px; font-size: 0.8em; border-radius: 6px;">⚙️ Ajustes de Cuenta</button>
-            </div>
-
-            <div style="display:flex; justify-content:center; gap: 10px; margin-bottom: 20px;">
-                <button id="start-btn" style="flex:1;">¡A Cocinar!</button>
-                <button id="shop-btn" class="btn-blue" style="padding: 15px 20px;">🛒 Tienda</button>
-            </div>
-            <div id="high-score-board">
-                <p>Cargando ranking...</p>
-            </div>
-            <p style="font-size: 0.75em; color: #888; margin-top: 15px; margin-bottom: 0;">v2.0.0 | <a
-                    href="privacy.html" target="_blank" style="color: inherit; text-decoration: underline;">Privacidad y
-                    Cookies</a></p>
-        </div>
+    <!-- PREVIEW VISUAL -->
+    <div class="game-preview">
+        🎂🎂🎂<br>🎂🎂🎂🎂<br>🎂🎂🎂🎂🎂<br>🏗️
+        <p>Construye tu torre desde la Tierra hasta la Galaxia</p>
     </div>
 
-    <!-- TIENDA Y SKINS -->
-    <div id="shop-screen" class="hidden">
-        <div class="modal" style="display: flex; flex-direction: column; max-width: 90%; width: 450px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="margin:0;">🛒 Tienda</h2>
-                <button id="close-shop-btn" class="btn-red"
-                    style="padding: 6px 14px; font-size: 0.9rem; width: auto; margin:0; border-radius: 8px;">✖</button>
+    <!-- CÓMO JUGAR (Tutorial) -->
+    <section id="como-jugar">
+        <h2>🎮 ¿Cómo se juega?</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-icon">👆</div>
+                <div class="step-num">1</div>
+                <h3>Toca la Pantalla</h3>
+                <p>Una grúa se mueve automáticamente de izquierda a derecha. Toca (o haz clic) para soltar la tarta en
+                    el momento exacto.</p>
             </div>
-            <p style="text-align: left; font-weight: 500; margin: 0 0 15px 0;">Saldo: <span id="shop-coins-display"
-                    style="color: #fbc02d; font-weight: 900; font-size: 1.2em;">0</span> 🪙</p>
-
-            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
-                <button id="shop-tab-skins" class="btn-blue" style="flex: 1; padding: 10px; font-size: 0.9em;"
-                    onclick="shop.switchTab('skins')">🎨 Estilos</button>
-                <button id="shop-tab-boosters" class="btn-gray" style="flex: 1; padding: 10px; font-size: 0.9em;"
-                    onclick="shop.switchTab('boosters')">🚀 Boosters</button>
+            <div class="step-card">
+                <div class="step-icon">🎯</div>
+                <div class="step-num">2</div>
+                <h3>Apunta al Centro</h3>
+                <p>Si la tarta cae centrada sobre la anterior, consigues una caída <strong>perfecta</strong> y ganas
+                    puntos extra y monedas bonus.</p>
             </div>
-
-            <div id="shop-items"
-                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding-right: 5px;">
-                <!-- Shop items will be injected here -->
+            <div class="step-card">
+                <div class="step-icon">⚖️</div>
+                <div class="step-num">3</div>
+                <h3>Equilibra la Torre</h3>
+                <p>La torre tiene física real. Si se inclina demasiado, ¡se caerá! Cada caída imperfecta reduce el ancho
+                    de la siguiente tarta.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">🌌</div>
+                <div class="step-num">4</div>
+                <h3>Llega a la Galaxia</h3>
+                <p>La cámara sube a medida que construyes. Atraviesa zonas únicas: Tierra, Cielo, Nubes, Espacio y
+                    Galaxia. ¿Llegas al final?</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- AJUSTES DE CUENTA -->
-    <div id="settings-screen" class="hidden">
-        <div class="modal" style="display: flex; flex-direction: column; max-width: 90%; width: 400px; padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="margin:0;">⚙️ Ajustes</h2>
-                <button id="close-settings-btn" class="btn-red"
-                    style="padding: 6px 14px; font-size: 0.9rem; width: auto; margin:0; border-radius: 8px;">✖</button>
+    <!-- CARACTERÍSTICAS -->
+    <section id="caracteristicas">
+        <h2>⭐ Características</h2>
+        <div class="features-grid">
+            <div class="feature-badge">
+                <div class="icon">🏆</div>
+                <h4>Ranking Global</h4>
+                <p>Compite contra jugadores de todo el mundo en tiempo real.</p>
             </div>
-
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="settings-change-name-btn" class="btn-blue" style="padding: 12px; font-size: 1em;">✏️
-                    Modificar Nombre</button>
-                <button id="logout-btn" class="btn-gray" style="padding: 12px; font-size: 1em;">🚪 Cerrar
-                    Sesión</button>
-
-                <hr style="border:none; border-top:1px solid #ddd; margin: 10px 0;">
-
-                <button id="settings-delete-account-btn" class="btn-red"
-                    style="padding: 12px; font-size: 1em; background-color: #d32f2f;">🚨 Borrar Cuenta</button>
-                <p style="font-size: 0.75em; color: #888; margin: 0; text-align: center;">Borrar la cuenta es
-                    irreversible y perderás todo tu progreso.</p>
+            <div class="feature-badge">
+                <div class="icon">🪙</div>
+                <h4>Monedas & Tienda</h4>
+                <p>Gana monedas jugando y desbloquea skins de tartas exclusivos.</p>
             </div>
-        </div>
-    </div>
-
-
-    <div id="tutorial-overlay" class="hidden">
-        <div id="tutorial-card" style="position: relative;">
-            <button id="tutorial-skip-btn"
-                style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #888; padding: 5px;">✖</button>
-            <div id="tutorial-steps">
-                <div class="tutorial-step active" id="tut-step-1">
-                    <div class="tut-icon">🎂</div>
-                    <h2>¡Torre de Tartas!</h2>
-                    <p>Apila tartas lo más alto que puedas sin que se caiga la torre.</p>
-                </div>
-                <div class="tutorial-step" id="tut-step-2">
-                    <div class="tut-icon">👆</div>
-                    <h2>¿Cómo jugar?</h2>
-                    <p><b>Toca o haz clic</b> en la pantalla para soltar la tarta cuando esté bien centrada.<br><br>Una
-                        caída <b>perfecta</b> te da puntos extra.</p>
-                </div>
+            <div class="feature-badge">
+                <div class="icon">🚀</div>
+                <h4>Boosters</h4>
+                <p>Usa potenciadores como Cuerda Lenta, Magnetismo o Segunda Vida.</p>
             </div>
-            <div id="tutorial-nav">
-                <div id="tutorial-dots">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                </div>
-                <button id="tutorial-next-btn">Siguiente →</button>
+            <div class="feature-badge">
+                <div class="icon">🎨</div>
+                <h4>Skins de Tartas</h4>
+                <p>Más de 10 diseños de pasteles para personalizar tu torre.</p>
+            </div>
+            <div class="feature-badge">
+                <div class="icon">📱</div>
+                <h4>100% Mobile</h4>
+                <p>Diseñado específicamente para jugar en el móvil. Sin descargas.</p>
+            </div>
+            <div class="feature-badge">
+                <div class="icon">☁️</div>
+                <h4>Progreso en la Nube</h4>
+                <p>Inicia sesión con Google y guarda tu progreso en cualquier dispositivo.</p>
             </div>
         </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <div class="cta-bottom">
+        <h2>¿Estás preparado para la torre más alta? 🍰</h2>
+        <p>Juega directamente en el navegador, sin descargas, sin registro obligatorio.</p>
+        <a href="game.html" class="btn-play">🎂 ¡Empezar a Jugar!</a>
     </div>
 
-    <div id="game-over-screen" class="hidden">
-        <div class="modal">
-            <h2 style="margin-bottom:0;">💥 ¡Torre Caída!</h2>
-            <p id="game-over-phrase"
-                style="margin: 5px 0 10px; font-style: italic; font-size: 0.9em; color: #666; font-weight: 500;">...</p>
-            <div style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 20px; margin: 15px 0;">
-                <p
-                    style="margin: 0; font-size: 0.9em; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 1px;">
-                    Puntuación Final</p>
-                <h3 id="final-score"
-                    style="color: #d81b60; font-size: 3em; font-weight: 900; margin: 5px 0 0; line-height: 1; text-shadow: 0 4px 10px rgba(216,27,96,0.2);">
-                    0</h3>
-                <p id="final-floors" style="margin: 10px 0 0; color: #555; font-size: 1.1em; font-weight: 600;">0 Pisos
-                </p>
-                <p id="final-coins" style="margin: 5px 0 0; color: #fbc02d; font-size: 1.2em; font-weight: 900;">+0 🪙
-                </p>
-            </div>
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Torre de Tartas · <a href="about.html">Sobre Nosotros</a> · <a href="privacy.html">Privacidad y
+                Cookies</a> · Hecho con ❤️</p>
+    </footer>
 
-            <div id="guest-save-prompt" class="hidden"
-                style="margin-bottom: 15px; padding: 12px; background: rgba(255,193,7,0.1); border: 2px dashed rgba(255,193,7,0.5); border-radius: 10px; text-align: center;">
-                <p style="font-size: 0.85em; margin: 0 0 10px; color: #666; font-weight: bold;">¿Buen récord? ¡Inicia
-                    sesión con Google para guardarlo en el ranking oficial!</p>
-                <button id="google-login-btn-go"
-                    style="width: 100%; background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.9em;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"
-                        style="width: 16px; height: 16px;">
-                    Guardar progreso
-                </button>
-            </div>
-            <div id="rewarded-ad-section" class="hidden"
-                style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-                <button id="ad-revive-btn" class="btn-yellow"
-                    style="width:100%; padding:12px; font-size:0.95em; display:flex; align-items:center; justify-content:center; gap:8px; border-radius:10px;">
-                    🧴 Segunda Vida (Ver anuncio)
-                </button>
-                <button id="ad-double-coins-btn"
-                    style="width:100%; padding:10px; font-size:0.9em; display:flex; align-items:center; justify-content:center; gap:8px; border-radius:10px; background: linear-gradient(135deg, #fbc02d, #f9a825); color: #333; font-weight:bold; border:none; cursor:pointer;">
-                    🪙 x2 Monedas (Ver anuncio)
-                </button>
-            </div>
-
-            <button onclick="ui.startGame()">🔄 Reintentar</button>
-            <button id="share-btn" class="glow-pulse btn-green" style="margin-top: 10px;">📸 Compartir Logro</button>
-            <button onclick="ui.showRankings()" class="btn-outline" style="margin-top: 10px;">🏆 Volver al Menú
-                Principal</button>
-        </div>
-    </div>
-
-    <div id="ui" class="hidden">
-        <div id="score-box" style="display:flex; flex-direction:column; gap:8px; position:relative;">
-            <div id="active-boosters-hud"></div>
-            <h1 style="margin:0; font-size:1.1em; color:#555;">🍰 <span id="user-display"></span></h1>
-            <div style="display: flex; gap: 20px; justify-content: center; font-size:1.4em;">
-                <span style="color:var(--pink); font-weight:900;">Puntos: <b id="score">0</b></span>
-                <span style="color:#fbc02d; font-weight:900;"><b id="hud-coins">0</b> 🪙</span>
-                <span id="multiplier-badge"
-                    style="opacity:0.3; color:#f59e0b; font-weight:900; transform:scale(0.8); transition:all 0.2s;">x1
-                    🔥</span>
-            </div>
-            <div style="display: flex; gap: 20px; justify-content: center; font-size:0.9em; color:#777;">
-                <span>Pisos: <b id="floors-display">0</b></span>
-                <span>⏱️ <b id="timer">00:00</b></span>
-            </div>
-        </div>
-    </div>
-
-    </div>
-
-    <div id="crane-system" class="hidden">
-        <div id="crane">
-            <div id="active-cake-container"></div>
-        </div>
-    </div>
-
-    <!-- Contenedor para anuncios IMA SDK -->
-    <div id="ad-container" class="hidden" style="position:fixed; inset:0; z-index:9999; background:black;"></div>
-    <div id="game-world" class="hidden">
-        <div id="camera-system">
-            <div id="base-container">
-                <div id="tower"></div>
-                <div id="base"></div>
-            </div>
-        </div>
-    </div>
-    <div id="alias-modal" class="hidden"
-        style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; display:flex; justify-content:center; align-items:center;">
-        <div
-            style="background:white; padding:25px; border-radius:15px; width:90%; max-width:350px; text-align:center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-            <h2 style="margin-top:0; color:#333;">🎮 Elige tu Alias</h2>
-            <p style="font-size:0.9em; color:#666; margin-bottom:15px;">Cómo quieres aparecer en el Top Mundial. ¡Debe
-                ser único y no podrás cambiarlo!</p>
-            <input type="text" id="alias-input" placeholder="Tu alias..." maxlength="12" autocomplete="off"
-                style="width:100%; border-radius:8px; padding:12px; border:2px solid #ddd; font-size:1.2em; text-align:center; box-sizing:border-box; font-weight:bold; color:#444;">
-            <p id="alias-error"
-                style="color:#d32f2f; font-size:0.85em; margin:8px 0; min-height:1.2em; font-weight:600;"></p>
-            <button id="btn-save-alias" class="glow-pulse btn-green"
-                style="width:100%; margin-top:5px; padding:12px; font-size:1em;">Guardar Alias</button>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-
-    <script src="privacy.js?v=4.0"></script>
-    <script src="ads.js?v=4.0"></script>
-    <script src="config.js?v=4.0"></script>
-    <script src="audio.js?v=4.0"></script>
-    <script src="physics.js?v=4.0"></script>
-    <script src="atmosphere.js?v=4.0"></script>
-    <script src="shop.js?v=4.0"></script>
-    <script src="main.js?v=4.0"></script>
-    <script src="ui.js?v=4.0"></script>
 </body>
 
 </html>

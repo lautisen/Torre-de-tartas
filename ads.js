@@ -9,7 +9,6 @@ const rewardedAds = {
     adDisplayContainer: null,
     onRewarded: null,
     onDismissed: null,
-    currentAd: null,
 
     init() {
         // Enforce consent check if the privacyManager is available
@@ -53,8 +52,8 @@ const rewardedAds = {
         this.onDismissed = onDismissed;
 
         if (!this.initialized) {
-            console.warn('[Ads] IMA not initialized, using fallback.');
-            this._fallbackAd(name, onRewarded, onDismissed);
+            console.warn('[Ads] IMA not initialized. No ad available.');
+            if (onDismissed) onDismissed();
             return;
         }
 
@@ -109,10 +108,11 @@ const rewardedAds = {
     },
 
     _onAdError(adErrorEvent) {
-        console.warn('[Ads] IMA Ad Error:', adErrorEvent.getError());
+        console.warn('[Ads] IMA Ad Error:', adErrorEvent.getError ? adErrorEvent.getError() : adErrorEvent);
         if (this.adsManager) this.adsManager.destroy();
-        this._fallbackAd('error', this.onRewarded, this.onDismissed);
         this._closeAd();
+        // If the ad fails, just dismiss gracefully — no fake countdown.
+        if (this.onDismissed) this.onDismissed();
     },
 
     _closeAd() {
@@ -122,37 +122,6 @@ const rewardedAds = {
             this.adsManager.destroy();
             this.adsManager = null;
         }
-    },
-
-    _fallbackAd(name, onRewarded, onDismissed) {
-        const overlay = document.createElement('div');
-        overlay.id = 'fallback-ad-overlay';
-        Object.assign(overlay.style, {
-            position: 'fixed', inset: '0', background: 'rgba(0,0,0,0.85)',
-            zIndex: '10000', display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', color: 'white',
-            fontFamily: 'Outfit, sans-serif', textAlign: 'center'
-        });
-
-        overlay.innerHTML = `
-            <p style="font-size: 1.2em; margin-bottom: 10px; opacity: 0.7;">📺 Anuncio (Simulado)</p>
-            <p id="fallback-ad-timer" style="font-size: 4em; font-weight: 900; margin: 0;">5</p>
-            <p style="font-size: 0.85em; margin-top: 15px; opacity: 0.5;">Usando modo de compatibilidad IMA</p>
-        `;
-
-        document.body.appendChild(overlay);
-
-        let seconds = 5;
-        const timerEl = overlay.querySelector('#fallback-ad-timer');
-        const interval = setInterval(() => {
-            seconds--;
-            timerEl.innerText = seconds;
-            if (seconds <= 0) {
-                clearInterval(interval);
-                overlay.remove();
-                if (onRewarded) onRewarded();
-            }
-        }, 1000);
     }
 };
 
