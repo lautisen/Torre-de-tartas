@@ -4,14 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad y Cookies - Dreaminraw</title>
+    <title>Privacy Policy - Dreaminraw</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3539090903954344"
+        crossorigin="anonymous"></script>
     <style>
         :root {
-            --bg: #f9fafb;
+            --bg: #f3f4f6;
             --text: #1f2937;
             --primary: #6366f1;
+            --primary-hover: #4f46e5;
             --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-600: #4b5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
         }
 
         body {
@@ -21,135 +33,396 @@
             line-height: 1.6;
             margin: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
             background: var(--white);
             padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            background: var(--gray-100);
+            padding: 4px;
+            border-radius: 12px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lang-btn.active {
+            background: var(--white);
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: var(--gray-200);
         }
 
         h1 {
-            font-size: 2rem;
-            margin-bottom: 24px;
+            font-size: 2.25rem;
+            margin-bottom: 8px;
             color: #111827;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .update-date {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 24px;
+            display: block;
         }
 
         h2 {
             font-size: 1.5rem;
-            margin-top: 32px;
+            margin-top: 40px;
             margin-bottom: 16px;
             color: #111827;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
         }
 
         p {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            color: #4b5563;
+        }
+
+        ul {
+            margin-bottom: 18px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #4b5563;
         }
 
         .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
             color: var(--primary);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            gap: 5px;
         }
 
         .back-link:hover {
-            text-decoration: underline;
+            color: var(--primary-hover);
+            transform: translateX(-3px);
+        }
+
+        .developer-info {
+            background: var(--gray-100);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .developer-info p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        strong {
+            color: #111827;
+        }
+
+        /* Fade animation for content change */
+        .fade-out {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+
+        .fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 1.75rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <a href="index.html" class="back-link">← Volver al juego</a>
+    <div class="container" id="main-content">
+        <div class="header-controls">
+            <a href="index.html" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span data-t="back">Volver</span>
+            </a>
+            <div class="lang-selector">
+                <button class="lang-btn active" onclick="setLanguage('es')" id="btn-es">🇪🇸 ES</button>
+                <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">🇺🇸 EN</button>
+                <button class="lang-btn" onclick="setLanguage('fr')" id="btn-fr">🇫🇷 FR</button>
+                <button class="lang-btn" onclick="setLanguage('de')" id="btn-de">🇩🇪 DE</button>
+            </div>
+        </div>
 
-        <h1>Política de Privacidad y Cookies</h1>
-        <p><strong>Desarrollador:</strong> Dreaminraw</p>
-        <p><em>Última actualización: Marzo 2026</em></p>
+        <h1 data-t="title">Política de Privacidad y Cookies</h1>
+        <span class="update-date"><span data-t="updated">Última actualización:</span> <span data-t="date">Abril 2026</span></span>
 
-        <p>En <strong>Dreaminraw</strong>, valoramos y respetamos tu privacidad. Este documento explica de forma
-            transparente qué información recopilamos, cómo la usamos y cuáles son tus derechos conforme al Reglamento
-            General de Protección de Datos (RGPD) y la normativa española (LOPDGDD y LSSI-CE).</p>
+        <div class="developer-info">
+            <p><strong>Desarrollador:</strong> Dreaminraw</p>
+            <p><strong><span data-t="contact_label">Contacto:</span></strong> Lautaro Senese (<span data-t="contact_role">Desarrollador principal</span>)</p>
+            <p><strong>Email:</strong> contact.dreaminraw@gmail.com</p>
+        </div>
 
-        <p>Esta política de privacidad aplica a <strong>todas las aplicaciones, juegos y servicios web</strong>
-            desarrollados y publicados bajo la marca <strong>Dreaminraw</strong>.</p>
+        <p data-t="intro">En <strong>Dreaminraw</strong>, valoramos y respetamos tu privacidad. Este documento explica de forma transparente qué información recopilamos, cómo la usamos y cuáles son tus derechos conforme al Reglamento General de Protección de Datos (RGPD) y normativas internacionales de privacidad.</p>
 
-        <h2>1. Responsable del Tratamiento</h2>
-        <p><strong>Responsable:</strong> Lautaro. Desarrollador Dreaminraw</p>
-        <p><strong>Contacto:</strong> contact.dreaminraw@gmail.com</p>
+        <p data-t="scope">Esta política de privacidad aplica a <strong>nuestros juegos y aplicaciones (como Gloop o Torre de Tartas)</strong> desarrollados y publicados bajo la marca <strong>Dreaminraw</strong>.</p>
 
-        <h2>2. Ámbito de Aplicación</h2>
-        <p>Esta política de privacidad es de aplicación para todos los proyectos y aplicaciones creadas por Dreaminraw,
-            que actualmente incluyen:</p>
+        <h2 data-t="h1">1. Responsable del Tratamiento</h2>
+        <p data-t="p1">El responsable del tratamiento de los datos es la marca de desarrollo <strong>Dreaminraw</strong>. Puedes contactar con el desarrollador principal, Lautaro Senese, a través del correo electrónico mencionado anteriormente para cualquier consulta sobre privacidad.</p>
+
+        <h2 data-t="h2">2. ¿Qué datos recopilamos? ¡Mínimos!</h2>
+        <p data-t="p2_1">En nuestros juegos y aplicaciones no te pedimos que te registres inicialmente, ni solicitamos tu correo electrónico, contraseñas, edad o nombre real de forma obligatoria.</p>
         <ul>
-            <li><strong>Torre de Tartas</strong> — Juego web de física disponible en <a href="https://cake-game.online"
-                    target="_blank">cake-game.online</a>. Un juego de apilar pasteles con una grúa, con ranking global,
-                skins y boosters.</li>
+            <li data-t="l2_1"><strong>Alias del jugador:</strong> Solo te pedimos que elijas un nombre de usuario (alias) para guardar tu progreso y mostrar tu puntuación en el ranking.</li>
+            <li data-t="l2_2"><strong>Almacenamiento Local:</strong> En nuestras aplicaciones móviles y juegos web, el progreso del juego y las preferencias se almacenan localmente en tu dispositivo (Local Storage o persistencia local).</li>
+            <li data-t="l2_3"><strong>Ranking Global:</strong> Si utilizas funciones online (como el ranking global), tu alias y puntuación se guardan en nuestros servicios, pero no están asociados a información que te identifique personalmente en el mundo real.</li>
         </ul>
-        <p>A medida que se publiquen nuevas aplicaciones, esta sección se actualizará para incluirlas.</p>
 
-        <h2>3. ¿Qué datos recopilamos y con qué finalidad?</h2>
-        <p>La base legal para el tratamiento de tus datos es tu consentimiento expreso. Recopilamos datos de la
-            siguiente manera:</p>
+        <h2 data-t="h3">3. Política de Cookies y Tecnologías Similares</h2>
+        <p data-t="p3_1">Utilizamos tecnologías de almacenamiento local y cookies para el correcto funcionamiento de los juegos y para mantener los proyectos gratuitos mediante publicidad:</p>
         <ul>
-            <li><strong>Usuarios registrados (Google Login):</strong> Si inicias sesión a través de Google, recopilamos
-                tu nombre público y dirección de correo electrónico. Utilizamos estos datos exclusivamente para crear tu
-                perfil de jugador, guardar tu progreso y registrar tus puntuaciones en el ranking global del juego.</li>
-            <li><strong>Jugadores invitados:</strong> Si juegas como invitado, no recopilamos datos personales. Tu alias
-                y progreso se guardan localmente en tu dispositivo mediante almacenamiento local (Local Storage).</li>
+            <li data-t="l3_1"><strong>Técnicas (Necesarias):</strong> Permiten guardar tus preferencias (volumen, idioma, alias) y progreso en tu propio dispositivo.</li>
+            <li data-t="l3_2"><strong>Analíticas y Diagnóstico:</strong> Nos ayudan a entender fallos técnicos y rendimiento de forma anónima.</li>
+            <li data-t="l3_3"><strong>Publicitarias:</strong> Operadas por terceros para mostrar anuncios y financiar el desarrollo.</li>
         </ul>
 
-        <h2>4. Conservación de los datos</h2>
-        <p>Conservaremos tus datos personales mientras tu cuenta siga activa. Si decides eliminar tu cuenta o revocar tu
-            consentimiento, eliminaremos tus datos personales de nuestros servidores, salvo aquellos que estemos
-            obligados a conservar por imperativo legal.</p>
-
-        <h2>5. Política de Cookies</h2>
-        <p>Utilizamos cookies propias y de terceros para el correcto funcionamiento del juego y para financiar el
-            proyecto mediante publicidad. Las clasificamos en:</p>
+        <h2 data-t="h4">4. Publicidad y Servicios de Terceros (Google)</h2>
+        <p data-t="p4_1">Nuestros juegos y aplicaciones se financian a través de servicios de publicidad de terceros:</p>
         <ul>
-            <li><strong>Cookies técnicas (Estrictamente necesarias):</strong> Permiten mantener tu sesión activa y
-                guardar tus preferencias de juego (como el volumen o el idioma). No requieren consentimiento previo.
-            </li>
-            <li><strong>Cookies analíticas:</strong> Nos ayudan a medir el tráfico y entender cómo interactúan los
-                jugadores con el juego de forma anónima.</li>
-            <li><strong>Cookies publicitarias:</strong> Operadas por terceros (Google AdSense / IMA SDK), sirven para
-                mostrarte anuncios personalizados basados en tus hábitos de navegación.</li>
+            <li data-t="l4_1"><strong>Google AdSense / IMA SDK:</strong> Utilizados en versiones web para mostrar anuncios.</li>
+            <li data-t="l4_2"><strong>Google AdMob:</strong> Utilizado en aplicaciones móviles para Android e iOS. <strong>AdMob</strong> puede recopilar identificadores de dispositivo (como el Android Advertising ID), datos de diagnóstico y ubicación aproximada para mostrar anuncios relevantes y medir el rendimiento.</li>
+            <li data-t="l4_3"><strong>Google Firebase:</strong> Utilizamos servicios técnicos como Firebase para la configuración remota (Remote Config), diagnóstico de errores (Crashlytics) y mejora del rendimiento.</li>
         </ul>
-        <p>Puedes gestionar o retirar tu consentimiento en cualquier momento a través del panel de Configuración de
-            Cookies dentro del menú del juego, o borrando los datos de navegación de tu navegador.</p>
+        <p data-t="p4_2">Para más detalles, visita la <a href="https://policies.google.com/privacy" target="_blank" style="color: var(--primary);">Política de Privacidad de Google</a>.</p>
 
-        <h2>6. Publicidad y Terceros</h2>
-        <p>Las aplicaciones de Dreaminraw pueden utilizar servicios de publicidad de terceros (Google IMA SDK y Google
-            AdSense). Estos proveedores, como encargados del tratamiento, pueden utilizar cookies o balizas web para
-            recopilar datos de navegación y mostrar anuncios relevantes.</p>
-        <p>Puedes obtener más información sobre cómo Google utiliza tus datos y cómo optar por no recibir publicidad
-            personalizada visitando la Política de Privacidad y Condiciones de Google.</p>
-
-        <h2>7. Menores de edad</h2>
-        <p>Las aplicaciones de <strong>Dreaminraw</strong> están dirigidas a un público general. Sin embargo, conforme a
-            la normativa española, si tienes menos de 14 años, necesitas el consentimiento de tus padres o tutores
-            legales para registrarte con Google y aceptar las cookies de publicidad.</p>
-
-        <h2>8. Tus Derechos</h2>
-        <p>Como usuario, la ley te otorga los siguientes derechos sobre tus datos:</p>
-        <ul>
-            <li><strong>Acceso:</strong> Conocer qué datos tuyos tenemos.</li>
-            <li><strong>Rectificación:</strong> Corregir datos inexactos.</li>
-            <li><strong>Supresión (Derecho al olvido):</strong> Solicitar que borremos tus datos.</li>
-            <li><strong>Oposición y Limitación:</strong> Oponerte a que usemos tus datos para ciertos fines.</li>
-            <li><strong>Portabilidad:</strong> Recibir tus datos en un formato estructurado.</li>
-        </ul>
-        <p>Para ejercer cualquiera de estos derechos, envíanos un correo electrónico a
-            <strong>contact.dreaminraw@gmail.com</strong> indicando en el asunto "Protección de Datos". Si consideras
-            que tus derechos han sido vulnerados, tienes derecho a presentar una reclamación ante la Agencia Española de
-            Protección de Datos (AEPD).
-        </p>
+        <h2 data-t="h5">5. Tus Derechos</h2>
+        <p data-t="p5_1">Dado que no vinculamos tu identidad real a tu progreso (no usamos emails), puedes ejercer tu derecho al olvido borrando los datos de la aplicación o la caché de tu navegador.</p>
+        <p data-t="p5_2">Si tienes dudas, escríbenos a <strong>contact.dreaminraw@gmail.com</strong>.</p>
     </div>
+
+    <script>
+        const translations = {
+            es: {
+                back: "Volver",
+                title: "Política de Privacidad y Cookies",
+                updated: "Última actualización:",
+                date: "Abril 2026",
+                contact_label: "Contacto:",
+                contact_role: "Desarrollador principal",
+                intro: "En <strong>Dreaminraw</strong>, valoramos y respetamos tu privacidad. Este documento explica de forma transparente qué información recopilamos, cómo la usamos y cuáles son tus derechos conforme al Reglamento General de Protección de Datos (RGPD) y normativas internacionales de privacidad.",
+                scope: "Esta política de privacidad aplica a <strong>nuestros juegos y aplicaciones (como Gloop o Torre de Tartas)</strong> desarrollados y publicados bajo la marca <strong>Dreaminraw</strong>.",
+                h1: "1. Responsable del Tratamiento",
+                p1: "El responsable del tratamiento de los datos es la marca de desarrollo <strong>Dreaminraw</strong>. Puedes contactar con el desarrollador principal, Lautaro Senese, a través del correo electrónico mencionado anteriormente para cualquier consulta sobre privacidad.",
+                h2: "2. ¿Qué datos recopilamos? ¡Mínimos!",
+                p2_1: "En nuestros juegos y aplicaciones no te pedimos que te registres inicialmente, ni solicitamos tu correo electrónico, contraseñas, edad o nombre real de forma obligatoria.",
+                l2_1: "<strong>Alias del jugador:</strong> Solo te pedimos que elijas un nombre de usuario (alias) para guardar tu progreso y mostrar tu puntuación en el ranking.",
+                l2_2: "<strong>Almacenamiento Local:</strong> En nuestras aplicaciones móviles y juegos web, el progreso del juego y las preferencias se almacenan localmente en tu dispositivo (Local Storage o persistencia local).",
+                l2_3: "<strong>Ranking Global:</strong> Si utilizas funciones online (como el ranking global), tu alias y puntuación se guardan en nuestros servicios, pero no están asociados a información que te identifique personalmente en el mundo real.",
+                h3: "3. Política de Cookies y Tecnologías Similares",
+                p3_1: "Utilizamos tecnologías de almacenamiento local y cookies para el correcto funcionamiento de los juegos y para mantener los proyectos gratuitos mediante publicidad:",
+                l3_1: "<strong>Técnicas (Necesarias):</strong> Permiten guardar tus preferencias (volumen, idioma, alias) y progreso en tu propio dispositivo.",
+                l3_2: "<strong>Analíticas y Diagnóstico:</strong> Nos ayudan a entender fallos técnicos y rendimiento de forma anónima.",
+                l3_3: "<strong>Publicitarias:</strong> Operadas por terceros para mostrar anuncios y financiar el desarrollo.",
+                h4: "4. Publicidad y Servicios de Terceros (Google)",
+                p4_1: "Nuestros juegos y aplicaciones se financian a través de servicios de publicidad de terceros:",
+                l4_1: "<strong>Google AdSense / IMA SDK:</strong> Utilizados en versiones web para mostrar anuncios.",
+                l4_2: "<strong>Google AdMob:</strong> Utilizado en aplicaciones móviles para Android e iOS. <strong>AdMob</strong> puede recopilar identificadores de dispositivo (como el Android Advertising ID), datos de diagnóstico y ubicación aproximada para mostrar anuncios relevantes y medir el rendimiento.",
+                l4_3: "<strong>Google Firebase:</strong> Utilizamos servicios técnicos como Firebase para la configuración remota (Remote Config), diagnóstico de errores (Crashlytics) y mejora del rendimiento.",
+                p4_2: "Para más detalles, visita la Política de Privacidad de Google.",
+                h5: "5. Tus Derechos",
+                p5_1: "Dado que no vinculamos tu identidad real a tu progreso (no usamos emails), puedes ejercer tu derecho al olvido borrando los datos de la aplicación o la caché de tu navegador.",
+                p5_2: "Si tienes dudas, escríbenos a contact.dreaminraw@gmail.com."
+            },
+            en: {
+                back: "Back",
+                title: "Privacy Policy & Cookies",
+                updated: "Last update:",
+                date: "April 2026",
+                contact_label: "Contact:",
+                contact_role: "Lead Developer",
+                intro: "At <strong>Dreaminraw</strong>, we value and respect your privacy. This document explains transparently what information we collect, how we use it, and what your rights are under the General Data Protection Regulation (GDPR) and international privacy regulations.",
+                scope: "This privacy policy applies to <strong>our games and applications (such as Gloop or Torre de Tartas)</strong> developed and published under the <strong>Dreaminraw</strong> brand.",
+                h1: "1. Data Controller",
+                p1: "The data controller is the development brand <strong>Dreaminraw</strong>. You can contact the lead developer, Lautaro Senese, via the email mentioned above for any privacy-related inquiries.",
+                h2: "2. What data do we collect? Minimum!",
+                p2_1: "In our games and applications, we do not initially ask you to register, nor do we request your email, passwords, age, or real name on a mandatory basis.",
+                l2_1: "<strong>Player Alias:</strong> We only ask you to choose a username (alias) to save your progress and display your score in the ranking.",
+                l2_2: "<strong>Local Storage:</strong> In our mobile apps and web games, game progress and preferences are stored locally on your device (Local Storage or local persistence).",
+                l2_3: "<strong>Global Ranking:</strong> If you use online features (such as global ranking), your alias and score are saved in our services, but they are not associated with information that personally identifies you in the real world.",
+                h3: "3. Cookies Policy and Similar Technologies",
+                p3_1: "We use local storage technologies and cookies for the proper functioning of the games and to keep the projects free through advertising:",
+                l3_1: "<strong>Technical (Necessary):</strong> They allow saving your preferences (volume, language, alias) and progress on your own device.",
+                l3_2: "<strong>Analytics and Diagnostics:</strong> They help us understand technical failures and performance anonymously.",
+                l3_3: "<strong>Advertising:</strong> Operated by third parties to show ads and fund development.",
+                h4: "4. Advertising and Third Party Services (Google)",
+                p4_1: "Our games and applications are funded through third-party advertising services:",
+                l4_1: "<strong>Google AdSense / IMA SDK:</strong> Used in web versions to show ads.",
+                l4_2: "<strong>Google AdMob:</strong> Used in mobile applications for Android and iOS. <strong>AdMob</strong> may collect device identifiers (such as the Android Advertising ID), diagnostic data, and approximate location to show relevant ads and measure performance.",
+                l4_3: "<strong>Google Firebase:</strong> We use technical services like Firebase for remote configuration (Remote Config), error diagnostics (Crashlytics), and performance improvement.",
+                p4_2: "For more details, visit the Google Privacy Policy.",
+                h5: "5. Your Rights",
+                p5_1: "Since we do not link your real identity to your progress (we do not use emails), you can exercise your right to be forgotten by deleting the application data or your browser cache.",
+                p5_2: "If you have questions, write to us at contact.dreaminraw@gmail.com."
+            },
+            fr: {
+                back: "Retour",
+                title: "Politique de Confidentialité",
+                updated: "Dernière mise à jour :",
+                date: "Avril 2026",
+                contact_label: "Contact :",
+                contact_role: "Développeur Principal",
+                intro: "Chez <strong>Dreaminraw</strong>, nous apprécions et respectons votre vie privée. Ce document explique en toute transparence quelles informations nous collectons, comment nous les utilisons et quels sont vos droits en vertu du Règlement Général sur la Protection des Données (RGPD).",
+                scope: "Cette politique de confidentialité s'applique à <strong>nos jeux et applications (tels que Gloop ou Torre de Tartas)</strong> développés et publiés sous la marque <strong>Dreaminraw</strong>.",
+                h1: "1. Responsable du Traitement",
+                p1: "Le responsable du traitement des données est la marque de développement <strong>Dreaminraw</strong>. Vous pouvez contacter le développeur principal, Lautaro Senese, via l'e-mail mentionné ci-dessus.",
+                h2: "2. Quelles données collectons-nous ? Minimum !",
+                p2_1: "Dans nos jeux et applications, nous ne vous demandons pas initialement de vous inscrire, ni ne demandons votre e-mail, vos mots de passe, votre âge ou votre vrai nom.",
+                l2_1: "<strong>Alias du Joueur :</strong> Nous vous demandons seulement de choisir un nom d'utilisateur (alias) pour sauvegarder votre progression.",
+                l2_2: "<strong>Stockage Local :</strong> Dans nos applications mobiles et jeux web, la progression et les préférences sont stockées localement sur votre appareil.",
+                l2_3: "<strong>Classement Mondial :</strong> Si vous utilisez les fonctions en ligne, votre alias et votre score sont enregistrés, mais ils ne sont pas associés à des informations personnelles identifiables.",
+                h3: "3. Politique de Cookies",
+                p3_1: "Nous utilisons des cookies pour le bon fonctionnement des jeux et pour financer nos projets gratuits :",
+                l3_1: "<strong>Techniques :</strong> Permettent de sauvegarder vos préférences sur votre propre appareil.",
+                l3_2: "<strong>Analytiques :</strong> Nous aident à comprendre les performances de manière anonyme.",
+                l3_3: "<strong>Publicitaires :</strong> Gérées par des tiers pour diffuser des publicités.",
+                h4: "4. Publicité et Services Tiers (Google)",
+                p4_1: "Nos jeux sont financés par des services publicitaires tiers :",
+                l4_1: "<strong>Google AdSense :</strong> Utilisé dans les versions web.",
+                l4_2: "<strong>Google AdMob :</strong> Utilisé dans les applications mobiles. <strong>AdMob</strong> peut collecter des identifiants d'appareil (ID publicitaire Android), des données de diagnostic et la localisation approximative.",
+                l4_3: "<strong>Google Firebase :</strong> Utilisé pour la configuration à distance et le diagnostic des erreurs (Crashlytics).",
+                p4_2: "Pour plus de détails, consultez la politique de confidentialité de Google.",
+                h5: "5. Vos Droits",
+                p5_1: "Comme nous ne lions pas votre identité à votre progression, vous pouvez exercer votre droit à l'oubli en supprimant les données de l'application.",
+                p5_2: "Pour toute question, contactez-nous à contact.dreaminraw@gmail.com."
+            },
+            de: {
+                back: "Zurück",
+                title: "Datenschutzerklärung",
+                updated: "Zuletzt aktualisiert:",
+                date: "April 2026",
+                contact_label: "Kontakt:",
+                contact_role: "Hauptentwickler",
+                intro: "Bei <strong>Dreaminraw</strong> schätzen und respektieren wir Ihre Privatsphäre. Dieses Dokument erklärt transparent, welche Informationen wir sammeln und wie wir sie verwenden.",
+                scope: "Diese Datenschutzerklärung gilt für <strong>unsere Spiele und Anwendungen (wie Gloop oder Torre de Tartas)</strong> unter der Marke <strong>Dreaminraw</strong>.",
+                h1: "1. Verantwortlicher",
+                p1: "Verantwortlich für die Datenverarbeitung ist <strong>Dreaminraw</strong>. Sie können den Hauptentwickler, Lautaro Senese, über die oben genannte E-Mail kontaktieren.",
+                h2: "2. Welche Daten sammeln wir? Minimum!",
+                p2_1: "In unseren Spielen und Anwendungen fragen wir nicht nach einer Registrierung, E-Mail-Adresse oder Ihrem echten Namen.",
+                l2_1: "<strong>Spieler-Alias:</strong> Wir bitten Sie nur, einen Benutzernamen (Alias) zu wählen, um Ihren Fortschritt zu speichern.",
+                l2_2: "<strong>Lokale Speicherung:</strong> In unseren Apps und Webspielen werden Fortschritte lokal auf Ihrem Gerät gespeichert.",
+                l2_3: "<strong>Globale Rangliste:</strong> Bei Online-Funktionen werden Alias und Punktzahl gespeichert, jedoch ohne Bezug zu Ihrer Person.",
+                h3: "3. Cookie-Richtlinie",
+                p3_1: "Wir verwenden Cookies für die Funktion der Spiele und zur Finanzierung durch Werbung:",
+                l3_1: "<strong>Technisch:</strong> Speichern von Einstellungen auf Ihrem Gerät.",
+                l3_2: "<strong>Analyse:</strong> Hilft uns, die Leistung anonym zu verstehen.",
+                l3_3: "<strong>Werbung:</strong> Drittanbieter-Cookies zur Anzeige von Werbung.",
+                h4: "4. Werbung und Drittanbieter (Google)",
+                p4_1: "Unsere Projekte werden durch Werbedienste finanziert:",
+                l4_1: "<strong>Google AdSense:</strong> Für Web-Versionen.",
+                l4_2: "<strong>Google AdMob:</strong> Für mobile Apps. <strong>AdMob</strong> kann Geräte-IDs (Android Werbe-ID), Diagnosedaten und den ungefähren Standort erfassen.",
+                l4_3: "<strong>Google Firebase:</strong> Für Fernkonfiguration und Fehlerdiagnose (Crashlytics).",
+                p4_2: "Besuchen Sie die Google-Datenschutzerklärung für weitere Details.",
+                h5: "5. Ihre Rechte",
+                p5_1: "Da wir keine Identität verknüpfen, können Sie Ihr Recht auf Löschung durch Entfernen der App-Daten ausüben.",
+                p5_2: "Fragen an contact.dreaminraw@gmail.com."
+            }
+        };
+
+        function setLanguage(lang) {
+            const container = document.getElementById('main-content');
+            
+            // Apply fade-out
+            document.querySelectorAll('[data-t]').forEach(el => {
+                el.classList.add('fade-out');
+            });
+
+            setTimeout(() => {
+                const translation = translations[lang];
+                if (!translation) return;
+
+                document.querySelectorAll('[data-t]').forEach(el => {
+                    const key = el.getAttribute('data-t');
+                    if (translation[key]) {
+                        el.innerHTML = translation[key];
+                    }
+                    el.classList.remove('fade-out');
+                    el.classList.add('fade-in');
+                });
+
+                // Update active button
+                document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+                document.getElementById('btn-' + lang).classList.add('active');
+
+                // Save preference
+                localStorage.setItem('dreaminraw-lang', lang);
+                document.documentElement.lang = lang;
+                
+                // Remove fade-in class after animation
+                setTimeout(() => {
+                    document.querySelectorAll('[data-t]').forEach(el => {
+                        el.classList.remove('fade-in');
+                    });
+                }, 300);
+            }, 200);
+        }
+
+        // Initialize language
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('dreaminraw-lang');
+            const browserLang = navigator.language.split('-')[0];
+            const supportedLangs = ['es', 'en', 'fr', 'de'];
+            
+            let finalLang = 'es'; // Default
+            if (savedLang && supportedLangs.includes(savedLang)) {
+                finalLang = savedLang;
+            } else if (supportedLangs.includes(browserLang)) {
+                finalLang = browserLang;
+            }
+
+            setLanguage(finalLang);
+        });
+    </script>
 </body>
 
 </html>
